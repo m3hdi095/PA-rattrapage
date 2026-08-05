@@ -9,13 +9,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     $telephone = $_POST['telephone'] ?? '';
-    $capacites = $_POST['capacites'] ?? []; // ex: checkboxes chauffeur / cuisinier / plombier...
+    $capacites = $_POST['capacites'] ?? [];
 
-    // TODO : appeler la route de création de compte de l'API Go,
-    // ex POST http://localhost:8080/benevoles
-    // avec les champs ci-dessus (role = "benevole", statut_candidature = "en_attente")
-    // si succès : rediriger vers index.php avec un message de confirmation
-    // (le compte devra être validé par un admin avant utilisation complète)
+    $payload = json_encode([
+        'email'     => $email,
+        'password'  => $password,
+        'nom'       => $nom,
+        'prenom'    => $prenom,
+        'telephone' => $telephone,
+        'capacites' => $capacites,
+    ]);
+
+    $ch = curl_init('http://localhost:8081/benevoles');
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    $curlError = curl_error($ch);
+    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($response === false) {
+        $error = "Impossible de contacter l'API (" . $curlError . "). Vérifie que l'API Go tourne bien sur le port 8080.";
+    } elseif ($statusCode === 201) {
+        header('Location: index.php?created=1');
+        exit;
+    } else {
+        $body = json_decode($response, true);
+        $error = $body['error'] ?? "Erreur lors de la création du compte (code $statusCode)";
+    }
 }
 ?>
 <!DOCTYPE html>
