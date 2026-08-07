@@ -43,3 +43,15 @@ func CreateBenevole(benevole *models.Benevole, capacites []string) (int, error) 
 	benevole.ID = id
 	return id, nil
 }
+
+func GetBenevoleByEmail(email string) (*models.Benevole, error) {
+	var benevole models.Benevole
+	row := Connection.QueryRow("SELECT id, email, password_hash, nom, prenom, telephone, statut_candidature FROM benevoles WHERE email = ?", email)
+
+	err := row.Scan(&benevole.ID, &benevole.Email, &benevole.PasswordHash, &benevole.Nom, &benevole.Prenom, &benevole.Telephone, &benevole.StatutCandidature)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get benevole by email: %w", err)
+	}
+
+	return &benevole, nil
+}

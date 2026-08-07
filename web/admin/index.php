@@ -1,18 +1,43 @@
 <?php
 session_start();
 
-// TODO : si déjà connecté (session admin valide), rediriger vers le dashboard admin
-
+if (isset($_SESSION['token']) && isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    header('Location: index.php?connected=1');
+    exit;
+}
 $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    // TODO : appeler la route de login de l'API Go, ex POST http://localhost:8080/login
-    // avec email, password, et role attendu = "admin"
-    // si succès : stocker $_SESSION['user_id'], $_SESSION['role'] = 'admin', etc.
-    // puis rediriger vers la page d'accueil du back-office
+    $payload = json_encode([
+        'email'    => $email,
+        'password' => $password,
+        'role'     => 'admin',
+    ]);
+
+    $ch = curl_init('http://localhost:8081/login');
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    $curlError = curl_error($ch);
+    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($response === false) {
+        $error = "Impossible de contacter l'API (" . $curlError . "). Vérifie que l'API Go tourne bien sur le port 8081.";
+    } elseif ($statusCode === 200) {
+        $body = json_decode($response, true);
+        $_SESSION['token'] = $body['token'];
+        $_SESSION['role'] = 'admin';
+        header('Location: index.php?connected=1');
+        exit;
+    } else {
+        $error = "Email ou mot de passe incorrect";
+    }
 }
 ?>
 <!DOCTYPE html>
