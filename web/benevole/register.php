@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     curl_close($ch);
 
     if ($response === false) {
-        $error = "Impossible de contacter l'API (" . $curlError . "). Vérifie que l'API Go tourne bien sur le port 8080.";
+        $error = "Impossible de contacter l'API (" . $curlError . "). Vérifie que l'API Go tourne bien sur le port 8081.";
     } elseif ($statusCode === 201) {
         header('Location: index.php?created=1');
         exit;

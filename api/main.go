@@ -16,6 +16,7 @@ func main() {
 	db.Connection = db.NewDB()
 
 	http.HandleFunc("POST /benevoles", app.CreateBenevole)
+	http.HandleFunc("POST /adherents", app.CreateAdherent)
 	http.HandleFunc("/health", healthCheck)
 	http.ListenAndServe(":8081", nil)
 

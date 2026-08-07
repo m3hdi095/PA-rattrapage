@@ -29,6 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p style="color:red;"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
+    <?php if (isset($_GET['created'])): ?>
+        <p style="color:green;">Compte créé ! Tu peux te connecter.</p>
+    <?php endif; ?>
+
     <form method="post" action="">
         <label>Email : <input type="email" name="email" required></label><br>
         <label>Mot de passe : <input type="password" name="password" required></label><br>

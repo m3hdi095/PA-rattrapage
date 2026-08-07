@@ -4,7 +4,7 @@ session_start();
 $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $raisonSociale = $_POST['raison_sociale'] ?? '';
+    $nomCommerce = $_POST['nom_commerce'] ?? '';
     $siret = $_POST['siret'] ?? '';
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
@@ -13,10 +13,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ville = $_POST['ville'] ?? '';
     $telephone = $_POST['telephone'] ?? '';
 
-    // TODO : appeler la route de création de compte de l'API Go,
-    // ex POST http://localhost:8080/commercants
-    // avec les champs ci-dessus (role = "commercant")
-    // si succès : rediriger vers index.php avec un message de confirmation
+    $payload = json_encode([
+        'email'       => $email,
+        'password'    => $password,
+        'nom'         => $nomCommerce,
+        'siret'       => $siret,
+        'adresse'     => $adresse,
+        'code_postal' => $codePostal,
+        'ville'       => $ville,
+        'telephone'   => $telephone,
+    ]);
+
+    $ch = curl_init('http://localhost:8081/adherents');
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    $curlError = curl_error($ch);
+    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($response === false) {
+        $error = "Impossible de contacter l'API (" . $curlError . "). Vérifie que l'API Go tourne bien sur le port 8081.";
+    } elseif ($statusCode === 201) {
+        header('Location: index.php?created=1');
+        exit;
+    } else {
+        $body = json_decode($response, true);
+        $error = $body['error'] ?? "Erreur lors de la création du compte (code $statusCode)";
+    }
+
 }
 ?>
 <!DOCTYPE html>
@@ -33,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="post" action="">
-        <label>Raison sociale : <input type="text" name="raison_sociale" required></label><br>
+        <label>Nom du commerce : <input type="text" name="nom_commerce" required></label><br>
         <label>SIRET : <input type="text" name="siret" required></label><br>
         <label>Adresse : <input type="text" name="adresse" required></label><br>
         <label>Code postal : <input type="text" name="code_postal" required></label><br>
