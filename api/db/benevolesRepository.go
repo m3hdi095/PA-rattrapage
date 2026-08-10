@@ -55,3 +55,19 @@ func GetBenevoleByEmail(email string) (*models.Benevole, error) {
 
 	return &benevole, nil
 }
+
+func ValidateBenevole(id int) error {
+	_, err := Connection.Exec("UPDATE benevoles SET statut_candidature = 'valide' WHERE id = ?", id)
+	if err != nil {
+		return fmt.Errorf("failed to validate benevole: %w", err)
+	}
+	return nil
+}
+
+func RejectBenevole(id int) error {
+	_, err := Connection.Exec("UPDATE benevoles SET statut_candidature = 'refuse' WHERE id = ?", id)
+	if err != nil {
+		return fmt.Errorf("failed to reject benevole: %w", err)
+	}
+	return nil
+}

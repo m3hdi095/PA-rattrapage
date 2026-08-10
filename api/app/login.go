@@ -44,6 +44,48 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"token": token})
+	case "admin":
+		admin, err := db.GetAdminByEmail(req.Email)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				http.Error(w, "email ou mot de passe incorrect", http.StatusUnauthorized)
+				return
+			}
+			http.Error(w, "erreur lors de la récupération de l'admin", http.StatusInternalServerError)
+			return
+		}
+		if !utils.CheckPasswordHash(req.Password, admin.PasswordHash) {
+			http.Error(w, "email ou mot de passe incorrect", http.StatusUnauthorized)
+			return
+		}
+		token, err := utils.GenerateJWT(admin.ID, "admin")
+		if err != nil {
+			http.Error(w, "erreur lors de la génération du token", http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"token": token})
+	case "adherent":
+		adherent, err := db.GetAdherentByEmail(req.Email)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				http.Error(w, "email ou mot de passe incorrect", http.StatusUnauthorized)
+				return
+			}
+			http.Error(w, "erreur lors de la récupération de l'adherent", http.StatusInternalServerError)
+			return
+		}
+		if !utils.CheckPasswordHash(req.Password, adherent.PasswordHash) {
+			http.Error(w, "email ou mot de passe incorrect", http.StatusUnauthorized)
+			return
+		}
+		token, err := utils.GenerateJWT(adherent.ID, "adherent")
+		if err != nil {
+			http.Error(w, "erreur lors de la génération du token", http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"token": token})
 
 	default:
 		http.Error(w, "rôle invalide", http.StatusBadRequest)

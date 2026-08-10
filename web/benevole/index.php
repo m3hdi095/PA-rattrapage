@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (isset($_SESSION['token']) && isset($_SESSION['role']) && $_SESSION['role'] === 'benevole') {
+if (isset($_SESSION['token']) && isset($_SESSION['role']) && $_SESSION['role'] === 'benevole' && !isset($_GET['connected'])) {
     header('Location: index.php?connected=1');
     exit;
 }

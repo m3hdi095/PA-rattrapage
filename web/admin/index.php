@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (isset($_SESSION['token']) && isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+if (isset($_SESSION['token']) && isset($_SESSION['role']) && $_SESSION['role'] === 'admin' && !isset($_GET['connected'])) {
     header('Location: index.php?connected=1');
     exit;
 }
@@ -52,6 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if ($error): ?>
         <p style="color:red;"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
+
+    <?php if (isset($_GET['connected']) && isset($_SESSION['token'])): ?>
+        <p style="color:green;">Connecté ! (espace administration pas encore construit, mais le token est bien en session)</p>
+        <p style="font-size:0.8em;word-break:break-all;">Token : <?= htmlspecialchars($_SESSION['token']) ?></p>
+    <?php endif; ?>
+
 
     <form method="post" action="">
         <label>Email : <input type="email" name="email" required></label><br>

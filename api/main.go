@@ -17,6 +17,8 @@ func main() {
 
 	http.HandleFunc("POST /benevoles", app.CreateBenevole)
 	http.HandleFunc("POST /adherents", app.CreateAdherent)
+	http.HandleFunc("PATCH /benevoles/valider", app.ValidateBenevole)
+	http.HandleFunc("PATCH /benevoles/rejeter", app.RejectBenevole)
 	http.HandleFunc("POST /login", app.Login)
 	http.HandleFunc("/health", healthCheck)
 	http.ListenAndServe(":8081", nil)

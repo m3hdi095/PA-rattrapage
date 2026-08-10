@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (isset($_SESSION['token']) && isset($_SESSION['role']) && $_SESSION['role'] === 'adherent') {
+if (isset($_SESSION['token']) && isset($_SESSION['role']) && $_SESSION['role'] === 'adherent' && !isset($_GET['connected'])) {
     header('Location: index.php?connected=1');
     exit;
 }
@@ -55,6 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <?php if (isset($_GET['created'])): ?>
         <p style="color:green;">Compte créé ! Tu peux te connecter.</p>
+    <?php endif; ?>
+
+     <?php if (isset($_GET['connected']) && isset($_SESSION['token'])): ?>
+        <p style="color:green;">Connecté ! (espace adherent pas encore construit, mais le token est bien en session)</p>
+        <p style="font-size:0.8em;word-break:break-all;">Token : <?= htmlspecialchars($_SESSION['token']) ?></p>
     <?php endif; ?>
 
     <form method="post" action="">

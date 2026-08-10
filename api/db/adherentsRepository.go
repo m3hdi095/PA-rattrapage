@@ -33,3 +33,14 @@ func CreateAdherent(adherent *models.Adherent) (int, error) {
 	adherent.ID = id
 	return id, nil
 }
+
+func GetAdherentByEmail(email string) (*models.Adherent, error) {
+	var adherent models.Adherent
+	row := Connection.QueryRow("SELECT id, email, password_hash, nom, siret, adresse, code_postal, ville, telephone, date_adhesion, date_expiration FROM adherents WHERE email = ?", email)
+	err := row.Scan(&adherent.ID, &adherent.Email, &adherent.PasswordHash, &adherent.Nom, &adherent.Siret, &adherent.Adresse, &adherent.CodePostal, &adherent.Ville, &adherent.Telephone, &adherent.DateAdhesion, &adherent.DateExpiration)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get adherent by email: %w", err)
+	}
+
+	return &adherent, nil
+}
