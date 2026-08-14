@@ -40,6 +40,11 @@ func main() {
 	http.HandleFunc("GET /produits", app.ListProduits)
 	http.HandleFunc("PATCH /produits/statut", app.UpdateProduitStatut)
 
+	//Tournees
+	http.HandleFunc("POST /tournees", app.CreateTournee)
+	http.HandleFunc("GET /tournees", app.ListTournees)
+	http.HandleFunc("PATCH /tournees/statut", app.UpdateTourneeStatut)
+
 	http.HandleFunc("/health", healthCheck)
 	http.ListenAndServe(":8081", nil)
 
