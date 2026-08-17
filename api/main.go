@@ -55,6 +55,9 @@ func main() {
 	http.HandleFunc("GET /produits", app.ListProduits)
 	http.HandleFunc("PATCH /produits/statut", app.UpdateProduitStatut)
 
+	//Rappels
+	http.HandleFunc("GET /rappels/renouvellement", app.RappelsRenouvellement)
+
 	//Services
 	http.HandleFunc("POST /services", app.CreateService)
 	http.HandleFunc("GET /services", app.ListServices)

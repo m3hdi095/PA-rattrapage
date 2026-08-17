@@ -44,3 +44,22 @@ func GetAdherentByEmail(email string) (*models.Adherent, error) {
 
 	return &adherent, nil
 }
+
+func GetAdherentsExpiredSoon(days int) ([]models.Adherent, error) {
+	rows, err := Connection.Query("SELECT id, email, nom, adresse, code_postal, ville, telephone, date_adhesion, date_expiration FROM adherents WHERE date_expiration BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL ? DAY)", days)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query adherents: %w", err)
+	}
+	defer rows.Close()
+
+	var adherents []models.Adherent
+	for rows.Next() {
+		var adherent models.Adherent
+		err := rows.Scan(&adherent.ID, &adherent.Email, &adherent.Nom, &adherent.Adresse, &adherent.CodePostal, &adherent.Ville, &adherent.Telephone, &adherent.DateAdhesion, &adherent.DateExpiration)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan adherent: %w", err)
+		}
+		adherents = append(adherents, adherent)
+	}
+	return adherents, nil
+}
