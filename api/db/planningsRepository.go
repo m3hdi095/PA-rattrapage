@@ -43,3 +43,23 @@ func GetAllPlannings() ([]models.Planning, error) {
 
 	return plannings, nil
 }
+
+func GetPlanningsByBenevole(benevoleID int) ([]models.Planning, error) {
+	rows, err := Connection.Query("SELECT id, service_id, benevole_id, date_debut, date_fin, lieu, places_max FROM plannings WHERE benevole_id = ?", benevoleID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get plannings by benevole: %w", err)
+	}
+	defer rows.Close()
+
+	var plannings []models.Planning
+	for rows.Next() {
+		var planning models.Planning
+		err := rows.Scan(&planning.ID, &planning.ServiceID, &planning.BenevoleID, &planning.DateDebut, &planning.DateFin, &planning.Lieu, &planning.PlacesMax)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan planning: %w", err)
+		}
+		plannings = append(plannings, planning)
+	}
+
+	return plannings, nil
+}

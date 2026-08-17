@@ -49,6 +49,7 @@ func main() {
 	//Plannings
 	http.HandleFunc("POST /plannings", app.CreatePlanning)
 	http.HandleFunc("GET /plannings", app.ListPlannings)
+	http.HandleFunc("GET /plannings/excel", app.ExportPlanningsExcel)
 
 	//Produits
 	http.HandleFunc("POST /produits", app.CreateProduit)

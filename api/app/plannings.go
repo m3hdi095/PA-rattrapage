@@ -5,7 +5,10 @@ import (
 	"api/models"
 	"api/utils"
 	"encoding/json"
+	"fmt"
 	"net/http"
+
+	"github.com/xuri/excelize/v2"
 )
 
 func CreatePlanning(w http.ResponseWriter, r *http.Request) {
@@ -77,4 +80,45 @@ func ListPlannings(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(plannings)
+}
+
+func ExportPlanningsExcel(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		http.Error(w, "token invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "benevole" {
+		http.Error(w, "accès réservé aux bénévoles", http.StatusForbidden)
+		return
+	}
+
+	plannings, err := db.GetPlanningsByBenevole(claims.ID)
+	if err != nil {
+		http.Error(w, "erreur lors de la récupération des plannings", http.StatusInternalServerError)
+		return
+	}
+
+	f := excelize.NewFile()
+	defer f.Close()
+
+	f.SetCellValue("Sheet1", "A1", "Service")
+	f.SetCellValue("Sheet1", "B1", "Date début")
+	f.SetCellValue("Sheet1", "C1", "Date fin")
+	f.SetCellValue("Sheet1", "D1", "Lieu")
+
+	ligne := 2
+	for _, p := range plannings {
+		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", ligne), p.ServiceID)
+		f.SetCellValue("Sheet1", fmt.Sprintf("B%d", ligne), p.DateDebut)
+		f.SetCellValue("Sheet1", fmt.Sprintf("C%d", ligne), p.DateFin)
+		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", ligne), p.Lieu)
+		ligne++
+	}
+
+	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	w.Header().Set("Content-Disposition", "attachment; filename=planning.xlsx")
+	f.Write(w)
 }
