@@ -1,0 +1,80 @@
+package app
+
+import (
+	"api/db"
+	"api/models"
+	"api/utils"
+	"encoding/json"
+	"net/http"
+)
+
+func CreatePlanning(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		http.Error(w, "token invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "admin" {
+		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		return
+	}
+
+	var req struct {
+		ServiceID  int    `json:"service_id"`
+		BenevoleID int    `json:"benevole_id"`
+		DateDebut  string `json:"date_debut"`
+		DateFin    string `json:"date_fin"`
+		Lieu       string `json:"lieu"`
+		PlacesMax  int    `json:"places_max"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "données invalides", http.StatusBadRequest)
+		return
+	}
+
+	planning := &models.Planning{
+		ServiceID:  req.ServiceID,
+		BenevoleID: req.BenevoleID,
+		DateDebut:  req.DateDebut,
+		DateFin:    req.DateFin,
+		Lieu:       req.Lieu,
+		PlacesMax:  req.PlacesMax,
+	}
+
+	id, err := db.CreatePlanning(planning)
+	if err != nil {
+		http.Error(w, "erreur lors de la création du planning", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]int{"id": id})
+}
+
+func ListPlannings(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+
+	if err != nil {
+		http.Error(w, "token invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "admin" {
+		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		return
+	}
+
+	plannings, err := db.GetAllPlannings()
+	if err != nil {
+		http.Error(w, "erreur lors de la récupération des plannings", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(plannings)
+}
