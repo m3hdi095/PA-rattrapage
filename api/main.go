@@ -37,7 +37,9 @@ func main() {
 
 	//Livraisons
 	http.HandleFunc("POST /livraisons", app.CreateLivraison)
+	http.HandleFunc("POST /livraisons/produits", app.AddProduitLivraison)
 	http.HandleFunc("GET /livraisons", app.ListLivraisons)
+	http.HandleFunc("GET /livraisons/recap", app.GetLivraisonRecap)
 	http.HandleFunc("PATCH /livraisons/statut", app.UpdateLivraisonStatut)
 
 	//Produits

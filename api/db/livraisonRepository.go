@@ -54,3 +54,37 @@ func UpdateStatutLivraison(livraisonID int, newStatut string) error {
 
 	return nil
 }
+
+func AddProduitToLivraison(livraisonID, produitID, quantite int) error {
+	_, err := Connection.Exec(
+		"INSERT INTO livraison_produits (livraison_id, produit_id, quantite) VALUES (?, ?, ?)",
+		livraisonID, produitID, quantite,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to add produit to livraison: %w", err)
+	}
+
+	return nil
+}
+
+func GetProduitsByLivraison(livraisonID int) ([]models.ProduitLivre, error) {
+	rows, err := Connection.Query(
+		"SELECT p.id, p.nom, p.code_barre, lp.quantite FROM livraison_produits lp JOIN produits p ON p.id = lp.produit_id WHERE lp.livraison_id = ?",
+		livraisonID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get produits for livraison %d: %w", livraisonID, err)
+	}
+	defer rows.Close()
+
+	var produits []models.ProduitLivre
+	for rows.Next() {
+		var p models.ProduitLivre
+		if err := rows.Scan(&p.ProduitID, &p.Nom, &p.CodeBarre, &p.Quantite); err != nil {
+			return nil, fmt.Errorf("failed to scan produit livre: %w", err)
+		}
+		produits = append(produits, p)
+	}
+
+	return produits, nil
+}

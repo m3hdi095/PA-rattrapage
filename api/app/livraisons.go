@@ -6,6 +6,7 @@ import (
 	"api/utils"
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 func CreateLivraison(w http.ResponseWriter, r *http.Request) {
@@ -104,4 +105,71 @@ func UpdateLivraisonStatut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func AddProduitLivraison(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		http.Error(w, "token invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "admin" {
+		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		return
+	}
+
+	var req struct {
+		LivraisonID int `json:"livraison_id"`
+		ProduitID   int `json:"produit_id"`
+		Quantite    int `json:"quantite"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "données invalides", http.StatusBadRequest)
+		return
+	}
+
+	if err := db.AddProduitToLivraison(req.LivraisonID, req.ProduitID, req.Quantite); err != nil {
+		http.Error(w, "erreur lors de l'ajout du produit à la livraison", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func GetLivraisonRecap(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		http.Error(w, "token invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "admin" {
+		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		return
+	}
+
+	livraisonID := r.URL.Query().Get("livraison_id")
+	if livraisonID == "" {
+		http.Error(w, "livraison_id manquant", http.StatusBadRequest)
+		return
+	}
+
+	livraisonIDInt, err := strconv.Atoi(livraisonID)
+	if err != nil {
+		http.Error(w, "livraison_id invalide", http.StatusBadRequest)
+		return
+	}
+
+	produits, err := db.GetProduitsByLivraison(livraisonIDInt)
+	if err != nil {
+		http.Error(w, "erreur lors de la récupération des produits de la livraison", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(produits)
 }
