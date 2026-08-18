@@ -139,7 +139,19 @@ func AddProduitLivraison(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// GetLivraisonRecapOptions répond au preflight CORS envoyé par le navigateur
+// avant le vrai GET (le JS de la page admin appelle l'API directement en
+// fetch(), avec un header Authorization personnalisé).
+func GetLivraisonRecapOptions(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET")
+	w.Header().Set("Access-Control-Allow-Headers", "Authorization")
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func GetLivraisonRecap(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {

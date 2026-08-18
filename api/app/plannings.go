@@ -60,17 +60,14 @@ func CreatePlanning(w http.ResponseWriter, r *http.Request) {
 
 func ListPlannings(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
-	claims, err := utils.VerifyJWT(tokenString)
+	_, err := utils.VerifyJWT(tokenString)
 
 	if err != nil {
 		http.Error(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
-	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
-		return
-	}
+	// Lecture ouverte, même raison que ListServices.
 
 	plannings, err := db.GetAllPlannings()
 	if err != nil {

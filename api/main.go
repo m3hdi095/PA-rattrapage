@@ -20,11 +20,13 @@ func main() {
 
 	//Adherents
 	http.HandleFunc("POST /adherents", app.CreateAdherent)
+	http.HandleFunc("GET /adherents", app.GetAllAdherents)
 
 	//Benevoles
 	http.HandleFunc("POST /benevoles", app.CreateBenevole)
 	http.HandleFunc("PATCH /benevoles/valider", app.ValidateBenevole)
 	http.HandleFunc("PATCH /benevoles/rejeter", app.RejectBenevole)
+	http.HandleFunc("GET /benevoles", app.GetAllBenevoles)
 
 	//Collectes
 	http.HandleFunc("POST /collectes", app.CreateCollecte)
@@ -44,6 +46,7 @@ func main() {
 	http.HandleFunc("POST /livraisons/produits", app.AddProduitLivraison)
 	http.HandleFunc("GET /livraisons", app.ListLivraisons)
 	http.HandleFunc("GET /livraisons/recap", app.GetLivraisonRecap)
+	http.HandleFunc("OPTIONS /livraisons/recap", app.GetLivraisonRecapOptions)
 	http.HandleFunc("PATCH /livraisons/statut", app.UpdateLivraisonStatut)
 
 	//Plannings

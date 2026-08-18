@@ -71,3 +71,22 @@ func RejectBenevole(id int) error {
 	}
 	return nil
 }
+
+func GetAllBenevoles() ([]models.Benevole, error) {
+	rows, err := Connection.Query("SELECT id, email, nom, prenom, telephone, statut_candidature FROM benevoles")
+	if err != nil {
+		return nil, fmt.Errorf("failed to query benevoles: %w", err)
+	}
+	defer rows.Close()
+
+	var benevoles []models.Benevole
+	for rows.Next() {
+		var benevole models.Benevole
+		err := rows.Scan(&benevole.ID, &benevole.Email, &benevole.Nom, &benevole.Prenom, &benevole.Telephone, &benevole.StatutCandidature)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan benevole: %w", err)
+		}
+		benevoles = append(benevoles, benevole)
+	}
+	return benevoles, nil
+}

@@ -62,3 +62,27 @@ func CreateAdherent(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(adherent)
 }
+
+func GetAllAdherents(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		http.Error(w, "token JWT invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "admin" {
+		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		return
+	}
+
+	adherents, err := db.GetAllAdherents()
+	if err != nil {
+		http.Error(w, "erreur lors de la récupération des adhérents", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(adherents)
+}

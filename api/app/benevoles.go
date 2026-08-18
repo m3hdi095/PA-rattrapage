@@ -113,3 +113,28 @@ func RejectBenevole(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 }
+
+func GetAllBenevoles(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+
+	if err != nil {
+		http.Error(w, "token invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "admin" {
+		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		return
+	}
+
+	benevoles, err := db.GetAllBenevoles()
+	if err != nil {
+		http.Error(w, "erreur lors de la récupération des bénévoles", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(benevoles)
+}

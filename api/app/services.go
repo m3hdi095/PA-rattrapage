@@ -51,17 +51,15 @@ func CreateService(w http.ResponseWriter, r *http.Request) {
 
 func ListServices(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
-	claims, err := utils.VerifyJWT(tokenString)
+	_, err := utils.VerifyJWT(tokenString)
 
 	if err != nil {
 		http.Error(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
-	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
-		return
-	}
+	// Lecture ouverte à tout utilisateur connecté : les adhérents doivent
+	// pouvoir parcourir les services pour s'y inscrire.
 
 	services, err := db.GetAllServices()
 	if err != nil {
