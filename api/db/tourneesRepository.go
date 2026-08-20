@@ -49,3 +49,11 @@ func UpdateStatutTournee(id int, statut string) error {
 	}
 	return nil
 }
+
+func DeleteTournee(id int) error {
+	_, err := Connection.Exec("DELETE FROM tournees WHERE id = ?", id)
+	if err != nil {
+		return fmt.Errorf("failed to delete tournee: %w", err)
+	}
+	return nil
+}

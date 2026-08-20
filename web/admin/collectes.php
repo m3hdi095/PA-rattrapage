@@ -11,10 +11,14 @@ $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        apiRequest('PATCH', '/collectes/statut', [
-            'id'     => (int) ($_POST['id'] ?? 0),
-            'statut' => $_POST['statut'] ?? '',
-        ], $_SESSION['token']);
+        if (($_POST['action'] ?? '') === 'supprimer') {
+            apiRequest('DELETE', '/collectes', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
+        } else {
+            apiRequest('PATCH', '/collectes/statut', [
+                'id'     => (int) ($_POST['id'] ?? 0),
+                'statut' => $_POST['statut'] ?? '',
+            ], $_SESSION['token']);
+        }
         header('Location: collectes.php');
         exit;
     } catch (Exception $e) {
@@ -63,6 +67,11 @@ require __DIR__ . '/../includes/header_admin.php';
                 </form>
                 <?php endif; ?>
             <?php endforeach; ?>
+            <form method="post" style="display:inline;" onsubmit="return confirm('Supprimer cette collecte ?');">
+                <input type="hidden" name="action" value="supprimer">
+                <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
+                <button type="submit">Supprimer</button>
+            </form>
         </td>
     </tr>
     <?php endforeach; ?>

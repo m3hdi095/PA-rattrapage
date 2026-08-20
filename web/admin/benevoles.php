@@ -18,6 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             apiRequest('PATCH', '/benevoles/valider', ['id' => $id], $_SESSION['token']);
         } elseif ($action === 'rejeter') {
             apiRequest('PATCH', '/benevoles/rejeter', ['id' => $id], $_SESSION['token']);
+        } elseif ($action === 'supprimer') {
+            apiRequest('DELETE', '/benevoles', ['id' => $id], $_SESSION['token']);
         }
         header('Location: benevoles.php');
         exit;
@@ -74,6 +76,11 @@ require __DIR__ . '/../includes/header_admin.php';
                 <button type="submit">Rejeter</button>
             </form>
             <?php endif; ?>
+            <form method="post" style="display:inline;" onsubmit="return confirm('Supprimer ce bénévole ?');">
+                <input type="hidden" name="id" value="<?= (int) $b['id'] ?>">
+                <input type="hidden" name="action" value="supprimer">
+                <button type="submit">Supprimer</button>
+            </form>
         </td>
     </tr>
     <?php endforeach; ?>

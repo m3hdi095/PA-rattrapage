@@ -43,3 +43,11 @@ func GetAllDestinataires() ([]models.Destinataire, error) {
 
 	return destinataires, nil
 }
+
+func DeleteDestinataire(id int) error {
+	_, err := Connection.Exec("DELETE FROM destinataires WHERE id = ?", id)
+	if err != nil {
+		return fmt.Errorf("failed to delete destinataire: %w", err)
+	}
+	return nil
+}

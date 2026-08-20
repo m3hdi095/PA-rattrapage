@@ -52,3 +52,11 @@ func UpdateStatutProduit(produitID int, newStatut string) error {
 	}
 	return nil
 }
+
+func DeleteProduit(id int) error {
+	_, err := Connection.Exec("DELETE FROM produits WHERE id = ?", id)
+	if err != nil {
+		return fmt.Errorf("failed to delete produit: %w", err)
+	}
+	return nil
+}

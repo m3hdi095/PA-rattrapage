@@ -11,14 +11,18 @@ $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        apiRequest('POST', '/plannings', [
-            'service_id'  => (int) ($_POST['service_id'] ?? 0),
-            'benevole_id' => (int) ($_POST['benevole_id'] ?? 0),
-            'date_debut'  => $_POST['date_debut'] ?? '',
-            'date_fin'    => $_POST['date_fin'] ?? '',
-            'lieu'        => $_POST['lieu'] ?? '',
-            'places_max'  => (int) ($_POST['places_max'] ?? 1),
-        ], $_SESSION['token']);
+        if (($_POST['action'] ?? '') === 'supprimer') {
+            apiRequest('DELETE', '/plannings', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
+        } else {
+            apiRequest('POST', '/plannings', [
+                'service_id'  => (int) ($_POST['service_id'] ?? 0),
+                'benevole_id' => (int) ($_POST['benevole_id'] ?? 0),
+                'date_debut'  => $_POST['date_debut'] ?? '',
+                'date_fin'    => $_POST['date_fin'] ?? '',
+                'lieu'        => $_POST['lieu'] ?? '',
+                'places_max'  => (int) ($_POST['places_max'] ?? 1),
+            ], $_SESSION['token']);
+        }
         header('Location: plannings.php');
         exit;
     } catch (Exception $e) {
@@ -64,6 +68,7 @@ require __DIR__ . '/../includes/header_admin.php';
         <th>Fin</th>
         <th>Lieu</th>
         <th>Places max</th>
+        <th>Actions</th>
     </tr>
     <?php foreach ($plannings as $p): ?>
     <tr>
@@ -74,6 +79,13 @@ require __DIR__ . '/../includes/header_admin.php';
         <td><?= htmlspecialchars($p['date_fin']) ?></td>
         <td><?= htmlspecialchars($p['lieu']) ?></td>
         <td><?= htmlspecialchars($p['places_max']) ?></td>
+        <td>
+            <form method="post" onsubmit="return confirm('Supprimer ce planning ?');">
+                <input type="hidden" name="action" value="supprimer">
+                <input type="hidden" name="id" value="<?= (int) $p['id'] ?>">
+                <button type="submit">Supprimer</button>
+            </form>
+        </td>
     </tr>
     <?php endforeach; ?>
 </table>

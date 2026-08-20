@@ -11,14 +11,18 @@ $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        apiRequest('POST', '/destinataires', [
-            'type'        => $_POST['type'] ?? '',
-            'nom'         => $_POST['nom'] ?? '',
-            'adresse'     => $_POST['adresse'] ?? '',
-            'code_postal' => $_POST['code_postal'] ?? '',
-            'ville'       => $_POST['ville'] ?? '',
-            'telephone'   => $_POST['telephone'] ?? '',
-        ], $_SESSION['token']);
+        if (($_POST['action'] ?? '') === 'supprimer') {
+            apiRequest('DELETE', '/destinataires', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
+        } else {
+            apiRequest('POST', '/destinataires', [
+                'type'        => $_POST['type'] ?? '',
+                'nom'         => $_POST['nom'] ?? '',
+                'adresse'     => $_POST['adresse'] ?? '',
+                'code_postal' => $_POST['code_postal'] ?? '',
+                'ville'       => $_POST['ville'] ?? '',
+                'telephone'   => $_POST['telephone'] ?? '',
+            ], $_SESSION['token']);
+        }
         header('Location: destinataires.php');
         exit;
     } catch (Exception $e) {
@@ -69,6 +73,7 @@ require __DIR__ . '/../includes/header_admin.php';
         <th>Code postal</th>
         <th>Ville</th>
         <th>Téléphone</th>
+        <th>Actions</th>
     </tr>
     <?php foreach ($destinataires as $d): ?>
     <tr>
@@ -79,6 +84,13 @@ require __DIR__ . '/../includes/header_admin.php';
         <td><?= htmlspecialchars($d['code_postal']) ?></td>
         <td><?= htmlspecialchars($d['ville']) ?></td>
         <td><?= htmlspecialchars($d['telephone']) ?></td>
+        <td>
+            <form method="post" onsubmit="return confirm('Supprimer ce destinataire ?');">
+                <input type="hidden" name="action" value="supprimer">
+                <input type="hidden" name="id" value="<?= (int) $d['id'] ?>">
+                <button type="submit">Supprimer</button>
+            </form>
+        </td>
     </tr>
     <?php endforeach; ?>
 </table>

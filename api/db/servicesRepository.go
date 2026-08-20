@@ -41,3 +41,11 @@ func GetAllServices() ([]models.Service, error) {
 	}
 	return services, nil
 }
+
+func DeleteService(id int) error {
+	_, err := Connection.Exec("DELETE FROM services WHERE id = ?", id)
+	if err != nil {
+		return fmt.Errorf("failed to delete service: %w", err)
+	}
+	return nil
+}

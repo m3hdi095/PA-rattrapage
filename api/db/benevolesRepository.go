@@ -121,3 +121,11 @@ func GetAllBenevoles() ([]models.Benevole, error) {
 	}
 	return benevoles, nil
 }
+
+func DeleteBenevole(id int) error {
+	_, err := Connection.Exec("DELETE FROM benevoles WHERE id = ?", id)
+	if err != nil {
+		return fmt.Errorf("failed to delete benevole: %w", err)
+	}
+	return nil
+}

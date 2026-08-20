@@ -16,6 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'id'     => (int) $_POST['id'],
                 'statut' => $_POST['statut'],
             ], $_SESSION['token']);
+        } elseif (($_POST['action'] ?? '') === 'supprimer') {
+            apiRequest('DELETE', '/produits', ['id' => (int) $_POST['id']], $_SESSION['token']);
         } else {
             apiRequest('POST', '/produits', [
                 'collecte_id'       => (int) ($_POST['collecte_id'] ?? 0),
@@ -95,6 +97,11 @@ require __DIR__ . '/../includes/header_admin.php';
                 </form>
                 <?php endif; ?>
             <?php endforeach; ?>
+            <form method="post" style="display:inline;" onsubmit="return confirm('Supprimer ce produit ?');">
+                <input type="hidden" name="action" value="supprimer">
+                <input type="hidden" name="id" value="<?= (int) $p['id'] ?>">
+                <button type="submit">Supprimer</button>
+            </form>
         </td>
     </tr>
     <?php endforeach; ?>

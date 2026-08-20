@@ -88,3 +88,11 @@ func GetProduitsByLivraison(livraisonID int) ([]models.ProduitLivre, error) {
 
 	return produits, nil
 }
+
+func DeleteLivraison(id int) error {
+	_, err := Connection.Exec("DELETE FROM livraisons WHERE id = ?", id)
+	if err != nil {
+		return fmt.Errorf("failed to delete livraison: %w", err)
+	}
+	return nil
+}

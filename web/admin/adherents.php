@@ -8,6 +8,17 @@ if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'admin') {
 }
 
 $error = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        apiRequest('DELETE', '/adherents', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
+        header('Location: adherents.php');
+        exit;
+    } catch (Exception $e) {
+        $error = $e->getMessage();
+    }
+}
+
 $adherents = [];
 try {
     $result = apiRequest('GET', '/adherents', null, $_SESSION['token']);
@@ -37,6 +48,7 @@ require __DIR__ . '/../includes/header_admin.php';
         <th>Téléphone</th>
         <th>Adhésion</th>
         <th>Expiration</th>
+        <th>Actions</th>
     </tr>
     <?php foreach ($adherents as $a): ?>
     <tr>
@@ -50,6 +62,12 @@ require __DIR__ . '/../includes/header_admin.php';
         <td><?= htmlspecialchars($a['telephone']) ?></td>
         <td><?= htmlspecialchars($a['date_adhesion']) ?></td>
         <td><?= htmlspecialchars($a['date_expiration']) ?></td>
+        <td>
+            <form method="post" onsubmit="return confirm('Supprimer cet adhérent ?');">
+                <input type="hidden" name="id" value="<?= (int) $a['id'] ?>">
+                <button type="submit">Supprimer</button>
+            </form>
+        </td>
     </tr>
     <?php endforeach; ?>
 </table>

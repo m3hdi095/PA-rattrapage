@@ -11,10 +11,14 @@ $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        apiRequest('POST', '/services', [
-            'nom'         => $_POST['nom'] ?? '',
-            'description' => $_POST['description'] ?? '',
-        ], $_SESSION['token']);
+        if (($_POST['action'] ?? '') === 'supprimer') {
+            apiRequest('DELETE', '/services', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
+        } else {
+            apiRequest('POST', '/services', [
+                'nom'         => $_POST['nom'] ?? '',
+                'description' => $_POST['description'] ?? '',
+            ], $_SESSION['token']);
+        }
         header('Location: services.php');
         exit;
     } catch (Exception $e) {
@@ -52,12 +56,20 @@ require __DIR__ . '/../includes/header_admin.php';
         <th>ID</th>
         <th>Nom</th>
         <th>Description</th>
+        <th>Actions</th>
     </tr>
     <?php foreach ($services as $s): ?>
     <tr>
         <td><?= htmlspecialchars($s['id']) ?></td>
         <td><?= htmlspecialchars($s['nom']) ?></td>
         <td><?= htmlspecialchars($s['description']) ?></td>
+        <td>
+            <form method="post" onsubmit="return confirm('Supprimer ce service ?');">
+                <input type="hidden" name="action" value="supprimer">
+                <input type="hidden" name="id" value="<?= (int) $s['id'] ?>">
+                <button type="submit">Supprimer</button>
+            </form>
+        </td>
     </tr>
     <?php endforeach; ?>
 </table>

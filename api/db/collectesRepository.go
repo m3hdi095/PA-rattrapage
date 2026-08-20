@@ -67,3 +67,11 @@ func UpdateStatutCollecte(id int, statut string) error {
 	}
 	return nil
 }
+
+func DeleteCollecte(id int) error {
+	_, err := Connection.Exec("DELETE FROM collectes WHERE id = ?", id)
+	if err != nil {
+		return fmt.Errorf("failed to delete collecte: %w", err)
+	}
+	return nil
+}

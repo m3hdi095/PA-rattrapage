@@ -112,3 +112,11 @@ func UpdateAdherentPassword(id int, newHash string) error {
 	}
 	return nil
 }
+
+func DeleteAdherent(id int) error {
+	_, err := Connection.Exec("DELETE FROM adherents WHERE id = ?", id)
+	if err != nil {
+		return fmt.Errorf("failed to delete adherent: %w", err)
+	}
+	return nil
+}

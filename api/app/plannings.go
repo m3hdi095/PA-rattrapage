@@ -119,3 +119,33 @@ func ExportPlanningsExcel(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Disposition", "attachment; filename=planning.xlsx")
 	f.Write(w)
 }
+
+func DeletePlanning(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		http.Error(w, "token invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "admin" {
+		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		return
+	}
+
+	var req struct {
+		ID int `json:"id"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "données invalides", http.StatusBadRequest)
+		return
+	}
+
+	if err := db.DeletePlanning(req.ID); err != nil {
+		http.Error(w, "erreur lors de la suppression du planning", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}

@@ -23,6 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'produit_id'   => (int) $_POST['produit_id'],
                 'quantite'     => (int) $_POST['quantite'],
             ], $_SESSION['token']);
+        } elseif ($action === 'supprimer') {
+            apiRequest('DELETE', '/livraisons', ['id' => (int) $_POST['id']], $_SESSION['token']);
         } else {
             apiRequest('POST', '/livraisons', [
                 'tournee_id'      => (int) ($_POST['tournee_id'] ?? 0),
@@ -101,6 +103,11 @@ require __DIR__ . '/../includes/header_admin.php';
                 <?php endif; ?>
             <?php endforeach; ?>
             <button type="button" onclick="genererPDF(<?= (int) $l['id'] ?>)">Générer PDF</button>
+            <form method="post" style="display:inline;" onsubmit="return confirm('Supprimer cette livraison ?');">
+                <input type="hidden" name="action" value="supprimer">
+                <input type="hidden" name="id" value="<?= (int) $l['id'] ?>">
+                <button type="submit">Supprimer</button>
+            </form>
         </td>
     </tr>
     <?php endforeach; ?>
