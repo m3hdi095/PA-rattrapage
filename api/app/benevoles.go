@@ -48,6 +48,7 @@ func CreateBenevole(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "erreur lors de la création du bénévole", http.StatusInternalServerError)
 		return
 	}
+	benevole.StatutCandidature = "en_attente"
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)

@@ -12,9 +12,12 @@ func CreateBenevole(benevole *models.Benevole, capacites []string) (int, error) 
 	}
 	defer tx.Rollback()
 
+	// statut_candidature n'est pas dans la liste des colonnes : ça laisse le
+	// DEFAULT 'en_attente' de la table s'appliquer, plutôt que de dépendre de
+	// benevole.StatutCandidature (qui vaut "" si l'appelant ne le fixe pas).
 	res, err := tx.Exec(
-		"INSERT INTO benevoles (email, password_hash, nom, prenom, telephone, statut_candidature) VALUES (?, ?, ?, ?, ?, ?)",
-		benevole.Email, benevole.PasswordHash, benevole.Nom, benevole.Prenom, benevole.Telephone, benevole.StatutCandidature,
+		"INSERT INTO benevoles (email, password_hash, nom, prenom, telephone) VALUES (?, ?, ?, ?, ?)",
+		benevole.Email, benevole.PasswordHash, benevole.Nom, benevole.Prenom, benevole.Telephone,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create benevole: %v", err)
