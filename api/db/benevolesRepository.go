@@ -72,6 +72,37 @@ func RejectBenevole(id int) error {
 	return nil
 }
 
+func GetBenevoleByID(id int) (*models.Benevole, error) {
+	var benevole models.Benevole
+	row := Connection.QueryRow("SELECT id, email, password_hash, nom, prenom, telephone, statut_candidature FROM benevoles WHERE id = ?", id)
+
+	err := row.Scan(&benevole.ID, &benevole.Email, &benevole.PasswordHash, &benevole.Nom, &benevole.Prenom, &benevole.Telephone, &benevole.StatutCandidature)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get benevole by id: %w", err)
+	}
+
+	return &benevole, nil
+}
+
+func UpdateBenevole(id int, nom, prenom, telephone string) error {
+	_, err := Connection.Exec(
+		"UPDATE benevoles SET nom = ?, prenom = ?, telephone = ? WHERE id = ?",
+		nom, prenom, telephone, id,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to update benevole: %w", err)
+	}
+	return nil
+}
+
+func UpdateBenevolePassword(id int, newHash string) error {
+	_, err := Connection.Exec("UPDATE benevoles SET password_hash = ? WHERE id = ?", newHash, id)
+	if err != nil {
+		return fmt.Errorf("failed to update benevole password: %w", err)
+	}
+	return nil
+}
+
 func GetAllBenevoles() ([]models.Benevole, error) {
 	rows, err := Connection.Query("SELECT id, email, nom, prenom, telephone, statut_candidature FROM benevoles")
 	if err != nil {

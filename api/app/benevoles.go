@@ -138,3 +138,81 @@ func GetAllBenevoles(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(benevoles)
 }
+
+func UpdateBenevoleProfile(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		http.Error(w, "token JWT invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "benevole" {
+		http.Error(w, "accès réservé aux bénévoles", http.StatusForbidden)
+		return
+	}
+
+	var req struct {
+		Nom       string `json:"nom"`
+		Prenom    string `json:"prenom"`
+		Telephone string `json:"telephone"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "corps de requête JSON invalide", http.StatusBadRequest)
+		return
+	}
+
+	if err := db.UpdateBenevole(claims.ID, req.Nom, req.Prenom, req.Telephone); err != nil {
+		http.Error(w, "erreur lors de la mise à jour du profil", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func UpdateBenevolePassword(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		http.Error(w, "token JWT invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "benevole" {
+		http.Error(w, "accès réservé aux bénévoles", http.StatusForbidden)
+		return
+	}
+
+	var req struct {
+		OldPassword string `json:"old_password"`
+		NewPassword string `json:"new_password"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "corps de requête JSON invalide", http.StatusBadRequest)
+		return
+	}
+
+	benevole, err := db.GetBenevoleByID(claims.ID)
+	if err != nil {
+		http.Error(w, "erreur lors de la récupération du bénévole", http.StatusInternalServerError)
+		return
+	}
+
+	if !utils.CheckPasswordHash(req.OldPassword, benevole.PasswordHash) {
+		http.Error(w, "mot de passe actuel incorrect", http.StatusUnauthorized)
+		return
+	}
+
+	newHash, err := utils.HashPassword(req.NewPassword)
+	if err != nil {
+		http.Error(w, "impossible de hasher le mot de passe", http.StatusInternalServerError)
+		return
+	}
+
+	if err := db.UpdateBenevolePassword(claims.ID, newHash); err != nil {
+		http.Error(w, "erreur lors de la mise à jour du mot de passe", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}

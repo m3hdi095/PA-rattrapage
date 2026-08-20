@@ -11,7 +11,8 @@
     <h1>Espace Bénévole</h1>
 
     <nav>
-        <a href="plannings.php">Mon planning</a>
+        <a href="plannings.php">Mon planning</a> |
+        <a href="profil.php">Mon profil</a>
     </nav>
 
     <hr>

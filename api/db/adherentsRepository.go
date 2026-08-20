@@ -82,3 +82,33 @@ func GetAllAdherents() ([]models.Adherent, error) {
 	}
 	return adherents, nil
 }
+
+func GetAdherentByID(id int) (*models.Adherent, error) {
+	var adherent models.Adherent
+	row := Connection.QueryRow("SELECT id, email, password_hash, nom, siret, adresse, code_postal, ville, telephone, date_adhesion, date_expiration FROM adherents WHERE id = ?", id)
+	err := row.Scan(&adherent.ID, &adherent.Email, &adherent.PasswordHash, &adherent.Nom, &adherent.Siret, &adherent.Adresse, &adherent.CodePostal, &adherent.Ville, &adherent.Telephone, &adherent.DateAdhesion, &adherent.DateExpiration)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get adherent by id: %w", err)
+	}
+
+	return &adherent, nil
+}
+
+func UpdateAdherent(id int, nom, adresse, codePostal, ville, telephone string) error {
+	_, err := Connection.Exec(
+		"UPDATE adherents SET nom = ?, adresse = ?, code_postal = ?, ville = ?, telephone = ? WHERE id = ?",
+		nom, adresse, codePostal, ville, telephone, id,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to update adherent: %w", err)
+	}
+	return nil
+}
+
+func UpdateAdherentPassword(id int, newHash string) error {
+	_, err := Connection.Exec("UPDATE adherents SET password_hash = ? WHERE id = ?", newHash, id)
+	if err != nil {
+		return fmt.Errorf("failed to update adherent password: %w", err)
+	}
+	return nil
+}

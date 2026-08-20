@@ -13,7 +13,8 @@
 
     <nav>
         <a href="collectes.php">Mes collectes</a> |
-        <a href="services.php">Services et inscriptions</a>
+        <a href="services.php">Services et inscriptions</a> |
+        <a href="profil.php">Mon profil</a>
     </nav>
 
     <hr>

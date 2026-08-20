@@ -21,12 +21,16 @@ func main() {
 	//Adherents
 	http.HandleFunc("POST /adherents", app.CreateAdherent)
 	http.HandleFunc("GET /adherents", app.GetAllAdherents)
+	http.HandleFunc("PATCH /adherents/profil", app.UpdateAdherentProfile)
+	http.HandleFunc("PATCH /adherents/mot-de-passe", app.UpdateAdherentPassword)
 
 	//Benevoles
 	http.HandleFunc("POST /benevoles", app.CreateBenevole)
 	http.HandleFunc("PATCH /benevoles/valider", app.ValidateBenevole)
 	http.HandleFunc("PATCH /benevoles/rejeter", app.RejectBenevole)
 	http.HandleFunc("GET /benevoles", app.GetAllBenevoles)
+	http.HandleFunc("PATCH /benevoles/profil", app.UpdateBenevoleProfile)
+	http.HandleFunc("PATCH /benevoles/mot-de-passe", app.UpdateBenevolePassword)
 
 	//Collectes
 	http.HandleFunc("POST /collectes", app.CreateCollecte)

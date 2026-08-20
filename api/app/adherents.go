@@ -86,3 +86,83 @@ func GetAllAdherents(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(adherents)
 }
+
+func UpdateAdherentProfile(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		http.Error(w, "token JWT invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "adherent" {
+		http.Error(w, "accès réservé aux adhérents", http.StatusForbidden)
+		return
+	}
+
+	var req struct {
+		Nom        string `json:"nom"`
+		Adresse    string `json:"adresse"`
+		CodePostal string `json:"code_postal"`
+		Ville      string `json:"ville"`
+		Telephone  string `json:"telephone"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "corps de requête JSON invalide", http.StatusBadRequest)
+		return
+	}
+
+	if err := db.UpdateAdherent(claims.ID, req.Nom, req.Adresse, req.CodePostal, req.Ville, req.Telephone); err != nil {
+		http.Error(w, "erreur lors de la mise à jour du profil", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func UpdateAdherentPassword(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		http.Error(w, "token JWT invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "adherent" {
+		http.Error(w, "accès réservé aux adhérents", http.StatusForbidden)
+		return
+	}
+
+	var req struct {
+		OldPassword string `json:"old_password"`
+		NewPassword string `json:"new_password"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "corps de requête JSON invalide", http.StatusBadRequest)
+		return
+	}
+
+	adherent, err := db.GetAdherentByID(claims.ID)
+	if err != nil {
+		http.Error(w, "erreur lors de la récupération de l'adhérent", http.StatusInternalServerError)
+		return
+	}
+
+	if !utils.CheckPasswordHash(req.OldPassword, adherent.PasswordHash) {
+		http.Error(w, "mot de passe actuel incorrect", http.StatusUnauthorized)
+		return
+	}
+
+	newHash, err := utils.HashPassword(req.NewPassword)
+	if err != nil {
+		http.Error(w, "impossible de hasher le mot de passe", http.StatusInternalServerError)
+		return
+	}
+
+	if err := db.UpdateAdherentPassword(claims.ID, newHash); err != nil {
+		http.Error(w, "erreur lors de la mise à jour du mot de passe", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
