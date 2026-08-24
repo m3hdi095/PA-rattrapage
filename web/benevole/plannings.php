@@ -34,14 +34,8 @@ foreach ($services as $s) {
 
 // GET /benevoles est réservé aux admins : on ne peut pas résoudre le nom des
 // autres bénévoles ici. On identifie juste sa propre ligne via l'id contenu
-// dans le token (lecture des claims, pas de vérification de signature :
-// l'authentification est déjà assurée côté API pour toutes les vraies actions).
-$ownBenevoleId = null;
-$tokenParts = explode('.', $_SESSION['token']);
-if (count($tokenParts) === 3) {
-    $payload = json_decode(base64_decode(strtr($tokenParts[1], '-_', '+/')), true);
-    $ownBenevoleId = $payload['id'] ?? null;
-}
+// dans le token.
+$ownBenevoleId = jwtClaims($_SESSION['token'])['id'] ?? null;
 
 require __DIR__ . '/../includes/header_benevole.php';
 ?>

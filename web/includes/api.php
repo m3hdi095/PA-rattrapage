@@ -67,3 +67,18 @@ function apiRequestRaw($method, $endpoint, $token = null): array
         'contentType' => $contentType ?? 'application/octet-stream',
     ];
 }
+
+/**
+ * Lit les claims d'un JWT sans vérifier la signature (déjà faite côté API) —
+ * uniquement pour affichage/branchement UI (ex: savoir si l'admin connecté
+ * est super_admin), jamais pour une décision de sécurité côté PHP.
+ */
+function jwtClaims(string $token): array
+{
+    $parts = explode('.', $token);
+    if (count($parts) !== 3) {
+        return [];
+    }
+    $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
+    return $payload ?? [];
+}

@@ -6,4 +6,5 @@ type Admin struct {
 	PasswordHash string `json:"-"`
 	Nom          string `json:"nom"`
 	Prenom       string `json:"prenom"`
+	Role         string `json:"role"`
 }

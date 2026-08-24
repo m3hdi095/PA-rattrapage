@@ -62,7 +62,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "email ou mot de passe incorrect", http.StatusUnauthorized)
 			return
 		}
-		token, err := utils.GenerateJWT(admin.ID, "admin")
+		token, err := utils.GenerateJWTWithAdminRole(admin.ID, "admin", admin.Role)
 		if err != nil {
 			http.Error(w, "erreur lors de la génération du token", http.StatusInternalServerError)
 			return

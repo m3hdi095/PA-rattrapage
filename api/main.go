@@ -18,6 +18,11 @@ func main() {
 	//Login
 	http.HandleFunc("POST /login", app.Login)
 
+	//Admins
+	http.HandleFunc("POST /admins", app.CreateAdmin)
+	http.HandleFunc("GET /admins", app.ListAdmins)
+	http.HandleFunc("DELETE /admins", app.DeleteAdmin)
+
 	//Adherents
 	http.HandleFunc("POST /adherents", app.CreateAdherent)
 	http.HandleFunc("GET /adherents", app.GetAllAdherents)

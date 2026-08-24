@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result['statusCode'] === 200) {
             $_SESSION['token'] = $result['body']['token'];
             $_SESSION['role'] = 'admin';
+            $_SESSION['admin_role'] = jwtClaims($_SESSION['token'])['admin_role'] ?? 'admin';
             header('Location: benevoles.php');
             exit;
         } else {

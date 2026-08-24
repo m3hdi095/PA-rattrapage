@@ -28,12 +28,15 @@ DROP TABLE IF EXISTS admins;
 -- Comptes
 -- ---------------------------------------------------------------------
 
+-- role : un super_admin peut créer/supprimer des comptes admin et super_admin,
+-- un admin simple ne peut pas gérer les autres comptes admin.
 CREATE TABLE admins (
     id            INT AUTO_INCREMENT PRIMARY KEY,
     email         VARCHAR(190) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     nom           VARCHAR(100),
-    prenom        VARCHAR(100)
+    prenom        VARCHAR(100),
+    role          ENUM('admin', 'super_admin') NOT NULL DEFAULT 'admin'
 ) ENGINE=InnoDB;
 
 -- Adhérents = commerçants. date_expiration sert au rappel automatique de renouvellement.

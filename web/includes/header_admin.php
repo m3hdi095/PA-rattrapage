@@ -30,6 +30,9 @@ function navClass($page, $currentPage) {
         <a href="plannings.php" class="<?= navClass('plannings.php', $currentPage) ?>">Plannings</a>
         <a href="inscriptions.php" class="<?= navClass('inscriptions.php', $currentPage) ?>">Inscriptions</a>
         <a href="competences.php" class="<?= navClass('competences.php', $currentPage) ?>">Compétences</a>
+        <?php if (($_SESSION['admin_role'] ?? '') === 'super_admin'): ?>
+        <a href="admins.php" class="<?= navClass('admins.php', $currentPage) ?>">Comptes admin</a>
+        <?php endif; ?>
         <a href="../logout.php">Déconnexion</a>
     </nav>
 

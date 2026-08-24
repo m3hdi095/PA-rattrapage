@@ -20,9 +20,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             apiRequest('PATCH', '/benevoles/rejeter', ['id' => $id], $_SESSION['token']);
         } elseif ($action === 'supprimer') {
             apiRequest('DELETE', '/benevoles', ['id' => $id], $_SESSION['token']);
+        } elseif ($action === 'creer') {
+            $result = apiRequest('POST', '/benevoles', [
+                'email'     => $_POST['email'] ?? '',
+                'password'  => $_POST['password'] ?? '',
+                'nom'       => $_POST['nom'] ?? '',
+                'prenom'    => $_POST['prenom'] ?? '',
+                'telephone' => $_POST['telephone'] ?? '',
+                'capacites' => $_POST['capacites'] ?? [],
+            ], $_SESSION['token']);
+            if ($result['statusCode'] >= 400) {
+                $error = $result['body']['error'] ?? "Impossible de créer ce bénévole.";
+            } else {
+                // Un bénévole créé directement par un admin est considéré comme
+                // déjà vérifié : pas besoin de repasser par la case "Valider".
+                apiRequest('PATCH', '/benevoles/valider', ['id' => $result['body']['id']], $_SESSION['token']);
+            }
         }
-        header('Location: benevoles.php');
-        exit;
+        if (!$error) {
+            header('Location: benevoles.php');
+            exit;
+        }
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
@@ -36,15 +54,43 @@ try {
     $error = $e->getMessage();
 }
 
+$capacitesDisponibles = [];
+try {
+    $result = apiRequest('GET', '/capacites');
+    $capacitesDisponibles = $result['body'] ?? [];
+} catch (Exception $e) {
+    // Pas bloquant : le select sera juste vide si l'API est indisponible.
+}
+
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
 <h2>Gestion des bénévoles</h2>
 
 <?php if (!empty($error)): ?>
-    <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+    <p class="error"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 
+<h3>Créer un bénévole</h3>
+<form method="post">
+    <input type="hidden" name="action" value="creer">
+    <label>Email : <input type="email" name="email" required></label><br>
+    <label>Mot de passe : <input type="password" name="password" required></label><br>
+    <label>Nom : <input type="text" name="nom" required></label><br>
+    <label>Prénom : <input type="text" name="prenom" required></label><br>
+    <label>Téléphone : <input type="tel" name="telephone"></label><br>
+    <label>Compétences :
+        <select name="capacites[]" multiple size="4">
+            <?php foreach ($capacitesDisponibles as $c): ?>
+                <option value="<?= htmlspecialchars($c['libelle']) ?>"><?= htmlspecialchars($c['libelle']) ?></option>
+            <?php endforeach; ?>
+        </select>
+        <br><small>Ctrl+clic pour sélectionner plusieurs compétences.</small>
+    </label><br>
+    <button type="submit">Créer (validé automatiquement)</button>
+</form>
+
+<h3>Liste</h3>
 <table border="1" cellpadding="6">
     <tr>
         <th>ID</th>
