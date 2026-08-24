@@ -37,31 +37,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title><?= t('adherent_page_title') ?></title>
+    <link rel="stylesheet" href="../public/css/styles.css">
 </head>
 <body>
-    <h1><?= t('adherent_login_title') ?></h1>
+    <div class="header">
+        <h1><?= t('adherent_login_title') ?></h1>
+    </div>
 
-    <?php if ($error): ?>
-        <p style="color:red;"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
+    <div class="container">
+        <?php if ($error): ?>
+            <p class="error"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
 
-    <?php if (isset($_GET['created'])): ?>
-        <p style="color:green;"><?= t('account_created_msg') ?></p>
-    <?php endif; ?>
+        <?php if (isset($_GET['created'])): ?>
+            <p class="success"><?= t('account_created_msg') ?></p>
+        <?php endif; ?>
 
-     <?php if (isset($_GET['connected']) && isset($_SESSION['token'])): ?>
-        <p style="color:green;"><?= t('adherent_connected_msg') ?></p>
-        <p style="font-size:0.8em;word-break:break-all;"><?= t('token_label') ?> <?= htmlspecialchars($_SESSION['token']) ?></p>
-    <?php endif; ?>
+         <?php if (isset($_GET['connected']) && isset($_SESSION['token'])): ?>
+            <p class="success"><?= t('adherent_connected_msg') ?></p>
+            <p style="font-size:0.8em;word-break:break-all;"><?= t('token_label') ?> <?= htmlspecialchars($_SESSION['token']) ?></p>
+        <?php endif; ?>
 
-    <form method="post" action="">
-        <label><?= t('email_label') ?> : <input type="email" name="email" required></label><br>
-        <label><?= t('password_label') ?> : <input type="password" name="password" required></label><br>
-        <button type="submit"><?= t('login_button') ?></button>
-    </form>
+        <form method="post" action="">
+            <label><?= t('email_label') ?> : <input type="email" name="email" required></label>
+            <label><?= t('password_label') ?> : <input type="password" name="password" required></label>
+            <button type="submit"><?= t('login_button') ?></button>
+        </form>
 
-    <p><a href="register.php"><?= t('adherent_no_account_link') ?></a></p>
-    <p><a href="../index.php"><?= t("back_link") ?></a></p>
-    <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
+        <p><a href="register.php"><?= t('adherent_no_account_link') ?></a></p>
+        <p><a href="../index.php"><?= t("back_link") ?></a></p>
+        <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
+    </div>
 </body>
 </html>

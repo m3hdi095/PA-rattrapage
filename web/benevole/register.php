@@ -46,33 +46,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title><?= t('benevole_register_title') ?></title>
+    <link rel="stylesheet" href="../public/css/styles.css">
 </head>
 <body>
-    <h1><?= t('benevole_register_heading') ?></h1>
+    <div class="header">
+        <h1><?= t('benevole_register_heading') ?></h1>
+    </div>
 
-    <?php if ($error): ?>
-        <p style="color:red;"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
+    <div class="container">
+        <?php if ($error): ?>
+            <p class="error"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
 
-    <form method="post" action="">
-        <label><?= t('nom_label') ?> : <input type="text" name="nom" required></label><br>
-        <label><?= t('prenom_label') ?> : <input type="text" name="prenom" required></label><br>
-        <label><?= t('telephone_label') ?> : <input type="tel" name="telephone"></label><br>
-        <label><?= t('email_label') ?> : <input type="email" name="email" required></label><br>
-        <label><?= t('password_label') ?> : <input type="password" name="password" required></label><br>
+        <form method="post" action="">
+            <label><?= t('nom_label') ?> : <input type="text" name="nom" required></label>
+            <label><?= t('prenom_label') ?> : <input type="text" name="prenom" required></label>
+            <label><?= t('telephone_label') ?> : <input type="tel" name="telephone"></label>
+            <label><?= t('email_label') ?> : <input type="email" name="email" required></label>
+            <label><?= t('password_label') ?> : <input type="password" name="password" required></label>
 
-        <fieldset>
-            <legend><?= t('competences_legend') ?></legend>
-            <label><input type="checkbox" name="capacites[]" value="chauffeur"> <?= t('chauffeur_label') ?></label><br>
-            <label><input type="checkbox" name="capacites[]" value="cuisinier"> <?= t('cuisinier_label') ?></label><br>
-            <label><input type="checkbox" name="capacites[]" value="plombier"> <?= t('plombier_label') ?></label><br>
-            <label><input type="checkbox" name="capacites[]" value="electricien"> <?= t('electricien_label') ?></label><br>
-        </fieldset>
+            <fieldset>
+                <legend><?= t('competences_legend') ?></legend>
+                <label><input type="checkbox" name="capacites[]" value="chauffeur"> <?= t('chauffeur_label') ?></label>
+                <label><input type="checkbox" name="capacites[]" value="cuisinier"> <?= t('cuisinier_label') ?></label>
+                <label><input type="checkbox" name="capacites[]" value="plombier"> <?= t('plombier_label') ?></label>
+                <label><input type="checkbox" name="capacites[]" value="electricien"> <?= t('electricien_label') ?></label>
+            </fieldset>
 
-        <button type="submit"><?= t('send_candidature_button') ?></button>
-    </form>
+            <button type="submit"><?= t('send_candidature_button') ?></button>
+        </form>
 
-    <p><a href="index.php"><?= t("back_to_login_link") ?></a></p>
-    <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
+        <p><a href="index.php"><?= t("back_to_login_link") ?></a></p>
+        <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
+    </div>
 </body>
 </html>

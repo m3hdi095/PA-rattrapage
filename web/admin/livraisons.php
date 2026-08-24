@@ -154,5 +154,6 @@ require __DIR__ . '/../includes/header_admin.php';
     }
 </script>
 
+</div>
 </body>
 </html>

@@ -90,5 +90,6 @@ require __DIR__ . '/../includes/header_admin.php';
     <?php endforeach; ?>
 </table>
 
+</div>
 </body>
 </html>

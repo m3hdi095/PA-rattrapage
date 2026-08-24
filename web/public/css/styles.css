@@ -1,0 +1,203 @@
+:root {
+  --bg-color: #0d1f12;
+  --text-color: #f0f5f0;
+  --header-bg: #1b4332;
+  --navbar-bg: #2d6a4f;
+  --navbar-hover-bg: #40916c;
+  --card-bg: #1b4332;
+  --card-title-color: #74c69d;
+  --card-text-color: #d8f3dc;
+  --button-bg: #40916c;
+  --button-hover-bg: #2d6a4f;
+  --border-color: #40916c;
+  --error-color: #ff8080;
+  --success-color: #95d5b2;
+  --input-bg: #14281a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3 {
+  color: var(--card-title-color);
+}
+
+a {
+  color: var(--card-title-color);
+}
+
+.header {
+  background-color: var(--header-bg);
+  padding: 20px;
+  text-align: center;
+}
+
+.header h1 {
+  color: var(--text-color);
+  margin: 0;
+  font-size: 24px;
+}
+
+.navbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  background-color: var(--navbar-bg);
+  padding: 10px 0;
+}
+
+.navbar a {
+  color: var(--text-color);
+  text-decoration: none;
+  padding: 10px 20px;
+  margin: 0 5px;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.navbar a:hover {
+  background-color: var(--navbar-hover-bg);
+}
+
+.container {
+  width: 90%;
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background-color: var(--card-bg);
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+.card h2, .card h3 {
+  color: var(--card-title-color);
+  margin-top: 0;
+}
+
+.card p {
+  color: var(--card-text-color);
+}
+
+/* Boutons : appliqué directement à button/input[type=submit] pour ne pas
+   avoir à ajouter une classe sur chaque bouton des pages existantes. */
+.button,
+button,
+input[type="submit"] {
+  background-color: var(--button-bg);
+  color: #fff;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
+.button:hover,
+button:hover,
+input[type="submit"]:hover {
+  background-color: var(--button-hover-bg);
+}
+
+/* Formulaires */
+form {
+  background-color: var(--card-bg);
+  padding: 20px;
+  border-radius: 8px;
+  margin: 15px 0;
+  max-width: 500px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--card-text-color);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+select,
+textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+}
+
+fieldset {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+legend {
+  color: var(--card-title-color);
+  font-weight: bold;
+  padding: 0 8px;
+}
+
+/* Tableaux */
+table {
+  display: block;
+  overflow-x: auto;
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--card-bg);
+  margin: 15px 0;
+  border-radius: 8px;
+}
+
+table, th, td {
+  border: 1px solid var(--border-color);
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  color: var(--card-text-color);
+}
+
+th {
+  background-color: var(--header-bg);
+  color: var(--text-color);
+}
+
+table form {
+  display: inline-block;
+  background: none;
+  padding: 0;
+  margin: 0 4px 4px 0;
+  max-width: none;
+}
+
+/* Messages */
+.error {
+  color: var(--error-color);
+  font-weight: bold;
+}
+
+.success {
+  color: var(--success-color);
+  font-weight: bold;
+}

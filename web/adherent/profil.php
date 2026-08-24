@@ -71,5 +71,6 @@ require __DIR__ . '/../includes/header_adherent.php';
     <button type="submit">Changer le mot de passe</button>
 </form>
 
+</div>
 </body>
 </html>

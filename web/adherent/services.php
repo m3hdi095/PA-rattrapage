@@ -81,5 +81,6 @@ require __DIR__ . '/../includes/header_adherent.php';
     <?php endforeach; ?>
 </table>
 
+</div>
 </body>
 </html>

@@ -6,13 +6,16 @@
 <head>
     <meta charset="UTF-8">
     <title>NO MORE WASTE - Espace Bénévole</title>
+    <link rel="stylesheet" href="../public/css/styles.css">
 </head>
 <body>
-    <h1>Espace Bénévole</h1>
+    <div class="header">
+        <h1>Espace Bénévole</h1>
+    </div>
 
-    <nav>
-        <a href="plannings.php">Mon planning</a> |
+    <nav class="navbar">
+        <a href="plannings.php">Mon planning</a>
         <a href="profil.php">Mon profil</a>
     </nav>
 
-    <hr>
+    <div class="container">

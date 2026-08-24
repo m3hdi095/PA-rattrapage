@@ -51,27 +51,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title><?= t('adherent_register_title') ?></title>
+    <link rel="stylesheet" href="../public/css/styles.css">
 </head>
 <body>
-    <h1><?= t('adherent_register_heading') ?></h1>
+    <div class="header">
+        <h1><?= t('adherent_register_heading') ?></h1>
+    </div>
 
-    <?php if ($error): ?>
-        <p style="color:red;"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
+    <div class="container">
+        <?php if ($error): ?>
+            <p class="error"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
 
-    <form method="post" action="">
-        <label><?= t('nom_commerce_label') ?> : <input type="text" name="nom_commerce" required></label><br>
-        <label><?= t('siret_label') ?> : <input type="text" name="siret" required></label><br>
-        <label><?= t('adresse_label') ?> : <input type="text" name="adresse" required></label><br>
-        <label><?= t('code_postal_label') ?> : <input type="text" name="code_postal" required></label><br>
-        <label><?= t('ville_label') ?> : <input type="text" name="ville" required></label><br>
-        <label><?= t('telephone_label') ?> : <input type="tel" name="telephone"></label><br>
-        <label><?= t('email_label') ?> : <input type="email" name="email" required></label><br>
-        <label><?= t('password_label') ?> : <input type="password" name="password" required></label><br>
-        <button type="submit"><?= t('create_account_button') ?></button>
-    </form>
+        <form method="post" action="">
+            <label><?= t('nom_commerce_label') ?> : <input type="text" name="nom_commerce" required></label>
+            <label><?= t('siret_label') ?> : <input type="text" name="siret" required></label>
+            <label><?= t('adresse_label') ?> : <input type="text" name="adresse" required></label>
+            <label><?= t('code_postal_label') ?> : <input type="text" name="code_postal" required></label>
+            <label><?= t('ville_label') ?> : <input type="text" name="ville" required></label>
+            <label><?= t('telephone_label') ?> : <input type="tel" name="telephone"></label>
+            <label><?= t('email_label') ?> : <input type="email" name="email" required></label>
+            <label><?= t('password_label') ?> : <input type="password" name="password" required></label>
+            <button type="submit"><?= t('create_account_button') ?></button>
+        </form>
 
-    <p><a href="index.php"><?= t("back_to_login_link") ?></a></p>
-    <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
+        <p><a href="index.php"><?= t("back_to_login_link") ?></a></p>
+        <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
+    </div>
 </body>
 </html>

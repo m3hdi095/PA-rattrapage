@@ -52,5 +52,6 @@ require __DIR__ . '/../includes/header_benevole.php';
     <?php endforeach; ?>
 </table>
 
+</div>
 </body>
 </html>

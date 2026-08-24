@@ -7,14 +7,17 @@
 <head>
     <meta charset="UTF-8">
     <title>NO MORE WASTE - Espace Commerçant</title>
+    <link rel="stylesheet" href="../public/css/styles.css">
 </head>
 <body>
-    <h1>Espace Commerçant</h1>
+    <div class="header">
+        <h1>Espace Commerçant</h1>
+    </div>
 
-    <nav>
-        <a href="collectes.php">Mes collectes</a> |
-        <a href="services.php">Services et inscriptions</a> |
+    <nav class="navbar">
+        <a href="collectes.php">Mes collectes</a>
+        <a href="services.php">Services et inscriptions</a>
         <a href="profil.php">Mon profil</a>
     </nav>
 
-    <hr>
+    <div class="container">

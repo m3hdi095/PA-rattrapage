@@ -51,5 +51,6 @@ require __DIR__ . '/../includes/header_admin.php';
 </table>
 <?php endif; ?>
 
+</div>
 </body>
 </html>
