@@ -51,13 +51,14 @@ try {
     // Pas bloquant : le select sera juste vide si l'API est indisponible.
 }
 
-$mesCapacites = [];
+$moi = [];
 try {
     $result = apiRequest('GET', '/benevoles/me', null, $_SESSION['token']);
-    $mesCapacites = array_map(fn($c) => $c['libelle'], $result['body']['capacites'] ?? []);
+    $moi = $result['body'] ?? [];
 } catch (Exception $e) {
-    // Pas bloquant : le select sera juste sans pré-sélection.
+    // Pas bloquant : les formulaires seront juste vides.
 }
+$mesCapacites = array_map(fn($c) => $c['libelle'], $moi['capacites'] ?? []);
 
 require __DIR__ . '/../includes/header_benevole.php';
 ?>
@@ -74,9 +75,9 @@ require __DIR__ . '/../includes/header_benevole.php';
 <h3>Mes informations</h3>
 <form method="post">
     <input type="hidden" name="form" value="profil">
-    <label>Nom : <input type="text" name="nom" required></label><br>
-    <label>Prénom : <input type="text" name="prenom" required></label><br>
-    <label>Téléphone : <input type="tel" name="telephone"></label><br>
+    <label>Nom : <input type="text" name="nom" value="<?= htmlspecialchars($moi['nom'] ?? '') ?>" required></label><br>
+    <label>Prénom : <input type="text" name="prenom" value="<?= htmlspecialchars($moi['prenom'] ?? '') ?>" required></label><br>
+    <label>Téléphone : <input type="tel" name="telephone" value="<?= htmlspecialchars($moi['telephone'] ?? '') ?>"></label><br>
     <button type="submit">Enregistrer</button>
 </form>
 
@@ -89,6 +90,7 @@ require __DIR__ . '/../includes/header_benevole.php';
                 <option value="<?= htmlspecialchars($c['libelle']) ?>" <?= in_array($c['libelle'], $mesCapacites, true) ? 'selected' : '' ?>><?= htmlspecialchars($c['libelle']) ?></option>
             <?php endforeach; ?>
         </select>
+        <br><small>Ctrl+clic pour sélectionner plusieurs compétences.</small>
     </label><br>
     <button type="submit">Enregistrer mes compétences</button>
 </form>

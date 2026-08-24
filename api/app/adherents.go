@@ -87,6 +87,28 @@ func GetAllAdherents(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(adherents)
 }
 
+func GetOwnAdherent(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		http.Error(w, "token invalide", http.StatusUnauthorized)
+		return
+	}
+	if claims.Role != "adherent" {
+		http.Error(w, "accès réservé aux adhérents", http.StatusForbidden)
+		return
+	}
+
+	adherent, err := db.GetAdherentByID(claims.ID)
+	if err != nil {
+		http.Error(w, "erreur lors de la récupération de l'adhérent", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(adherent)
+}
+
 func UpdateAdherentProfile(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)

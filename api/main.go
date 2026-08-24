@@ -21,6 +21,7 @@ func main() {
 	//Adherents
 	http.HandleFunc("POST /adherents", app.CreateAdherent)
 	http.HandleFunc("GET /adherents", app.GetAllAdherents)
+	http.HandleFunc("GET /adherents/me", app.GetOwnAdherent)
 	http.HandleFunc("PATCH /adherents/profil", app.UpdateAdherentProfile)
 	http.HandleFunc("PATCH /adherents/mot-de-passe", app.UpdateAdherentPassword)
 	http.HandleFunc("DELETE /adherents", app.DeleteAdherent)

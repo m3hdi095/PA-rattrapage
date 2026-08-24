@@ -50,5 +50,6 @@
     "cuisinier_label": "Cook",
     "plombier_label": "Plumber",
     "electricien_label": "Electrician",
-    "send_candidature_button": "Submit my application"
+    "send_candidature_button": "Submit my application",
+    "multiselect_hint": "Ctrl+click to select multiple skills."
 }

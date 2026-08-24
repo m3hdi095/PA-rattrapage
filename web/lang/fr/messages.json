@@ -50,5 +50,6 @@
     "cuisinier_label": "Cuisinier",
     "plombier_label": "Plombier",
     "electricien_label": "Électricien",
-    "send_candidature_button": "Envoyer ma candidature"
+    "send_candidature_button": "Envoyer ma candidature",
+    "multiselect_hint": "Ctrl+clic pour sélectionner plusieurs compétences."
 }

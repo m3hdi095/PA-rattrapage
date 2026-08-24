@@ -40,26 +40,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$moi = [];
+try {
+    $result = apiRequest('GET', '/adherents/me', null, $_SESSION['token']);
+    $moi = $result['body'] ?? [];
+} catch (Exception $e) {
+    // Pas bloquant : le formulaire sera juste vide.
+}
+
 require __DIR__ . '/../includes/header_adherent.php';
 ?>
 
 <h2>Mon profil</h2>
 
 <?php if ($error): ?>
-    <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+    <p class="error"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 <?php if ($success): ?>
-    <p style="color:green;"><?= htmlspecialchars($success) ?></p>
+    <p class="success"><?= htmlspecialchars($success) ?></p>
 <?php endif; ?>
 
 <h3>Informations du commerce</h3>
 <form method="post">
     <input type="hidden" name="form" value="profil">
-    <label>Nom du commerce : <input type="text" name="nom" required></label><br>
-    <label>Adresse : <input type="text" name="adresse" required></label><br>
-    <label>Code postal : <input type="text" name="code_postal" required></label><br>
-    <label>Ville : <input type="text" name="ville" required></label><br>
-    <label>Téléphone : <input type="tel" name="telephone"></label><br>
+    <label>Nom du commerce : <input type="text" name="nom" value="<?= htmlspecialchars($moi['nom'] ?? '') ?>" required></label><br>
+    <label>Adresse : <input type="text" name="adresse" value="<?= htmlspecialchars($moi['adresse'] ?? '') ?>" required></label><br>
+    <label>Code postal : <input type="text" name="code_postal" value="<?= htmlspecialchars($moi['code_postal'] ?? '') ?>" required></label><br>
+    <label>Ville : <input type="text" name="ville" value="<?= htmlspecialchars($moi['ville'] ?? '') ?>" required></label><br>
+    <label>Téléphone : <input type="tel" name="telephone" value="<?= htmlspecialchars($moi['telephone'] ?? '') ?>"></label><br>
     <button type="submit">Enregistrer</button>
 </form>
 

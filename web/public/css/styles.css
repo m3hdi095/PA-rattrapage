@@ -68,6 +68,11 @@ a {
   background-color: var(--navbar-hover-bg);
 }
 
+.navbar a.active {
+  background-color: var(--navbar-hover-bg);
+  text-decoration: underline;
+}
+
 .container {
   width: 90%;
   max-width: 1100px;

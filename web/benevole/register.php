@@ -82,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <option value="<?= htmlspecialchars($c['libelle']) ?>" <?= in_array($c['libelle'], $selectedCapacites, true) ? 'selected' : '' ?>><?= htmlspecialchars($c['libelle']) ?></option>
                     <?php endforeach; ?>
                 </select>
+                <br><small><?= t('multiselect_hint') ?></small>
             </label>
 
             <button type="submit"><?= t('send_candidature_button') ?></button>
