@@ -2,13 +2,14 @@ package db
 
 import (
 	"api/models"
+	"database/sql"
 	"fmt"
 )
 
 func CreateService(service *models.Service) (int, error) {
 	res, err := Connection.Exec(
-		"INSERT INTO services (nom, description) VALUES (?, ?)",
-		service.Nom, service.Description,
+		"INSERT INTO services (nom, description, capacite_id) VALUES (?, ?, ?)",
+		service.Nom, service.Description, service.CapaciteID,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create service: %w", err)
@@ -24,7 +25,9 @@ func CreateService(service *models.Service) (int, error) {
 }
 
 func GetAllServices() ([]models.Service, error) {
-	rows, err := Connection.Query("SELECT id, nom, description FROM services")
+	rows, err := Connection.Query(
+		"SELECT s.id, s.nom, s.description, s.capacite_id, c.libelle FROM services s LEFT JOIN capacites c ON c.id = s.capacite_id",
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get all services: %w", err)
 	}
@@ -33,9 +36,16 @@ func GetAllServices() ([]models.Service, error) {
 	var services []models.Service
 	for rows.Next() {
 		var service models.Service
-		err := rows.Scan(&service.ID, &service.Nom, &service.Description)
+		var capaciteID sql.NullInt64
+		var capaciteLibelle sql.NullString
+		err := rows.Scan(&service.ID, &service.Nom, &service.Description, &capaciteID, &capaciteLibelle)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan service: %w", err)
+		}
+		if capaciteID.Valid {
+			id := int(capaciteID.Int64)
+			service.CapaciteID = &id
+			service.CapaciteLibelle = capaciteLibelle.String
 		}
 		services = append(services, service)
 	}

@@ -25,6 +25,7 @@
         <a href="services.php">Services</a>
         <a href="plannings.php">Plannings</a>
         <a href="inscriptions.php">Inscriptions</a>
+        <a href="competences.php">Compétences</a>
     </nav>
 
     <div class="container">

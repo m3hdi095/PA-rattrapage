@@ -150,10 +150,13 @@ CREATE TABLE livraison_produits (
 -- partage de véhicules, échange de services, réparation, gardiennage...)
 -- ---------------------------------------------------------------------
 
+-- capacite_id : compétence requise pour tenir ce service (optionnelle)
 CREATE TABLE services (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     nom         VARCHAR(100) NOT NULL,
-    description TEXT
+    description TEXT,
+    capacite_id INT,
+    CONSTRAINT fk_services_capacite FOREIGN KEY (capacite_id) REFERENCES capacites(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- Une occurrence planifiée d'un service, tenue par un bénévole (ex: plombier)
@@ -180,6 +183,6 @@ CREATE TABLE inscriptions_service (
     CONSTRAINT fk_is_adherent FOREIGN KEY (adherent_id) REFERENCES adherents(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Liste fixe des compétences proposables par un bénévole (checkboxes du formulaire)
+-- Compétences de départ (l'admin peut en ajouter/supprimer depuis l'espace admin)
 INSERT INTO capacites (libelle) VALUES
     ('chauffeur'), ('cuisinier'), ('plombier'), ('electricien');

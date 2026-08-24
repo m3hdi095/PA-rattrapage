@@ -171,6 +171,56 @@ func UpdateBenevoleProfile(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func GetOwnBenevole(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		http.Error(w, "token invalide", http.StatusUnauthorized)
+		return
+	}
+	if claims.Role != "benevole" {
+		http.Error(w, "accès réservé aux bénévoles", http.StatusForbidden)
+		return
+	}
+
+	benevole, err := db.GetBenevoleByID(claims.ID)
+	if err != nil {
+		http.Error(w, "erreur lors de la récupération du bénévole", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(benevole)
+}
+
+func UpdateBenevoleCapacites(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		http.Error(w, "token invalide", http.StatusUnauthorized)
+		return
+	}
+	if claims.Role != "benevole" {
+		http.Error(w, "accès réservé aux bénévoles", http.StatusForbidden)
+		return
+	}
+
+	var req struct {
+		Capacites []string `json:"capacites"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "données invalides", http.StatusBadRequest)
+		return
+	}
+
+	if err := db.UpdateBenevoleCapacites(claims.ID, req.Capacites); err != nil {
+		http.Error(w, "erreur lors de la mise à jour des compétences", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
 func UpdateBenevolePassword(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)

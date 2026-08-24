@@ -25,6 +25,7 @@ func CreateService(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		Nom         string `json:"nom"`
 		Description string `json:"description"`
+		CapaciteID  *int   `json:"capacite_id"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -35,6 +36,7 @@ func CreateService(w http.ResponseWriter, r *http.Request) {
 	service := &models.Service{
 		Nom:         req.Nom,
 		Description: req.Description,
+		CapaciteID:  req.CapaciteID,
 	}
 
 	id, err := db.CreateService(service)

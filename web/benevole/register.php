@@ -1,7 +1,18 @@
 <?php
 require_once __DIR__ . '/../includes/i18n.php';
+require_once __DIR__ . '/../includes/api.php';
 
 $error = null;
+
+$capacitesDisponibles = [];
+try {
+    $result = apiRequest('GET', '/capacites');
+    $capacitesDisponibles = $result['body'] ?? [];
+} catch (Exception $e) {
+    // Pas bloquant : le select sera juste vide si l'API est indisponible.
+}
+
+$selectedCapacites = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = $_POST['nom'] ?? '';
@@ -9,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     $telephone = $_POST['telephone'] ?? '';
-    $capacites = $_POST['capacites'] ?? [];
+    $selectedCapacites = $_POST['capacites'] ?? [];
 
     $payload = json_encode([
         'email'     => $email,
@@ -17,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'nom'       => $nom,
         'prenom'    => $prenom,
         'telephone' => $telephone,
-        'capacites' => $capacites,
+        'capacites' => $selectedCapacites,
     ]);
 
     $ch = curl_init('http://localhost:8081/benevoles');
@@ -65,13 +76,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label><?= t('email_label') ?> : <input type="email" name="email" required></label>
             <label><?= t('password_label') ?> : <input type="password" name="password" required></label>
 
-            <fieldset>
-                <legend><?= t('competences_legend') ?></legend>
-                <label><input type="checkbox" name="capacites[]" value="chauffeur"> <?= t('chauffeur_label') ?></label>
-                <label><input type="checkbox" name="capacites[]" value="cuisinier"> <?= t('cuisinier_label') ?></label>
-                <label><input type="checkbox" name="capacites[]" value="plombier"> <?= t('plombier_label') ?></label>
-                <label><input type="checkbox" name="capacites[]" value="electricien"> <?= t('electricien_label') ?></label>
-            </fieldset>
+            <label><?= t('competences_legend') ?> :
+                <select name="capacites[]" multiple size="4">
+                    <?php foreach ($capacitesDisponibles as $c): ?>
+                        <option value="<?= htmlspecialchars($c['libelle']) ?>" <?= in_array($c['libelle'], $selectedCapacites, true) ? 'selected' : '' ?>><?= htmlspecialchars($c['libelle']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
 
             <button type="submit"><?= t('send_candidature_button') ?></button>
         </form>

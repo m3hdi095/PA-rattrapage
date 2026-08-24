@@ -14,9 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (($_POST['action'] ?? '') === 'supprimer') {
             apiRequest('DELETE', '/services', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
         } else {
+            $capaciteId = ($_POST['capacite_id'] ?? '') !== '' ? (int) $_POST['capacite_id'] : null;
             apiRequest('POST', '/services', [
                 'nom'         => $_POST['nom'] ?? '',
                 'description' => $_POST['description'] ?? '',
+                'capacite_id' => $capaciteId,
             ], $_SESSION['token']);
         }
         header('Location: services.php');
@@ -34,6 +36,14 @@ try {
     $error = $e->getMessage();
 }
 
+$capacites = [];
+try {
+    $result = apiRequest('GET', '/capacites', null, $_SESSION['token']);
+    $capacites = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
@@ -47,6 +57,14 @@ require __DIR__ . '/../includes/header_admin.php';
 <form method="post">
     <label>Nom : <input type="text" name="nom" required></label><br>
     <label>Description : <textarea name="description"></textarea></label><br>
+    <label>Compétence requise (optionnel) :
+        <select name="capacite_id">
+            <option value="">-- Aucune --</option>
+            <?php foreach ($capacites as $c): ?>
+                <option value="<?= (int) $c['id'] ?>"><?= htmlspecialchars($c['libelle']) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </label><br>
     <button type="submit">Créer</button>
 </form>
 
@@ -56,6 +74,7 @@ require __DIR__ . '/../includes/header_admin.php';
         <th>ID</th>
         <th>Nom</th>
         <th>Description</th>
+        <th>Compétence requise</th>
         <th>Actions</th>
     </tr>
     <?php foreach ($services as $s): ?>
@@ -63,6 +82,7 @@ require __DIR__ . '/../includes/header_admin.php';
         <td><?= htmlspecialchars($s['id']) ?></td>
         <td><?= htmlspecialchars($s['nom']) ?></td>
         <td><?= htmlspecialchars($s['description']) ?></td>
+        <td><?= htmlspecialchars($s['capacite_libelle'] ?? '—') ?></td>
         <td>
             <form method="post" onsubmit="return confirm('Supprimer ce service ?');">
                 <input type="hidden" name="action" value="supprimer">

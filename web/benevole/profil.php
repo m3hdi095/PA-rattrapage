@@ -32,10 +32,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $error = "Mot de passe actuel incorrect.";
             }
+        } elseif ($form === 'competences') {
+            apiRequest('PATCH', '/benevoles/capacites', [
+                'capacites' => $_POST['capacites'] ?? [],
+            ], $_SESSION['token']);
+            $success = "Compétences mises à jour.";
         }
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
+}
+
+$capacitesDisponibles = [];
+try {
+    $result = apiRequest('GET', '/capacites');
+    $capacitesDisponibles = $result['body'] ?? [];
+} catch (Exception $e) {
+    // Pas bloquant : le select sera juste vide si l'API est indisponible.
+}
+
+$mesCapacites = [];
+try {
+    $result = apiRequest('GET', '/benevoles/me', null, $_SESSION['token']);
+    $mesCapacites = array_map(fn($c) => $c['libelle'], $result['body']['capacites'] ?? []);
+} catch (Exception $e) {
+    // Pas bloquant : le select sera juste sans pré-sélection.
 }
 
 require __DIR__ . '/../includes/header_benevole.php';
@@ -44,10 +65,10 @@ require __DIR__ . '/../includes/header_benevole.php';
 <h2>Mon profil</h2>
 
 <?php if ($error): ?>
-    <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+    <p class="error"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 <?php if ($success): ?>
-    <p style="color:green;"><?= htmlspecialchars($success) ?></p>
+    <p class="success"><?= htmlspecialchars($success) ?></p>
 <?php endif; ?>
 
 <h3>Mes informations</h3>
@@ -57,6 +78,19 @@ require __DIR__ . '/../includes/header_benevole.php';
     <label>Prénom : <input type="text" name="prenom" required></label><br>
     <label>Téléphone : <input type="tel" name="telephone"></label><br>
     <button type="submit">Enregistrer</button>
+</form>
+
+<h3>Mes compétences</h3>
+<form method="post">
+    <input type="hidden" name="form" value="competences">
+    <label>Compétences :
+        <select name="capacites[]" multiple size="4">
+            <?php foreach ($capacitesDisponibles as $c): ?>
+                <option value="<?= htmlspecialchars($c['libelle']) ?>" <?= in_array($c['libelle'], $mesCapacites, true) ? 'selected' : '' ?>><?= htmlspecialchars($c['libelle']) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </label><br>
+    <button type="submit">Enregistrer mes compétences</button>
 </form>
 
 <h3>Changer de mot de passe</h3>

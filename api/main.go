@@ -30,9 +30,16 @@ func main() {
 	http.HandleFunc("PATCH /benevoles/valider", app.ValidateBenevole)
 	http.HandleFunc("PATCH /benevoles/rejeter", app.RejectBenevole)
 	http.HandleFunc("GET /benevoles", app.GetAllBenevoles)
+	http.HandleFunc("GET /benevoles/me", app.GetOwnBenevole)
 	http.HandleFunc("PATCH /benevoles/profil", app.UpdateBenevoleProfile)
 	http.HandleFunc("PATCH /benevoles/mot-de-passe", app.UpdateBenevolePassword)
+	http.HandleFunc("PATCH /benevoles/capacites", app.UpdateBenevoleCapacites)
 	http.HandleFunc("DELETE /benevoles", app.DeleteBenevole)
+
+	//Capacites
+	http.HandleFunc("GET /capacites", app.ListCapacites)
+	http.HandleFunc("POST /capacites", app.CreateCapacite)
+	http.HandleFunc("DELETE /capacites", app.DeleteCapacite)
 
 	//Collectes
 	http.HandleFunc("POST /collectes", app.CreateCollecte)
