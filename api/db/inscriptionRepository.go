@@ -40,5 +40,9 @@ func GetInscriptionsByPlanning(planningID int) ([]models.Inscription, error) {
 		inscriptions = append(inscriptions, inscription)
 	}
 
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate inscriptions: %w", err)
+	}
+
 	return inscriptions, nil
 }

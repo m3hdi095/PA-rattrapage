@@ -119,6 +119,9 @@ func GetAllBenevoles() ([]models.Benevole, error) {
 		}
 		benevoles = append(benevoles, benevole)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate benevoles: %w", err)
+	}
 	return benevoles, nil
 }
 

@@ -39,6 +39,9 @@ func GetAllTournees() ([]models.Tournee, error) {
 		}
 		tournees = append(tournees, t)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate tournees: %w", err)
+	}
 	return tournees, nil
 }
 

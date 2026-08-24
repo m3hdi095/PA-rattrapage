@@ -21,6 +21,10 @@ func GetProduits() ([]models.Produit, error) {
 		produits = append(produits, p)
 	}
 
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate produits: %w", err)
+	}
+
 	return produits, nil
 }
 

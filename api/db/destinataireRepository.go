@@ -41,6 +41,10 @@ func GetAllDestinataires() ([]models.Destinataire, error) {
 		destinataires = append(destinataires, destinataire)
 	}
 
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate destinataires: %w", err)
+	}
+
 	return destinataires, nil
 }
 

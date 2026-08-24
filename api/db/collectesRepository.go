@@ -39,6 +39,9 @@ func GetAllCollectes() ([]models.Collecte, error) {
 		}
 		collectes = append(collectes, c)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate collectes: %w", err)
+	}
 	return collectes, nil
 }
 
@@ -56,6 +59,9 @@ func GetCollectesByAdherent(adherentID int) ([]models.Collecte, error) {
 			return nil, fmt.Errorf("failed to scan collecte: %w", err)
 		}
 		collectes = append(collectes, c)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate collectes: %w", err)
 	}
 	return collectes, nil
 }

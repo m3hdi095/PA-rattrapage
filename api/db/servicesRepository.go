@@ -39,6 +39,9 @@ func GetAllServices() ([]models.Service, error) {
 		}
 		services = append(services, service)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate services: %w", err)
+	}
 	return services, nil
 }
 

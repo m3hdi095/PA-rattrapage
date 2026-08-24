@@ -61,6 +61,9 @@ func GetAdherentsExpiredSoon(days int) ([]models.Adherent, error) {
 		}
 		adherents = append(adherents, adherent)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate adherents: %w", err)
+	}
 	return adherents, nil
 }
 
@@ -79,6 +82,9 @@ func GetAllAdherents() ([]models.Adherent, error) {
 			return nil, fmt.Errorf("failed to scan adherent: %w", err)
 		}
 		adherents = append(adherents, adherent)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate adherents: %w", err)
 	}
 	return adherents, nil
 }

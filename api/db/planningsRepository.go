@@ -41,6 +41,10 @@ func GetAllPlannings() ([]models.Planning, error) {
 		plannings = append(plannings, planning)
 	}
 
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate plannings: %w", err)
+	}
+
 	return plannings, nil
 }
 
@@ -59,6 +63,10 @@ func GetPlanningsByBenevole(benevoleID int) ([]models.Planning, error) {
 			return nil, fmt.Errorf("failed to scan planning: %w", err)
 		}
 		plannings = append(plannings, planning)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate plannings: %w", err)
 	}
 
 	return plannings, nil

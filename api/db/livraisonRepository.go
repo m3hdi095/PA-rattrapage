@@ -41,6 +41,10 @@ func GetAllLivraisons() ([]models.Livraison, error) {
 		livraisons = append(livraisons, l)
 	}
 
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate livraisons: %w", err)
+	}
+
 	return livraisons, nil
 }
 
@@ -84,6 +88,10 @@ func GetProduitsByLivraison(livraisonID int) ([]models.ProduitLivre, error) {
 			return nil, fmt.Errorf("failed to scan produit livre: %w", err)
 		}
 		produits = append(produits, p)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate produits: %w", err)
 	}
 
 	return produits, nil
