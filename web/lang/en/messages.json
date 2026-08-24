@@ -1,0 +1,53 @@
+{
+    "site_title": "NO MORE WASTE",
+    "home_choose_space": "Choose your space:",
+    "home_admin_space": "Administration Area",
+    "home_adherent_space": "Merchant Area (member)",
+    "home_benevole_space": "Volunteer Area",
+
+    "email_label": "Email",
+    "password_label": "Password",
+    "login_button": "Log in",
+    "back_link": "← Back",
+    "login_error": "Incorrect email or password",
+    "api_unreachable_error": "Unable to contact the API. Make sure the Go API is running on port 8081.",
+    "token_label": "Token:",
+
+    "admin_page_title": "NO MORE WASTE - Administration",
+    "admin_login_title": "Login - Administration Area",
+
+    "adherent_page_title": "NO MORE WASTE - Merchant Area",
+    "adherent_login_title": "Login - Merchant Area",
+    "account_created_msg": "Account created! You can now log in.",
+    "adherent_connected_msg": "Connected! (merchant area not built yet, but the token is in session)",
+    "adherent_no_account_link": "No account yet? Create a merchant account",
+
+    "benevole_page_title": "NO MORE WASTE - Volunteer Area",
+    "benevole_login_title": "Login - Volunteer Area",
+    "candidature_sent_msg": "Application sent! Your account must be validated by an admin before you can log in.",
+    "benevole_connected_msg": "Connected! (volunteer area not built yet, but the token is in session)",
+    "benevole_no_account_link": "No account yet? Become a volunteer",
+
+    "adherent_register_title": "NO MORE WASTE - Create a merchant account",
+    "adherent_register_heading": "Create an account - Merchant",
+    "nom_commerce_label": "Business name",
+    "siret_label": "SIRET",
+    "adresse_label": "Address",
+    "code_postal_label": "Postal code",
+    "ville_label": "City",
+    "telephone_label": "Phone",
+    "create_account_button": "Create my account",
+    "back_to_login_link": "← Back to login",
+    "account_create_error": "Error while creating the account",
+
+    "benevole_register_title": "NO MORE WASTE - Become a volunteer",
+    "benevole_register_heading": "Create an account - Volunteer",
+    "nom_label": "Last name",
+    "prenom_label": "First name",
+    "competences_legend": "Skills offered",
+    "chauffeur_label": "Driver",
+    "cuisinier_label": "Cook",
+    "plombier_label": "Plumber",
+    "electricien_label": "Electrician",
+    "send_candidature_button": "Submit my application"
+}

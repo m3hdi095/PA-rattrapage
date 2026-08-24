@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/../includes/i18n.php';
 
 $error = null;
 
@@ -31,47 +31,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     curl_close($ch);
 
     if ($response === false) {
-        $error = "Impossible de contacter l'API (" . $curlError . "). Vérifie que l'API Go tourne bien sur le port 8081.";
+        $error = t('api_unreachable_error') . ' (' . $curlError . ')';
     } elseif ($statusCode === 201) {
         header('Location: index.php?created=1');
         exit;
     } else {
         $body = json_decode($response, true);
-        $error = $body['error'] ?? "Erreur lors de la création du compte (code $statusCode)";
+        $error = $body['error'] ?? t('account_create_error') . " (code $statusCode)";
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= currentLang() ?>">
 <head>
     <meta charset="UTF-8">
-    <title>NO MORE WASTE - Devenir bénévole</title>
+    <title><?= t('benevole_register_title') ?></title>
 </head>
 <body>
-    <h1>Créer un compte - Bénévole</h1>
+    <h1><?= t('benevole_register_heading') ?></h1>
 
     <?php if ($error): ?>
         <p style="color:red;"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
     <form method="post" action="">
-        <label>Nom : <input type="text" name="nom" required></label><br>
-        <label>Prénom : <input type="text" name="prenom" required></label><br>
-        <label>Téléphone : <input type="tel" name="telephone"></label><br>
-        <label>Email : <input type="email" name="email" required></label><br>
-        <label>Mot de passe : <input type="password" name="password" required></label><br>
+        <label><?= t('nom_label') ?> : <input type="text" name="nom" required></label><br>
+        <label><?= t('prenom_label') ?> : <input type="text" name="prenom" required></label><br>
+        <label><?= t('telephone_label') ?> : <input type="tel" name="telephone"></label><br>
+        <label><?= t('email_label') ?> : <input type="email" name="email" required></label><br>
+        <label><?= t('password_label') ?> : <input type="password" name="password" required></label><br>
 
         <fieldset>
-            <legend>Compétences proposées</legend>
-            <label><input type="checkbox" name="capacites[]" value="chauffeur"> Chauffeur</label><br>
-            <label><input type="checkbox" name="capacites[]" value="cuisinier"> Cuisinier</label><br>
-            <label><input type="checkbox" name="capacites[]" value="plombier"> Plombier</label><br>
-            <label><input type="checkbox" name="capacites[]" value="electricien"> Électricien</label><br>
+            <legend><?= t('competences_legend') ?></legend>
+            <label><input type="checkbox" name="capacites[]" value="chauffeur"> <?= t('chauffeur_label') ?></label><br>
+            <label><input type="checkbox" name="capacites[]" value="cuisinier"> <?= t('cuisinier_label') ?></label><br>
+            <label><input type="checkbox" name="capacites[]" value="plombier"> <?= t('plombier_label') ?></label><br>
+            <label><input type="checkbox" name="capacites[]" value="electricien"> <?= t('electricien_label') ?></label><br>
         </fieldset>
 
-        <button type="submit">Envoyer ma candidature</button>
+        <button type="submit"><?= t('send_candidature_button') ?></button>
     </form>
 
-    <p><a href="index.php">&larr; Retour à la connexion</a></p>
+    <p><a href="index.php"><?= t("back_to_login_link") ?></a></p>
+    <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
 </body>
 </html>

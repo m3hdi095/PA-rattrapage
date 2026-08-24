@@ -8,7 +8,7 @@ import (
 func CreateBenevole(benevole *models.Benevole, capacites []string) (int, error) {
 	tx, err := Connection.Begin()
 	if err != nil {
-		return 0, fmt.Errorf("failed to start transaction: %v", err)
+		return 0, fmt.Errorf("failed to start transaction: %w", err)
 	}
 	defer tx.Rollback()
 
@@ -17,12 +17,12 @@ func CreateBenevole(benevole *models.Benevole, capacites []string) (int, error) 
 		benevole.Email, benevole.PasswordHash, benevole.Nom, benevole.Prenom, benevole.Telephone,
 	)
 	if err != nil {
-		return 0, fmt.Errorf("failed to create benevole: %v", err)
+		return 0, fmt.Errorf("failed to create benevole: %w", err)
 	}
 
 	id64, err := res.LastInsertId()
 	if err != nil {
-		return 0, fmt.Errorf("failed to get inserted id: %v", err)
+		return 0, fmt.Errorf("failed to get inserted id: %w", err)
 	}
 	id := int(id64)
 
@@ -32,12 +32,12 @@ func CreateBenevole(benevole *models.Benevole, capacites []string) (int, error) 
 			id, capacite,
 		)
 		if err != nil {
-			return 0, fmt.Errorf("failed to link capacite %q: %v", capacite, err)
+			return 0, fmt.Errorf("failed to link capacite %q: %w", capacite, err)
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
-		return 0, fmt.Errorf("failed to commit transaction: %v", err)
+		return 0, fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	benevole.ID = id

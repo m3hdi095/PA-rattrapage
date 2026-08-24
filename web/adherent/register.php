@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/../includes/i18n.php';
 
 $error = null;
 
@@ -35,42 +35,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     curl_close($ch);
 
     if ($response === false) {
-        $error = "Impossible de contacter l'API (" . $curlError . "). Vérifie que l'API Go tourne bien sur le port 8081.";
+        $error = t('api_unreachable_error') . ' (' . $curlError . ')';
     } elseif ($statusCode === 201) {
         header('Location: index.php?created=1');
         exit;
     } else {
         $body = json_decode($response, true);
-        $error = $body['error'] ?? "Erreur lors de la création du compte (code $statusCode)";
+        $error = $body['error'] ?? t('account_create_error') . " (code $statusCode)";
     }
 
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= currentLang() ?>">
 <head>
     <meta charset="UTF-8">
-    <title>NO MORE WASTE - Créer un compte commerçant</title>
+    <title><?= t('adherent_register_title') ?></title>
 </head>
 <body>
-    <h1>Créer un compte - Commerçant</h1>
+    <h1><?= t('adherent_register_heading') ?></h1>
 
     <?php if ($error): ?>
         <p style="color:red;"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
     <form method="post" action="">
-        <label>Nom du commerce : <input type="text" name="nom_commerce" required></label><br>
-        <label>SIRET : <input type="text" name="siret" required></label><br>
-        <label>Adresse : <input type="text" name="adresse" required></label><br>
-        <label>Code postal : <input type="text" name="code_postal" required></label><br>
-        <label>Ville : <input type="text" name="ville" required></label><br>
-        <label>Téléphone : <input type="tel" name="telephone"></label><br>
-        <label>Email : <input type="email" name="email" required></label><br>
-        <label>Mot de passe : <input type="password" name="password" required></label><br>
-        <button type="submit">Créer mon compte</button>
+        <label><?= t('nom_commerce_label') ?> : <input type="text" name="nom_commerce" required></label><br>
+        <label><?= t('siret_label') ?> : <input type="text" name="siret" required></label><br>
+        <label><?= t('adresse_label') ?> : <input type="text" name="adresse" required></label><br>
+        <label><?= t('code_postal_label') ?> : <input type="text" name="code_postal" required></label><br>
+        <label><?= t('ville_label') ?> : <input type="text" name="ville" required></label><br>
+        <label><?= t('telephone_label') ?> : <input type="tel" name="telephone"></label><br>
+        <label><?= t('email_label') ?> : <input type="email" name="email" required></label><br>
+        <label><?= t('password_label') ?> : <input type="password" name="password" required></label><br>
+        <button type="submit"><?= t('create_account_button') ?></button>
     </form>
 
-    <p><a href="index.php">&larr; Retour à la connexion</a></p>
+    <p><a href="index.php"><?= t("back_to_login_link") ?></a></p>
+    <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
 </body>
 </html>

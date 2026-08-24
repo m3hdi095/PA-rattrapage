@@ -1,0 +1,53 @@
+{
+    "site_title": "NO MORE WASTE",
+    "home_choose_space": "Choisissez votre espace :",
+    "home_admin_space": "Espace Administration",
+    "home_adherent_space": "Espace Commerçant (adhérent)",
+    "home_benevole_space": "Espace Bénévole",
+
+    "email_label": "Email",
+    "password_label": "Mot de passe",
+    "login_button": "Se connecter",
+    "back_link": "← Retour",
+    "login_error": "Email ou mot de passe incorrect",
+    "api_unreachable_error": "Impossible de contacter l'API. Vérifie que l'API Go tourne bien sur le port 8081.",
+    "token_label": "Token :",
+
+    "admin_page_title": "NO MORE WASTE - Administration",
+    "admin_login_title": "Connexion - Espace Administration",
+
+    "adherent_page_title": "NO MORE WASTE - Espace Commerçant",
+    "adherent_login_title": "Connexion - Espace Commerçant",
+    "account_created_msg": "Compte créé ! Tu peux te connecter.",
+    "adherent_connected_msg": "Connecté ! (espace adherent pas encore construit, mais le token est bien en session)",
+    "adherent_no_account_link": "Pas encore de compte ? Créer un compte commerçant",
+
+    "benevole_page_title": "NO MORE WASTE - Espace Bénévole",
+    "benevole_login_title": "Connexion - Espace Bénévole",
+    "candidature_sent_msg": "Candidature envoyée ! Ton compte doit être validé par un administrateur avant de pouvoir te connecter.",
+    "benevole_connected_msg": "Connecté ! (espace bénévole pas encore construit, mais le token est bien en session)",
+    "benevole_no_account_link": "Pas encore de compte ? Devenir bénévole",
+
+    "adherent_register_title": "NO MORE WASTE - Créer un compte commerçant",
+    "adherent_register_heading": "Créer un compte - Commerçant",
+    "nom_commerce_label": "Nom du commerce",
+    "siret_label": "SIRET",
+    "adresse_label": "Adresse",
+    "code_postal_label": "Code postal",
+    "ville_label": "Ville",
+    "telephone_label": "Téléphone",
+    "create_account_button": "Créer mon compte",
+    "back_to_login_link": "← Retour à la connexion",
+    "account_create_error": "Erreur lors de la création du compte",
+
+    "benevole_register_title": "NO MORE WASTE - Devenir bénévole",
+    "benevole_register_heading": "Créer un compte - Bénévole",
+    "nom_label": "Nom",
+    "prenom_label": "Prénom",
+    "competences_legend": "Compétences proposées",
+    "chauffeur_label": "Chauffeur",
+    "cuisinier_label": "Cuisinier",
+    "plombier_label": "Plombier",
+    "electricien_label": "Électricien",
+    "send_candidature_button": "Envoyer ma candidature"
+}

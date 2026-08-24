@@ -1,19 +1,20 @@
 <?php
-// Page d'accueil : permet de choisir l'espace de connexion
+require_once __DIR__ . '/includes/i18n.php';
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= currentLang() ?>">
 <head>
     <meta charset="UTF-8">
-    <title>NO MORE WASTE</title>
+    <title><?= t('site_title') ?></title>
 </head>
 <body>
-    <h1>NO MORE WASTE</h1>
-    <p>Choisissez votre espace :</p>
+    <h1><?= t('site_title') ?></h1>
+    <p><?= t('home_choose_space') ?></p>
     <ul>
-        <li><a href="admin/index.php">Espace Administration</a></li>
-        <li><a href="adherent/index.php">Espace Commerçant (adhérent)</a></li>
-        <li><a href="benevole/index.php">Espace Bénévole</a></li>
+        <li><a href="admin/index.php"><?= t('home_admin_space') ?></a></li>
+        <li><a href="adherent/index.php"><?= t('home_adherent_space') ?></a></li>
+        <li><a href="benevole/index.php"><?= t('home_benevole_space') ?></a></li>
     </ul>
+    <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
 </body>
 </html>

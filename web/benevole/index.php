@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/api.php';
 
 if (isset($_SESSION['token']) && isset($_SESSION['role']) && $_SESSION['role'] === 'benevole' && !isset($_GET['connected'])) {
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: index.php?connected=1');
             exit;
         } else {
-            $error = "Email ou mot de passe incorrect";
+            $error = t('login_error');
         }
     } catch (Exception $e) {
         $error = $e->getMessage();
@@ -34,34 +34,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= currentLang() ?>">
 <head>
     <meta charset="UTF-8">
-    <title>NO MORE WASTE - Espace Bénévole</title>
+    <title><?= t('benevole_page_title') ?></title>
 </head>
 <body>
-    <h1>Connexion - Espace Bénévole</h1>
+    <h1><?= t('benevole_login_title') ?></h1>
 
     <?php if ($error): ?>
         <p style="color:red;"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
     <?php if (isset($_GET['created'])): ?>
-        <p style="color:green;">Candidature envoyée ! Ton compte doit être validé par un administrateur avant de pouvoir te connecter.</p>
+        <p style="color:green;"><?= t('candidature_sent_msg') ?></p>
     <?php endif; ?>
 
     <?php if (isset($_GET['connected']) && isset($_SESSION['token'])): ?>
-        <p style="color:green;">Connecté ! (espace bénévole pas encore construit, mais le token est bien en session)</p>
-        <p style="font-size:0.8em;word-break:break-all;">Token : <?= htmlspecialchars($_SESSION['token']) ?></p>
+        <p style="color:green;"><?= t('benevole_connected_msg') ?></p>
+        <p style="font-size:0.8em;word-break:break-all;"><?= t('token_label') ?> <?= htmlspecialchars($_SESSION['token']) ?></p>
     <?php endif; ?>
 
     <form method="post" action="">
-        <label>Email : <input type="email" name="email" required></label><br>
-        <label>Mot de passe : <input type="password" name="password" required></label><br>
-        <button type="submit">Se connecter</button>
+        <label><?= t('email_label') ?> : <input type="email" name="email" required></label><br>
+        <label><?= t('password_label') ?> : <input type="password" name="password" required></label><br>
+        <button type="submit"><?= t('login_button') ?></button>
     </form>
 
-    <p><a href="register.php">Pas encore de compte ? Devenir bénévole</a></p>
-    <p><a href="../index.php">&larr; Retour</a></p>
+    <p><a href="register.php"><?= t('benevole_no_account_link') ?></a></p>
+    <p><a href="../index.php"><?= t("back_link") ?></a></p>
+    <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
 </body>
 </html>

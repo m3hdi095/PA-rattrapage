@@ -8,7 +8,7 @@ import (
 func CreateAdmin(admin *models.Admin) (int, error) {
 	tx, err := Connection.Begin()
 	if err != nil {
-		return 0, fmt.Errorf("failed to start transaction: %v", err)
+		return 0, fmt.Errorf("failed to start transaction: %w", err)
 	}
 	defer tx.Rollback()
 
@@ -17,17 +17,17 @@ func CreateAdmin(admin *models.Admin) (int, error) {
 		admin.Email, admin.PasswordHash, admin.Nom, admin.Prenom,
 	)
 	if err != nil {
-		return 0, fmt.Errorf("failed to create admin: %v", err)
+		return 0, fmt.Errorf("failed to create admin: %w", err)
 	}
 
 	id64, err := res.LastInsertId()
 	if err != nil {
-		return 0, fmt.Errorf("failed to get inserted id: %v", err)
+		return 0, fmt.Errorf("failed to get inserted id: %w", err)
 	}
 	id := int(id64)
 
 	if err := tx.Commit(); err != nil {
-		return 0, fmt.Errorf("failed to commit transaction: %v", err)
+		return 0, fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	admin.ID = id

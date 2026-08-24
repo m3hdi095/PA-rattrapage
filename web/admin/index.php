@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/api.php';
 
 if (isset($_SESSION['token']) && isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: benevoles.php');
             exit;
         } else {
-            $error = "Email ou mot de passe incorrect";
+            $error = t('login_error');
         }
     } catch (Exception $e) {
         $error = $e->getMessage();
@@ -33,24 +33,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= currentLang() ?>">
 <head>
     <meta charset="UTF-8">
-    <title>NO MORE WASTE - Administration</title>
+    <title><?= t('admin_page_title') ?></title>
 </head>
 <body>
-    <h1>Connexion - Espace Administration</h1>
+    <h1><?= t('admin_login_title') ?></h1>
 
     <?php if ($error): ?>
         <p style="color:red;"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
     <form method="post" action="">
-        <label>Email : <input type="email" name="email" required></label><br>
-        <label>Mot de passe : <input type="password" name="password" required></label><br>
-        <button type="submit">Se connecter</button>
+        <label><?= t('email_label') ?> : <input type="email" name="email" required></label><br>
+        <label><?= t('password_label') ?> : <input type="password" name="password" required></label><br>
+        <button type="submit"><?= t('login_button') ?></button>
     </form>
 
-    <p><a href="../index.php">&larr; Retour</a></p>
+    <p><a href="../index.php"><?= t("back_link") ?></a></p>
+    <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
 </body>
 </html>

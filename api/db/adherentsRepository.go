@@ -8,7 +8,7 @@ import (
 func CreateAdherent(adherent *models.Adherent) (int, error) {
 	tx, err := Connection.Begin()
 	if err != nil {
-		return 0, fmt.Errorf("failed to start transaction: %v", err)
+		return 0, fmt.Errorf("failed to start transaction: %w", err)
 	}
 	defer tx.Rollback()
 
@@ -17,17 +17,17 @@ func CreateAdherent(adherent *models.Adherent) (int, error) {
 		adherent.Email, adherent.PasswordHash, adherent.Nom, adherent.Siret, adherent.Adresse, adherent.CodePostal, adherent.Ville, adherent.Telephone, adherent.DateAdhesion, adherent.DateExpiration,
 	)
 	if err != nil {
-		return 0, fmt.Errorf("failed to create adherent: %v", err)
+		return 0, fmt.Errorf("failed to create adherent: %w", err)
 	}
 
 	id64, err := res.LastInsertId()
 	if err != nil {
-		return 0, fmt.Errorf("failed to get inserted id: %v", err)
+		return 0, fmt.Errorf("failed to get inserted id: %w", err)
 	}
 	id := int(id64)
 
 	if err := tx.Commit(); err != nil {
-		return 0, fmt.Errorf("failed to commit transaction: %v", err)
+		return 0, fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	adherent.ID = id
