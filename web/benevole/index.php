@@ -25,6 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['role'] = 'benevole';
             header('Location: index.php?connected=1');
             exit;
+        } elseif ($result['statusCode'] === 403) {
+            $error = t('benevole_not_validated_error');
         } else {
             $error = t('login_error');
         }

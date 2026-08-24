@@ -37,6 +37,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "email ou mot de passe incorrect", http.StatusUnauthorized)
 			return
 		}
+		if benevole.StatutCandidature != "valide" {
+			http.Error(w, "ta candidature n'a pas encore été validée par un administrateur", http.StatusForbidden)
+			return
+		}
 		token, err := utils.GenerateJWT(benevole.ID, "benevole")
 		if err != nil {
 			http.Error(w, "erreur lors de la génération du token", http.StatusInternalServerError)

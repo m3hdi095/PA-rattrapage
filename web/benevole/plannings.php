@@ -19,6 +19,30 @@ try {
     $error = $e->getMessage();
 }
 
+$services = [];
+try {
+    $result = apiRequest('GET', '/services', null, $_SESSION['token']);
+    $services = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
+$servicesById = [];
+foreach ($services as $s) {
+    $servicesById[$s['id']] = $s['nom'];
+}
+
+// GET /benevoles est réservé aux admins : on ne peut pas résoudre le nom des
+// autres bénévoles ici. On identifie juste sa propre ligne via l'id contenu
+// dans le token (lecture des claims, pas de vérification de signature :
+// l'authentification est déjà assurée côté API pour toutes les vraies actions).
+$ownBenevoleId = null;
+$tokenParts = explode('.', $_SESSION['token']);
+if (count($tokenParts) === 3) {
+    $payload = json_decode(base64_decode(strtr($tokenParts[1], '-_', '+/')), true);
+    $ownBenevoleId = $payload['id'] ?? null;
+}
+
 require __DIR__ . '/../includes/header_benevole.php';
 ?>
 
@@ -34,8 +58,8 @@ require __DIR__ . '/../includes/header_benevole.php';
 <table border="1" cellpadding="6">
     <tr>
         <th>ID</th>
-        <th>Service (id)</th>
-        <th>Bénévole (id)</th>
+        <th>Service</th>
+        <th>Bénévole</th>
         <th>Début</th>
         <th>Fin</th>
         <th>Lieu</th>
@@ -43,8 +67,8 @@ require __DIR__ . '/../includes/header_benevole.php';
     <?php foreach ($plannings as $p): ?>
     <tr>
         <td><?= htmlspecialchars($p['id']) ?></td>
-        <td><?= htmlspecialchars($p['service_id']) ?></td>
-        <td><?= htmlspecialchars($p['benevole_id']) ?></td>
+        <td><?= htmlspecialchars($servicesById[$p['service_id']] ?? ('service #' . $p['service_id'])) ?></td>
+        <td><?= $p['benevole_id'] === $ownBenevoleId ? 'Moi' : htmlspecialchars('bénévole #' . $p['benevole_id']) ?></td>
         <td><?= htmlspecialchars($p['date_debut']) ?></td>
         <td><?= htmlspecialchars($p['date_fin']) ?></td>
         <td><?= htmlspecialchars($p['lieu']) ?></td>

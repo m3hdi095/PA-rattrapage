@@ -43,6 +43,32 @@ try {
     $error = $e->getMessage();
 }
 
+$collectes = [];
+try {
+    $result = apiRequest('GET', '/collectes', null, $_SESSION['token']);
+    $collectes = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
+$adherents = [];
+try {
+    $result = apiRequest('GET', '/adherents', null, $_SESSION['token']);
+    $adherents = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
+$adherentsById = [];
+foreach ($adherents as $a) {
+    $adherentsById[$a['id']] = $a['nom'];
+}
+
+$collectesById = [];
+foreach ($collectes as $c) {
+    $collectesById[$c['id']] = 'Collecte #' . $c['id'] . ' — ' . ($adherentsById[$c['adherent_id']] ?? ('adhérent #' . $c['adherent_id']));
+}
+
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
@@ -54,7 +80,14 @@ require __DIR__ . '/../includes/header_admin.php';
 
 <h3>Ajouter un produit</h3>
 <form method="post">
-    <label>ID de la collecte : <input type="number" name="collecte_id" required></label><br>
+    <label>Collecte :
+        <select name="collecte_id" required>
+            <option value="">-- Choisir --</option>
+            <?php foreach ($collectes as $c): ?>
+                <option value="<?= (int) $c['id'] ?>">Collecte #<?= (int) $c['id'] ?> — <?= htmlspecialchars($adherentsById[$c['adherent_id']] ?? ('adhérent #' . $c['adherent_id'])) ?> — <?= htmlspecialchars($c['date_collecte']) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </label><br>
     <label>Code-barre : <input type="text" name="code_barre" required></label><br>
     <label>Nom : <input type="text" name="nom" required></label><br>
     <label>Quantité : <input type="number" name="quantite" value="1" required></label><br>
@@ -79,7 +112,7 @@ require __DIR__ . '/../includes/header_admin.php';
     <?php foreach ($produits as $p): ?>
     <tr>
         <td><?= htmlspecialchars($p['id']) ?></td>
-        <td><?= htmlspecialchars($p['collecte_id']) ?></td>
+        <td><?= htmlspecialchars($collectesById[$p['collecte_id']] ?? ('collecte #' . $p['collecte_id'])) ?></td>
         <td><?= htmlspecialchars($p['code_barre']) ?></td>
         <td><?= htmlspecialchars($p['nom']) ?></td>
         <td><?= htmlspecialchars($p['quantite']) ?></td>

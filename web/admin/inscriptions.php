@@ -20,13 +20,56 @@ if ($planningId !== null) {
     }
 }
 
+$plannings = [];
+try {
+    $result = apiRequest('GET', '/plannings', null, $_SESSION['token']);
+    $plannings = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
+$services = [];
+try {
+    $result = apiRequest('GET', '/services', null, $_SESSION['token']);
+    $services = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
+$servicesById = [];
+foreach ($services as $s) {
+    $servicesById[$s['id']] = $s['nom'];
+}
+
+$adherents = [];
+try {
+    $result = apiRequest('GET', '/adherents', null, $_SESSION['token']);
+    $adherents = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
+$adherentsById = [];
+foreach ($adherents as $a) {
+    $adherentsById[$a['id']] = $a['nom'];
+}
+
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
 <h2>Inscriptions à un créneau</h2>
 
 <form method="get">
-    <label>ID du planning : <input type="number" name="planning_id" value="<?= htmlspecialchars($planningId ?? '') ?>" required></label>
+    <label>Planning :
+        <select name="planning_id" required>
+            <option value="">-- Choisir --</option>
+            <?php foreach ($plannings as $p): ?>
+                <option value="<?= (int) $p['id'] ?>" <?= $p['id'] === $planningId ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($servicesById[$p['service_id']] ?? ('service #' . $p['service_id'])) ?> — <?= htmlspecialchars($p['date_debut']) ?> (<?= htmlspecialchars($p['lieu']) ?>)
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </label>
     <button type="submit">Voir les inscriptions</button>
 </form>
 
@@ -38,13 +81,13 @@ require __DIR__ . '/../includes/header_admin.php';
 <table border="1" cellpadding="6">
     <tr>
         <th>ID</th>
-        <th>Adhérent (id)</th>
+        <th>Adhérent</th>
         <th>Statut</th>
     </tr>
     <?php foreach ($inscriptions as $i): ?>
     <tr>
         <td><?= htmlspecialchars($i['id']) ?></td>
-        <td><?= htmlspecialchars($i['adherent_id']) ?></td>
+        <td><?= htmlspecialchars($adherentsById[$i['adherent_id']] ?? ('adhérent #' . $i['adherent_id'])) ?></td>
         <td><?= htmlspecialchars($i['statut']) ?></td>
     </tr>
     <?php endforeach; ?>

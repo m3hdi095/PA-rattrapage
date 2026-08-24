@@ -46,6 +46,40 @@ try {
     $error = $e->getMessage();
 }
 
+$tournees = [];
+try {
+    $result = apiRequest('GET', '/tournees', null, $_SESSION['token']);
+    $tournees = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
+$destinataires = [];
+try {
+    $result = apiRequest('GET', '/destinataires', null, $_SESSION['token']);
+    $destinataires = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
+$produits = [];
+try {
+    $result = apiRequest('GET', '/produits', null, $_SESSION['token']);
+    $produits = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
+$destinatairesById = [];
+foreach ($destinataires as $d) {
+    $destinatairesById[$d['id']] = $d['nom'];
+}
+
+$tourneesById = [];
+foreach ($tournees as $t) {
+    $tourneesById[$t['id']] = 'Tournée #' . $t['id'] . ' — ' . $t['date_tournee'];
+}
+
 $token = $_SESSION['token'];
 
 require __DIR__ . '/../includes/header_admin.php';
@@ -62,16 +96,44 @@ require __DIR__ . '/../includes/header_admin.php';
 <h3>Créer une livraison</h3>
 <form method="post">
     <input type="hidden" name="action" value="create">
-    <label>ID de la tournée : <input type="number" name="tournee_id" required></label><br>
-    <label>ID du destinataire : <input type="number" name="destinataire_id" required></label><br>
+    <label>Tournée :
+        <select name="tournee_id" required>
+            <option value="">-- Choisir --</option>
+            <?php foreach ($tournees as $t): ?>
+                <option value="<?= (int) $t['id'] ?>">Tournée #<?= (int) $t['id'] ?> — <?= htmlspecialchars($t['date_tournee']) ?> (<?= htmlspecialchars($t['statut']) ?>)</option>
+            <?php endforeach; ?>
+        </select>
+    </label><br>
+    <label>Destinataire :
+        <select name="destinataire_id" required>
+            <option value="">-- Choisir --</option>
+            <?php foreach ($destinataires as $d): ?>
+                <option value="<?= (int) $d['id'] ?>"><?= htmlspecialchars($d['nom']) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </label><br>
     <button type="submit">Créer</button>
 </form>
 
 <h3>Ajouter un produit à une livraison</h3>
 <form method="post">
     <input type="hidden" name="action" value="add_produit">
-    <label>ID de la livraison : <input type="number" name="livraison_id" required></label><br>
-    <label>ID du produit : <input type="number" name="produit_id" required></label><br>
+    <label>Livraison :
+        <select name="livraison_id" required>
+            <option value="">-- Choisir --</option>
+            <?php foreach ($livraisons as $l): ?>
+                <option value="<?= (int) $l['id'] ?>">Livraison #<?= (int) $l['id'] ?> — <?= htmlspecialchars($destinatairesById[$l['destinataire_id']] ?? ('destinataire #' . $l['destinataire_id'])) ?> (<?= htmlspecialchars($l['statut']) ?>)</option>
+            <?php endforeach; ?>
+        </select>
+    </label><br>
+    <label>Produit :
+        <select name="produit_id" required>
+            <option value="">-- Choisir --</option>
+            <?php foreach ($produits as $p): ?>
+                <option value="<?= (int) $p['id'] ?>"><?= htmlspecialchars($p['nom'] . ' (' . $p['code_barre'] . ')') ?></option>
+            <?php endforeach; ?>
+        </select>
+    </label><br>
     <label>Quantité : <input type="number" name="quantite" value="1" required></label><br>
     <button type="submit">Ajouter</button>
 </form>
@@ -88,8 +150,8 @@ require __DIR__ . '/../includes/header_admin.php';
     <?php foreach ($livraisons as $l): ?>
     <tr>
         <td><?= htmlspecialchars($l['id']) ?></td>
-        <td><?= htmlspecialchars($l['tournee_id']) ?></td>
-        <td><?= htmlspecialchars($l['destinataire_id']) ?></td>
+        <td><?= htmlspecialchars($tourneesById[$l['tournee_id']] ?? ('tournée #' . $l['tournee_id'])) ?></td>
+        <td><?= htmlspecialchars($destinatairesById[$l['destinataire_id']] ?? ('destinataire #' . $l['destinataire_id'])) ?></td>
         <td><?= htmlspecialchars($l['statut']) ?></td>
         <td>
             <?php foreach (['prevue', 'livree', 'annulee'] as $statut): ?>

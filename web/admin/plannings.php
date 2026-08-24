@@ -38,6 +38,32 @@ try {
     $error = $e->getMessage();
 }
 
+$services = [];
+try {
+    $result = apiRequest('GET', '/services', null, $_SESSION['token']);
+    $services = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
+$benevoles = [];
+try {
+    $result = apiRequest('GET', '/benevoles', null, $_SESSION['token']);
+    $benevoles = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
+$servicesById = [];
+foreach ($services as $s) {
+    $servicesById[$s['id']] = $s['nom'];
+}
+
+$benevolesById = [];
+foreach ($benevoles as $b) {
+    $benevolesById[$b['id']] = $b['nom'] . ' ' . $b['prenom'];
+}
+
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
@@ -49,8 +75,22 @@ require __DIR__ . '/../includes/header_admin.php';
 
 <h3>Créer un créneau</h3>
 <form method="post">
-    <label>ID du service : <input type="number" name="service_id" required></label><br>
-    <label>ID du bénévole affecté : <input type="number" name="benevole_id" required></label><br>
+    <label>Service :
+        <select name="service_id" required>
+            <option value="">-- Choisir --</option>
+            <?php foreach ($services as $s): ?>
+                <option value="<?= (int) $s['id'] ?>"><?= htmlspecialchars($s['nom']) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </label><br>
+    <label>Bénévole affecté :
+        <select name="benevole_id" required>
+            <option value="">-- Choisir --</option>
+            <?php foreach ($benevoles as $b): ?>
+                <option value="<?= (int) $b['id'] ?>"><?= htmlspecialchars($b['nom'] . ' ' . $b['prenom']) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </label><br>
     <label>Date/heure début : <input type="datetime-local" name="date_debut" required></label><br>
     <label>Date/heure fin : <input type="datetime-local" name="date_fin" required></label><br>
     <label>Lieu : <input type="text" name="lieu"></label><br>
@@ -62,8 +102,8 @@ require __DIR__ . '/../includes/header_admin.php';
 <table border="1" cellpadding="6">
     <tr>
         <th>ID</th>
-        <th>Service (id)</th>
-        <th>Bénévole (id)</th>
+        <th>Service</th>
+        <th>Bénévole</th>
         <th>Début</th>
         <th>Fin</th>
         <th>Lieu</th>
@@ -73,8 +113,8 @@ require __DIR__ . '/../includes/header_admin.php';
     <?php foreach ($plannings as $p): ?>
     <tr>
         <td><?= htmlspecialchars($p['id']) ?></td>
-        <td><?= htmlspecialchars($p['service_id']) ?></td>
-        <td><?= htmlspecialchars($p['benevole_id']) ?></td>
+        <td><?= htmlspecialchars($servicesById[$p['service_id']] ?? ('service #' . $p['service_id'])) ?></td>
+        <td><?= htmlspecialchars($benevolesById[$p['benevole_id']] ?? ('bénévole #' . $p['benevole_id'])) ?></td>
         <td><?= htmlspecialchars($p['date_debut']) ?></td>
         <td><?= htmlspecialchars($p['date_fin']) ?></td>
         <td><?= htmlspecialchars($p['lieu']) ?></td>

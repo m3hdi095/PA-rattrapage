@@ -34,6 +34,19 @@ try {
     $error = $e->getMessage();
 }
 
+$adherents = [];
+try {
+    $result = apiRequest('GET', '/adherents', null, $_SESSION['token']);
+    $adherents = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
+$adherentsById = [];
+foreach ($adherents as $a) {
+    $adherentsById[$a['id']] = $a['nom'];
+}
+
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
@@ -46,7 +59,7 @@ require __DIR__ . '/../includes/header_admin.php';
 <table border="1" cellpadding="6">
     <tr>
         <th>ID</th>
-        <th>Adhérent (id)</th>
+        <th>Adhérent</th>
         <th>Date collecte</th>
         <th>Statut</th>
         <th>Actions</th>
@@ -54,7 +67,7 @@ require __DIR__ . '/../includes/header_admin.php';
     <?php foreach ($collectes as $c): ?>
     <tr>
         <td><?= htmlspecialchars($c['id']) ?></td>
-        <td><?= htmlspecialchars($c['adherent_id']) ?></td>
+        <td><?= htmlspecialchars($adherentsById[$c['adherent_id']] ?? ('adhérent #' . $c['adherent_id'])) ?></td>
         <td><?= htmlspecialchars($c['date_collecte']) ?></td>
         <td><?= htmlspecialchars($c['statut']) ?></td>
         <td>

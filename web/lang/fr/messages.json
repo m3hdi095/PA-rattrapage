@@ -27,6 +27,7 @@
     "candidature_sent_msg": "Candidature envoyée ! Ton compte doit être validé par un administrateur avant de pouvoir te connecter.",
     "benevole_connected_msg": "Connecté ! (espace bénévole pas encore construit, mais le token est bien en session)",
     "benevole_no_account_link": "Pas encore de compte ? Devenir bénévole",
+    "benevole_not_validated_error": "Ta candidature n'a pas encore été validée par un administrateur.",
 
     "adherent_register_title": "NO MORE WASTE - Créer un compte commerçant",
     "adherent_register_heading": "Créer un compte - Commerçant",

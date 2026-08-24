@@ -27,6 +27,7 @@
     "candidature_sent_msg": "Application sent! Your account must be validated by an admin before you can log in.",
     "benevole_connected_msg": "Connected! (volunteer area not built yet, but the token is in session)",
     "benevole_no_account_link": "No account yet? Become a volunteer",
+    "benevole_not_validated_error": "Your application has not been validated by an admin yet.",
 
     "adherent_register_title": "NO MORE WASTE - Create a merchant account",
     "adherent_register_heading": "Create an account - Merchant",

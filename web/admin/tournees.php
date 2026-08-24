@@ -39,6 +39,19 @@ try {
     $error = $e->getMessage();
 }
 
+$benevoles = [];
+try {
+    $result = apiRequest('GET', '/benevoles', null, $_SESSION['token']);
+    $benevoles = $result['body'] ?? [];
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+
+$benevolesById = [];
+foreach ($benevoles as $b) {
+    $benevolesById[$b['id']] = $b['nom'] . ' ' . $b['prenom'];
+}
+
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
@@ -50,7 +63,14 @@ require __DIR__ . '/../includes/header_admin.php';
 
 <h3>Créer une tournée</h3>
 <form method="post">
-    <label>ID du bénévole (chauffeur) : <input type="number" name="benevole_id" required></label><br>
+    <label>Bénévole (chauffeur) :
+        <select name="benevole_id" required>
+            <option value="">-- Choisir --</option>
+            <?php foreach ($benevoles as $b): ?>
+                <option value="<?= (int) $b['id'] ?>"><?= htmlspecialchars($b['nom'] . ' ' . $b['prenom']) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </label><br>
     <label>Date : <input type="date" name="date_tournee" required></label><br>
     <button type="submit">Créer</button>
 </form>
@@ -59,7 +79,7 @@ require __DIR__ . '/../includes/header_admin.php';
 <table border="1" cellpadding="6">
     <tr>
         <th>ID</th>
-        <th>Bénévole (id)</th>
+        <th>Bénévole</th>
         <th>Date</th>
         <th>Statut</th>
         <th>Actions</th>
@@ -67,7 +87,7 @@ require __DIR__ . '/../includes/header_admin.php';
     <?php foreach ($tournees as $t): ?>
     <tr>
         <td><?= htmlspecialchars($t['id']) ?></td>
-        <td><?= htmlspecialchars($t['benevole_id']) ?></td>
+        <td><?= htmlspecialchars($benevolesById[$t['benevole_id']] ?? ('bénévole #' . $t['benevole_id'])) ?></td>
         <td><?= htmlspecialchars($t['date_tournee']) ?></td>
         <td><?= htmlspecialchars($t['statut']) ?></td>
         <td>
