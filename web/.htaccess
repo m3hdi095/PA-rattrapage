@@ -1,0 +1,16 @@
+Options -Indexes
+
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+
+ErrorDocument 403 /PA-rattrapage/web/403.php
+ErrorDocument 404 /PA-rattrapage/web/404.php
+ErrorDocument 500 /PA-rattrapage/web/500.php
+
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php [L]
