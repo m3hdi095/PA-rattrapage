@@ -1,0 +1,9 @@
+nomorewaste.xyz, www.nomorewaste.xyz {
+    handle /api/* {
+        uri strip_prefix /api
+        reverse_proxy api:8081
+    }
+    handle {
+        reverse_proxy web:80
+    }
+}
