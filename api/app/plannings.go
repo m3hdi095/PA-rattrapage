@@ -67,8 +67,6 @@ func ListPlannings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Lecture ouverte, même raison que ListServices.
-
 	plannings, err := db.GetAllPlannings()
 	if err != nil {
 		http.Error(w, "erreur lors de la récupération des plannings", http.StatusInternalServerError)

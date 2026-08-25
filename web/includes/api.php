@@ -1,8 +1,13 @@
 <?php
 
-function apiRequest($method, $endpoint, $data = null, $token = null) : array 
+function apiBaseUrl(): string
 {
-    $url = 'http://localhost:8081' . $endpoint;
+    return getenv('API_BASE_URL') ?: 'http://localhost:8081';
+}
+
+function apiRequest($method, $endpoint, $data = null, $token = null) : array
+{
+    $url = apiBaseUrl() . $endpoint;
     $ch = curl_init($url);
 
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
@@ -33,13 +38,9 @@ function apiRequest($method, $endpoint, $data = null, $token = null) : array
     ];
 }
 
-/**
- * Comme apiRequest, mais sans décodage JSON du corps — pour les réponses
- * binaires (ex: le fichier Excel des plannings).
- */
 function apiRequestRaw($method, $endpoint, $token = null): array
 {
-    $url = 'http://localhost:8081' . $endpoint;
+    $url = apiBaseUrl() . $endpoint;
     $ch = curl_init($url);
 
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
@@ -68,11 +69,6 @@ function apiRequestRaw($method, $endpoint, $token = null): array
     ];
 }
 
-/**
- * Lit les claims d'un JWT sans vérifier la signature (déjà faite côté API) —
- * uniquement pour affichage/branchement UI (ex: savoir si l'admin connecté
- * est super_admin), jamais pour une décision de sécurité côté PHP.
- */
 function jwtClaims(string $token): array
 {
     $parts = explode('.', $token);

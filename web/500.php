@@ -1,7 +1,4 @@
 <?php
-// Page volontairement minimale et sans dépendance (pas d'include, pas de
-// session) : elle doit pouvoir s'afficher même si le reste de l'appli est
-// cassé, puisque c'est justement pour ça qu'elle est appelée.
 http_response_code(500);
 $base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 ?>

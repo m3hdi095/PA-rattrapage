@@ -32,8 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($result['statusCode'] >= 400) {
                 $error = $result['body']['error'] ?? "Impossible de créer ce bénévole.";
             } else {
-                // Un bénévole créé directement par un admin est considéré comme
-                // déjà vérifié : pas besoin de repasser par la case "Valider".
                 apiRequest('PATCH', '/benevoles/valider', ['id' => $result['body']['id']], $_SESSION['token']);
             }
         }
@@ -59,7 +57,6 @@ try {
     $result = apiRequest('GET', '/capacites');
     $capacitesDisponibles = $result['body'] ?? [];
 } catch (Exception $e) {
-    // Pas bloquant : le select sera juste vide si l'API est indisponible.
 }
 
 require __DIR__ . '/../includes/header_admin.php';

@@ -1,6 +1,4 @@
 <?php
-// Header commun aux pages admin. A inclure après session_start() et le check
-// du role admin. Suppose que la page courante est dans web/admin/.
 $currentPage = basename($_SERVER['PHP_SELF']);
 function navClass($page, $currentPage) {
     return $page === $currentPage ? 'active' : '';

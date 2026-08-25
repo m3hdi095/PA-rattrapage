@@ -10,9 +10,6 @@ if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'benevole') {
 $error = null;
 $plannings = [];
 try {
-    // GET /plannings renvoie tous les créneaux (pas de filtre par bénévole côté
-    // liste) — le filtrage par bénévole connecté se fait côté API uniquement
-    // pour l'export Excel ci-dessous (via le token).
     $result = apiRequest('GET', '/plannings', null, $_SESSION['token']);
     $plannings = $result['body'] ?? [];
 } catch (Exception $e) {
@@ -32,9 +29,6 @@ foreach ($services as $s) {
     $servicesById[$s['id']] = $s['nom'];
 }
 
-// GET /benevoles est réservé aux admins : on ne peut pas résoudre le nom des
-// autres bénévoles ici. On identifie juste sa propre ligne via l'id contenu
-// dans le token.
 $ownBenevoleId = jwtClaims($_SESSION['token'])['id'] ?? null;
 
 require __DIR__ . '/../includes/header_benevole.php';

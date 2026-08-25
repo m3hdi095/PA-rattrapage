@@ -60,9 +60,6 @@ func ListServices(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Lecture ouverte à tout utilisateur connecté : les adhérents doivent
-	// pouvoir parcourir les services pour s'y inscrire.
-
 	services, err := db.GetAllServices()
 	if err != nil {
 		http.Error(w, "erreur lors de la récupération des services", http.StatusInternalServerError)

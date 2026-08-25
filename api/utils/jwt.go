@@ -13,9 +13,6 @@ func GenerateJWT(id int, role string) (string, error) {
 	return GenerateJWTWithAdminRole(id, role, "")
 }
 
-// GenerateJWTWithAdminRole embarque en plus le sous-rôle admin/super_admin
-// (vide pour les adhérents et bénévoles) pour éviter un aller-retour DB à
-// chaque requête protégée réservée aux super_admins.
 func GenerateJWTWithAdminRole(id int, role string, adminRole string) (string, error) {
 	claims := jwt.MapClaims{
 		"id":         id,

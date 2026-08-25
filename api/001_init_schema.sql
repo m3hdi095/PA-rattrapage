@@ -1,9 +1,3 @@
--- =====================================================================
--- NO MORE WASTE - Schéma de base de données
--- Basé sur "Mission 1 : développement des applications" du rattrapage 2ESGI
--- A importer via phpMyAdmin (WAMP) ou : mysql -u root -p < 001_init_schema.sql
--- =====================================================================
-
 CREATE DATABASE IF NOT EXISTS no_more_waste
     CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -24,12 +18,6 @@ DROP TABLE IF EXISTS benevoles;
 DROP TABLE IF EXISTS adherents;
 DROP TABLE IF EXISTS admins;
 
--- ---------------------------------------------------------------------
--- Comptes
--- ---------------------------------------------------------------------
-
--- role : un super_admin peut créer/supprimer des comptes admin et super_admin,
--- un admin simple ne peut pas gérer les autres comptes admin.
 CREATE TABLE admins (
     id            INT AUTO_INCREMENT PRIMARY KEY,
     email         VARCHAR(190) NOT NULL UNIQUE,
@@ -39,7 +27,6 @@ CREATE TABLE admins (
     role          ENUM('admin', 'super_admin') NOT NULL DEFAULT 'admin'
 ) ENGINE=InnoDB;
 
--- Adhérents = commerçants. date_expiration sert au rappel automatique de renouvellement.
 CREATE TABLE adherents (
     id              INT AUTO_INCREMENT PRIMARY KEY,
     email           VARCHAR(190) NOT NULL UNIQUE,
@@ -54,7 +41,6 @@ CREATE TABLE adherents (
     date_expiration DATE NOT NULL
 ) ENGINE=InnoDB;
 
--- statut_candidature : suivi du bénévole depuis sa candidature jusqu'à sa validation
 CREATE TABLE benevoles (
     id                  INT AUTO_INCREMENT PRIMARY KEY,
     email               VARCHAR(190) NOT NULL UNIQUE,
@@ -78,11 +64,6 @@ CREATE TABLE benevole_capacites (
     CONSTRAINT fk_bc_capacite FOREIGN KEY (capacite_id) REFERENCES capacites(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- ---------------------------------------------------------------------
--- Collectes et stocks
--- ---------------------------------------------------------------------
-
--- Une collecte = un passage de camion chez un adhérent
 CREATE TABLE collectes (
     id           INT AUTO_INCREMENT PRIMARY KEY,
     adherent_id  INT NOT NULL,
@@ -91,7 +72,6 @@ CREATE TABLE collectes (
     CONSTRAINT fk_collectes_adherent FOREIGN KEY (adherent_id) REFERENCES adherents(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Chaque produit rapporté est référencé par code-barre et localisé en stock
 CREATE TABLE produits (
     id                 INT AUTO_INCREMENT PRIMARY KEY,
     collecte_id        INT NOT NULL,
@@ -104,11 +84,6 @@ CREATE TABLE produits (
     CONSTRAINT fk_produits_collecte FOREIGN KEY (collecte_id) REFERENCES collectes(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- ---------------------------------------------------------------------
--- Tournées de distribution
--- ---------------------------------------------------------------------
-
--- Bénéficiaire d'une tournée : association caritative ou particulier en détresse
 CREATE TABLE destinataires (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     type        ENUM('association', 'particulier') NOT NULL,
@@ -119,7 +94,6 @@ CREATE TABLE destinataires (
     telephone   VARCHAR(20)
 ) ENGINE=InnoDB;
 
--- Une tournée est conduite par un bénévole (chauffeur)
 CREATE TABLE tournees (
     id           INT AUTO_INCREMENT PRIMARY KEY,
     benevole_id  INT,
@@ -128,7 +102,6 @@ CREATE TABLE tournees (
     CONSTRAINT fk_tournees_benevole FOREIGN KEY (benevole_id) REFERENCES benevoles(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
--- Un arrêt de la tournée chez un destinataire = une livraison (donne lieu au récap PDF)
 CREATE TABLE livraisons (
     id              INT AUTO_INCREMENT PRIMARY KEY,
     tournee_id      INT NOT NULL,
@@ -138,7 +111,6 @@ CREATE TABLE livraisons (
     CONSTRAINT fk_livraisons_destinataire FOREIGN KEY (destinataire_id) REFERENCES destinataires(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Détail des produits remis lors d'une livraison
 CREATE TABLE livraison_produits (
     livraison_id INT NOT NULL,
     produit_id   INT NOT NULL,
@@ -148,12 +120,6 @@ CREATE TABLE livraison_produits (
     CONSTRAINT fk_lp_produit FOREIGN KEY (produit_id) REFERENCES produits(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- ---------------------------------------------------------------------
--- Services proposés aux adhérents (conseils anti-gaspi, cours de cuisine,
--- partage de véhicules, échange de services, réparation, gardiennage...)
--- ---------------------------------------------------------------------
-
--- capacite_id : compétence requise pour tenir ce service (optionnelle)
 CREATE TABLE services (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     nom         VARCHAR(100) NOT NULL,
@@ -162,7 +128,6 @@ CREATE TABLE services (
     CONSTRAINT fk_services_capacite FOREIGN KEY (capacite_id) REFERENCES capacites(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
--- Une occurrence planifiée d'un service, tenue par un bénévole (ex: plombier)
 CREATE TABLE plannings (
     id           INT AUTO_INCREMENT PRIMARY KEY,
     service_id   INT NOT NULL,
@@ -175,7 +140,6 @@ CREATE TABLE plannings (
     CONSTRAINT fk_plannings_benevole FOREIGN KEY (benevole_id) REFERENCES benevoles(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
--- Inscription d'un adhérent à un créneau de service
 CREATE TABLE inscriptions_service (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     planning_id INT NOT NULL,
@@ -186,6 +150,5 @@ CREATE TABLE inscriptions_service (
     CONSTRAINT fk_is_adherent FOREIGN KEY (adherent_id) REFERENCES adherents(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Compétences de départ (l'admin peut en ajouter/supprimer depuis l'espace admin)
 INSERT INTO capacites (libelle) VALUES
     ('chauffeur'), ('cuisinier'), ('plombier'), ('electricien');

@@ -8,8 +8,6 @@ import (
 	"net/http"
 )
 
-// ListCapacites est public : la page d'inscription bénévole en a besoin
-// avant même qu'un compte (et donc un token) existe.
 func ListCapacites(w http.ResponseWriter, r *http.Request) {
 	capacites, err := db.GetAllCapacites()
 	if err != nil {

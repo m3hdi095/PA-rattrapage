@@ -97,8 +97,6 @@ a {
   color: var(--card-text-color);
 }
 
-/* Boutons : appliqué directement à button/input[type=submit] pour ne pas
-   avoir à ajouter une classe sur chaque bouton des pages existantes. */
 .button,
 button,
 input[type="submit"] {
@@ -117,7 +115,6 @@ input[type="submit"]:hover {
   background-color: var(--button-hover-bg);
 }
 
-/* Formulaires */
 form {
   background-color: var(--card-bg);
   padding: 20px;
@@ -162,7 +159,6 @@ legend {
   padding: 0 8px;
 }
 
-/* Tableaux */
 table {
   display: block;
   overflow-x: auto;
@@ -196,7 +192,6 @@ table form {
   max-width: none;
 }
 
-/* Messages */
 .error {
   color: var(--error-color);
   font-weight: bold;

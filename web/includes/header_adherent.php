@@ -1,6 +1,4 @@
 <?php
-// Header commun aux pages adhérent. A inclure après session_start() et le
-// check du rôle. Suppose que la page courante est dans web/adherent/.
 $currentPage = basename($_SERVER['PHP_SELF']);
 function navClass($page, $currentPage) {
     return $page === $currentPage ? 'active' : '';

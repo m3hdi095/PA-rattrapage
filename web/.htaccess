@@ -5,9 +5,9 @@ Options -Indexes
 </FilesMatch>
 
 
-ErrorDocument 403 /PA-rattrapage/web/403.php
-ErrorDocument 404 /PA-rattrapage/web/404.php
-ErrorDocument 500 /PA-rattrapage/web/500.php
+ErrorDocument 403 /403.php
+ErrorDocument 404 /404.php
+ErrorDocument 500 /500.php
 
 
 RewriteEngine On

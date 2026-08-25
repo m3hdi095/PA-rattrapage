@@ -38,7 +38,6 @@ func CreateAdherent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// L'adhésion démarre aujourd'hui et est valable un an, ce n'est pas au client de le décider.
 	now := time.Now()
 	adherent := models.Adherent{
 		Email:          req.Email,

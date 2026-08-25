@@ -9,7 +9,6 @@ try {
     $result = apiRequest('GET', '/capacites');
     $capacitesDisponibles = $result['body'] ?? [];
 } catch (Exception $e) {
-    // Pas bloquant : le select sera juste vide si l'API est indisponible.
 }
 
 $selectedCapacites = [];

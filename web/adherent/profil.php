@@ -45,7 +45,6 @@ try {
     $result = apiRequest('GET', '/adherents/me', null, $_SESSION['token']);
     $moi = $result['body'] ?? [];
 } catch (Exception $e) {
-    // Pas bloquant : le formulaire sera juste vide.
 }
 
 require __DIR__ . '/../includes/header_adherent.php';

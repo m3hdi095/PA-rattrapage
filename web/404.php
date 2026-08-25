@@ -1,10 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/i18n.php';
 http_response_code(404);
-// dirname(SCRIPT_NAME) = chemin de ce fichier, quel que soit le sous-dossier
-// où le site est déployé (/, /PA-rattrapage/web, etc.) — indispensable ici
-// car une page d'erreur Apache garde l'URL d'origine dans la barre
-// d'adresse, donc un lien relatif pointerait au mauvais endroit.
 $base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 ?>
 <!DOCTYPE html>

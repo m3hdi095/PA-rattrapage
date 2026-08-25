@@ -1,5 +1,4 @@
 <?php
-// Header commun aux pages bénévole.
 $currentPage = basename($_SERVER['PHP_SELF']);
 function navClass($page, $currentPage) {
     return $page === $currentPage ? 'active' : '';

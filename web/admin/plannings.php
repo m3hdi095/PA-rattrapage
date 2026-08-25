@@ -64,8 +64,6 @@ foreach ($benevoles as $b) {
     $benevolesById[$b['id']] = $b['nom'] . ' ' . $b['prenom'];
 }
 
-// Pour le filtrage JS du select "Bénévole affecté" selon la compétence
-// requise par le service choisi.
 $serviceCapaciteId = [];
 foreach ($services as $s) {
     $serviceCapaciteId[$s['id']] = $s['capacite_id'] ?? null;

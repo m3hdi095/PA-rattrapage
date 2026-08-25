@@ -81,6 +81,7 @@ foreach ($tournees as $t) {
 }
 
 $token = $_SESSION['token'];
+$apiPublicUrl = getenv('API_PUBLIC_URL') ?: 'http://localhost:8081';
 
 require __DIR__ . '/../includes/header_admin.php';
 ?>
@@ -177,9 +178,10 @@ require __DIR__ . '/../includes/header_admin.php';
 
 <script>
     const API_TOKEN = <?= json_encode($token) ?>;
+    const API_PUBLIC_URL = <?= json_encode($apiPublicUrl) ?>;
 
     async function genererPDF(livraisonId) {
-        const res = await fetch('http://localhost:8081/livraisons/recap?livraison_id=' + livraisonId, {
+        const res = await fetch(API_PUBLIC_URL + '/livraisons/recap?livraison_id=' + livraisonId, {
             headers: { 'Authorization': API_TOKEN }
         });
         if (!res.ok) {

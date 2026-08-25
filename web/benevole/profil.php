@@ -48,7 +48,6 @@ try {
     $result = apiRequest('GET', '/capacites');
     $capacitesDisponibles = $result['body'] ?? [];
 } catch (Exception $e) {
-    // Pas bloquant : le select sera juste vide si l'API est indisponible.
 }
 
 $moi = [];
@@ -56,7 +55,6 @@ try {
     $result = apiRequest('GET', '/benevoles/me', null, $_SESSION['token']);
     $moi = $result['body'] ?? [];
 } catch (Exception $e) {
-    // Pas bloquant : les formulaires seront juste vides.
 }
 $mesCapacites = array_map(fn($c) => $c['libelle'], $moi['capacites'] ?? []);
 
