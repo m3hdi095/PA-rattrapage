@@ -14,11 +14,20 @@ if [ -d "$data_path/conf/live/${domains[0]}" ]; then
     fi
 fi
 
-echo "### Telechargement des parametres TLS recommandes ..."
+echo "### Generation des parametres TLS recommandes ..."
 mkdir -p "$data_path/conf"
+cat > "$data_path/conf/options-ssl-nginx.conf" << 'CONF'
+ssl_session_cache shared:le_nginx_SSL:10m;
+ssl_session_timeout 1440m;
+ssl_session_tickets off;
+
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_prefer_server_ciphers off;
+
+ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA256";
+CONF
 docker run --rm -v "$(pwd)/$data_path/conf:/dest" alpine sh -c \
-    "wget -q -O /dest/options-ssl-nginx.conf https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf && \
-     wget -q -O /dest/ssl-dhparams.pem https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem"
+    "apk add --no-cache openssl >/dev/null && openssl dhparam -out /dest/ssl-dhparams.pem 2048"
 
 echo "### Creation d'un certificat factice pour ${domains[0]} ..."
 path="/etc/letsencrypt/live/${domains[0]}"

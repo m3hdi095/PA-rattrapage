@@ -17,7 +17,4 @@ jobs:
           script: |
             cd ~/nomorewaste
             git pull
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml down --remove-orphans
-            chmod +x init-letsencrypt.sh
-            echo o | ./init-letsencrypt.sh
             docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
