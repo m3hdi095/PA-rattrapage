@@ -3,12 +3,9 @@ services:
     environment:
       API_PUBLIC_URL: https://nomorewaste.xyz/api
 
-  caddy:
-    image: caddy:2-alpine
+  nginx:
+    image: nginx:alpine
     restart: unless-stopped
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
     depends_on:
       - web
       - api
@@ -16,10 +13,14 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
+      - ./nginx/app.conf:/etc/nginx/conf.d/app.conf:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
 
-volumes:
-  caddy_data:
-  caddy_config:
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: sh -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done"
