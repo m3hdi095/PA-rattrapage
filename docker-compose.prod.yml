@@ -6,6 +6,9 @@ services:
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     depends_on:
       - web
       - api
