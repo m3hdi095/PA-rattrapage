@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../includes/i18n.php';
 require_once __DIR__ . '/../includes/api.php';
 
-if (isset($_SESSION['token']) && isset($_SESSION['role']) && $_SESSION['role'] === 'benevole' && !isset($_GET['connected'])) {
-    header('Location: index.php?connected=1');
+if (isset($_SESSION['token']) && isset($_SESSION['role']) && $_SESSION['role'] === 'benevole') {
+    header('Location: plannings.php');
     exit;
 }
 
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result['statusCode'] === 200) {
             $_SESSION['token'] = $result['body']['token'];
             $_SESSION['role'] = 'benevole';
-            header('Location: index.php?connected=1');
+            header('Location: plannings.php');
             exit;
         } elseif ($result['statusCode'] === 403) {
             $error = t('benevole_not_validated_error');
@@ -54,11 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <?php if (isset($_GET['created'])): ?>
             <p class="success"><?= t('candidature_sent_msg') ?></p>
-        <?php endif; ?>
-
-        <?php if (isset($_GET['connected']) && isset($_SESSION['token'])): ?>
-            <p class="success"><?= t('benevole_connected_msg') ?></p>
-            <p style="font-size:0.8em;word-break:break-all;"><?= t('token_label') ?> <?= htmlspecialchars($_SESSION['token']) ?></p>
         <?php endif; ?>
 
         <form method="post" action="">

@@ -11,7 +11,6 @@
     "back_link": "← Back",
     "login_error": "Incorrect email or password",
     "api_unreachable_error": "Unable to contact the API. Make sure the Go API is running on port 8081.",
-    "token_label": "Token:",
 
     "admin_page_title": "NO MORE WASTE - Administration",
     "admin_login_title": "Login - Administration Area",
@@ -19,13 +18,11 @@
     "adherent_page_title": "NO MORE WASTE - Merchant Area",
     "adherent_login_title": "Login - Merchant Area",
     "account_created_msg": "Account created! You can now log in.",
-    "adherent_connected_msg": "Connected! (merchant area not built yet, but the token is in session)",
     "adherent_no_account_link": "No account yet? Create a merchant account",
 
     "benevole_page_title": "NO MORE WASTE - Volunteer Area",
     "benevole_login_title": "Login - Volunteer Area",
     "candidature_sent_msg": "Application sent! Your account must be validated by an admin before you can log in.",
-    "benevole_connected_msg": "Connected! (volunteer area not built yet, but the token is in session)",
     "benevole_no_account_link": "No account yet? Become a volunteer",
     "benevole_not_validated_error": "Your application has not been validated by an admin yet.",
 
