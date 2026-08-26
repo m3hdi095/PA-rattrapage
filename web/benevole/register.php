@@ -14,40 +14,28 @@ try {
 $selectedCapacites = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nom = $_POST['nom'] ?? '';
-    $prenom = $_POST['prenom'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-    $telephone = $_POST['telephone'] ?? '';
     $selectedCapacites = $_POST['capacites'] ?? [];
 
-    $payload = json_encode([
-        'email'     => $email,
-        'password'  => $password,
-        'nom'       => $nom,
-        'prenom'    => $prenom,
-        'telephone' => $telephone,
+    $payload = [
+        'email'     => $_POST['email'] ?? '',
+        'password'  => $_POST['password'] ?? '',
+        'nom'       => $_POST['nom'] ?? '',
+        'prenom'    => $_POST['prenom'] ?? '',
+        'telephone' => $_POST['telephone'] ?? '',
         'capacites' => $selectedCapacites,
-    ]);
+    ];
 
-    $ch = curl_init('http://localhost:8081/benevoles');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($ch);
-    $curlError = curl_error($ch);
-    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    try {
+        $result = apiRequest('POST', '/benevoles', $payload);
 
-    if ($response === false) {
-        $error = t('api_unreachable_error') . ' (' . $curlError . ')';
-    } elseif ($statusCode === 201) {
-        header('Location: index.php?created=1');
-        exit;
-    } else {
-        $body = json_decode($response, true);
-        $error = $body['error'] ?? t('account_create_error') . " (code $statusCode)";
+        if ($result['statusCode'] === 201) {
+            header('Location: index.php?created=1');
+            exit;
+        } else {
+            $error = $result['body']['error'] ?? t('account_create_error') . " (code {$result['statusCode']})";
+        }
+    } catch (Exception $e) {
+        $error = $e->getMessage();
     }
 }
 ?>

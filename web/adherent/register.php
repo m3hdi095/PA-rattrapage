@@ -1,49 +1,33 @@
 <?php
 require_once __DIR__ . '/../includes/i18n.php';
+require_once __DIR__ . '/../includes/api.php';
 
 $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nomCommerce = $_POST['nom_commerce'] ?? '';
-    $siret = $_POST['siret'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-    $adresse = $_POST['adresse'] ?? '';
-    $codePostal = $_POST['code_postal'] ?? '';
-    $ville = $_POST['ville'] ?? '';
-    $telephone = $_POST['telephone'] ?? '';
+    $payload = [
+        'email'       => $_POST['email'] ?? '',
+        'password'    => $_POST['password'] ?? '',
+        'nom'         => $_POST['nom_commerce'] ?? '',
+        'siret'       => $_POST['siret'] ?? '',
+        'adresse'     => $_POST['adresse'] ?? '',
+        'code_postal' => $_POST['code_postal'] ?? '',
+        'ville'       => $_POST['ville'] ?? '',
+        'telephone'   => $_POST['telephone'] ?? '',
+    ];
 
-    $payload = json_encode([
-        'email'       => $email,
-        'password'    => $password,
-        'nom'         => $nomCommerce,
-        'siret'       => $siret,
-        'adresse'     => $adresse,
-        'code_postal' => $codePostal,
-        'ville'       => $ville,
-        'telephone'   => $telephone,
-    ]);
+    try {
+        $result = apiRequest('POST', '/adherents', $payload);
 
-    $ch = curl_init('http://localhost:8081/adherents');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($ch);
-    $curlError = curl_error($ch);
-    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    if ($response === false) {
-        $error = t('api_unreachable_error') . ' (' . $curlError . ')';
-    } elseif ($statusCode === 201) {
-        header('Location: index.php?created=1');
-        exit;
-    } else {
-        $body = json_decode($response, true);
-        $error = $body['error'] ?? t('account_create_error') . " (code $statusCode)";
+        if ($result['statusCode'] === 201) {
+            header('Location: index.php?created=1');
+            exit;
+        } else {
+            $error = $result['body']['error'] ?? t('account_create_error') . " (code {$result['statusCode']})";
+        }
+    } catch (Exception $e) {
+        $error = $e->getMessage();
     }
-
 }
 ?>
 <!DOCTYPE html>
