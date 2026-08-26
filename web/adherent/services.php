@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-if (isset($_GET['inscrit'])) {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['inscrit'])) {
     $success = "Inscription confirmée !";
 }
 
@@ -85,7 +85,7 @@ require __DIR__ . '/../includes/header_adherent.php';
         <td><?= htmlspecialchars($p['lieu']) ?></td>
         <td><?= htmlspecialchars($p['places_max']) ?></td>
         <td>
-            <form method="post">
+            <form method="post" action="services.php">
                 <input type="hidden" name="planning_id" value="<?= (int) $p['id'] ?>">
                 <button type="submit">S'inscrire</button>
             </form>
