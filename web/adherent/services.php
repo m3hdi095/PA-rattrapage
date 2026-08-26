@@ -8,17 +8,27 @@ if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'adherent') {
 }
 
 $error = null;
+$success = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        apiRequest('POST', '/inscriptions', [
+        $result = apiRequest('POST', '/inscriptions', [
             'planning_id' => (int) ($_POST['planning_id'] ?? 0),
         ], $_SESSION['token']);
-        header('Location: services.php');
-        exit;
+
+        if ($result['statusCode'] >= 400) {
+            $error = $result['body']['error'] ?? "Impossible de s'inscrire à ce créneau (peut-être déjà inscrit ?).";
+        } else {
+            header('Location: services.php?inscrit=1');
+            exit;
+        }
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
+}
+
+if (isset($_GET['inscrit'])) {
+    $success = "Inscription confirmée !";
 }
 
 $services = [];
@@ -44,7 +54,10 @@ require __DIR__ . '/../includes/header_adherent.php';
 <h2>Services proposés</h2>
 
 <?php if (!empty($error)): ?>
-    <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+    <p class="error"><?= htmlspecialchars($error) ?></p>
+<?php endif; ?>
+<?php if (!empty($success)): ?>
+    <p class="success"><?= htmlspecialchars($success) ?></p>
 <?php endif; ?>
 
 <h3>Nos services</h3>
