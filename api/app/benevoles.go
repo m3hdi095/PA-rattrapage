@@ -21,18 +21,18 @@ type CreateBenevoleRequest struct {
 func CreateBenevole(w http.ResponseWriter, r *http.Request) {
 	var req CreateBenevoleRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "corps de requête JSON invalide", http.StatusBadRequest)
+		utils.JSONError(w, "corps de requête JSON invalide", http.StatusBadRequest)
 		return
 	}
 
 	if req.Email == "" || req.Password == "" || req.Nom == "" || req.Prenom == "" {
-		http.Error(w, "email, password, nom et prenom sont obligatoires", http.StatusBadRequest)
+		utils.JSONError(w, "email, password, nom et prenom sont obligatoires", http.StatusBadRequest)
 		return
 	}
 
 	passwordHash, err := utils.HashPassword(req.Password)
 	if err != nil {
-		http.Error(w, "impossible de hasher le mot de passe", http.StatusInternalServerError)
+		utils.JSONError(w, "impossible de hasher le mot de passe", http.StatusInternalServerError)
 		return
 	}
 
@@ -45,7 +45,7 @@ func CreateBenevole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err := db.CreateBenevole(&benevole, req.Capacites); err != nil {
-		http.Error(w, "erreur lors de la création du bénévole", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la création du bénévole", http.StatusInternalServerError)
 		return
 	}
 	benevole.StatutCandidature = "en_attente"
@@ -59,12 +59,12 @@ func ValidateBenevole(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -73,12 +73,12 @@ func ValidateBenevole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "corps de requête JSON invalide", http.StatusBadRequest)
+		utils.JSONError(w, "corps de requête JSON invalide", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.ValidateBenevole(req.ID); err != nil {
-		http.Error(w, "erreur lors de la validation du bénévole", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la validation du bénévole", http.StatusInternalServerError)
 		return
 	}
 
@@ -89,12 +89,12 @@ func RejectBenevole(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -103,12 +103,12 @@ func RejectBenevole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "corps de requête JSON invalide", http.StatusBadRequest)
+		utils.JSONError(w, "corps de requête JSON invalide", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.RejectBenevole(req.ID); err != nil {
-		http.Error(w, "erreur lors de la rejection du bénévole", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la rejection du bénévole", http.StatusInternalServerError)
 		return
 	}
 
@@ -120,18 +120,18 @@ func GetAllBenevoles(w http.ResponseWriter, r *http.Request) {
 	claims, err := utils.VerifyJWT(tokenString)
 
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
 	benevoles, err := db.GetAllBenevoles()
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération des bénévoles", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération des bénévoles", http.StatusInternalServerError)
 		return
 	}
 
@@ -144,12 +144,12 @@ func UpdateBenevoleProfile(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token JWT invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token JWT invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "benevole" {
-		http.Error(w, "accès réservé aux bénévoles", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux bénévoles", http.StatusForbidden)
 		return
 	}
 
@@ -159,12 +159,12 @@ func UpdateBenevoleProfile(w http.ResponseWriter, r *http.Request) {
 		Telephone string `json:"telephone"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "corps de requête JSON invalide", http.StatusBadRequest)
+		utils.JSONError(w, "corps de requête JSON invalide", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.UpdateBenevole(claims.ID, req.Nom, req.Prenom, req.Telephone); err != nil {
-		http.Error(w, "erreur lors de la mise à jour du profil", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la mise à jour du profil", http.StatusInternalServerError)
 		return
 	}
 
@@ -175,17 +175,17 @@ func GetOwnBenevole(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 	if claims.Role != "benevole" {
-		http.Error(w, "accès réservé aux bénévoles", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux bénévoles", http.StatusForbidden)
 		return
 	}
 
 	benevole, err := db.GetBenevoleByID(claims.ID)
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération du bénévole", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération du bénévole", http.StatusInternalServerError)
 		return
 	}
 
@@ -197,11 +197,11 @@ func UpdateBenevoleCapacites(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 	if claims.Role != "benevole" {
-		http.Error(w, "accès réservé aux bénévoles", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux bénévoles", http.StatusForbidden)
 		return
 	}
 
@@ -209,12 +209,12 @@ func UpdateBenevoleCapacites(w http.ResponseWriter, r *http.Request) {
 		Capacites []string `json:"capacites"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.UpdateBenevoleCapacites(claims.ID, req.Capacites); err != nil {
-		http.Error(w, "erreur lors de la mise à jour des compétences", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la mise à jour des compétences", http.StatusInternalServerError)
 		return
 	}
 
@@ -225,12 +225,12 @@ func UpdateBenevolePassword(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token JWT invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token JWT invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "benevole" {
-		http.Error(w, "accès réservé aux bénévoles", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux bénévoles", http.StatusForbidden)
 		return
 	}
 
@@ -239,29 +239,29 @@ func UpdateBenevolePassword(w http.ResponseWriter, r *http.Request) {
 		NewPassword string `json:"new_password"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "corps de requête JSON invalide", http.StatusBadRequest)
+		utils.JSONError(w, "corps de requête JSON invalide", http.StatusBadRequest)
 		return
 	}
 
 	benevole, err := db.GetBenevoleByID(claims.ID)
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération du bénévole", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération du bénévole", http.StatusInternalServerError)
 		return
 	}
 
 	if !utils.CheckPasswordHash(req.OldPassword, benevole.PasswordHash) {
-		http.Error(w, "mot de passe actuel incorrect", http.StatusUnauthorized)
+		utils.JSONError(w, "mot de passe actuel incorrect", http.StatusUnauthorized)
 		return
 	}
 
 	newHash, err := utils.HashPassword(req.NewPassword)
 	if err != nil {
-		http.Error(w, "impossible de hasher le mot de passe", http.StatusInternalServerError)
+		utils.JSONError(w, "impossible de hasher le mot de passe", http.StatusInternalServerError)
 		return
 	}
 
 	if err := db.UpdateBenevolePassword(claims.ID, newHash); err != nil {
-		http.Error(w, "erreur lors de la mise à jour du mot de passe", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la mise à jour du mot de passe", http.StatusInternalServerError)
 		return
 	}
 
@@ -272,12 +272,12 @@ func DeleteBenevole(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -286,12 +286,12 @@ func DeleteBenevole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.DeleteBenevole(req.ID); err != nil {
-		http.Error(w, "erreur lors de la suppression du bénévole", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la suppression du bénévole", http.StatusInternalServerError)
 		return
 	}
 

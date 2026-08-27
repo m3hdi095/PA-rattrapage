@@ -10,7 +10,7 @@
     "login_button": "Se connecter",
     "back_link": "← Retour",
     "login_error": "Email ou mot de passe incorrect",
-    "api_unreachable_error": "Impossible de contacter l'API. Vérifie que l'API Go tourne bien sur le port 8081.",
+    "api_unreachable_error": "Le service est momentanément indisponible. Merci de réessayer dans quelques instants.",
 
     "admin_page_title": "NO MORE WASTE - Administration",
     "admin_login_title": "Connexion - Espace Administration",

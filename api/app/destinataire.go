@@ -12,12 +12,12 @@ func CreateDestinataire(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -31,7 +31,7 @@ func CreateDestinataire(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
@@ -46,7 +46,7 @@ func CreateDestinataire(w http.ResponseWriter, r *http.Request) {
 
 	id, err := db.CreateDestinataire(destinataire)
 	if err != nil {
-		http.Error(w, "erreur lors de la création du destinataire", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la création du destinataire", http.StatusInternalServerError)
 		return
 	}
 
@@ -59,18 +59,18 @@ func ListDestinataires(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
 	destinataires, err := db.GetAllDestinataires()
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération des destinataires", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération des destinataires", http.StatusInternalServerError)
 		return
 	}
 
@@ -82,12 +82,12 @@ func DeleteDestinataire(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -96,12 +96,12 @@ func DeleteDestinataire(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.DeleteDestinataire(req.ID); err != nil {
-		http.Error(w, "erreur lors de la suppression du destinataire", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la suppression du destinataire", http.StatusInternalServerError)
 		return
 	}
 

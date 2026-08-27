@@ -12,12 +12,12 @@ func CreateCollecte(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "adherent" {
-		http.Error(w, "accès réservé aux adhérents", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux adhérents", http.StatusForbidden)
 		return
 	}
 
@@ -25,7 +25,7 @@ func CreateCollecte(w http.ResponseWriter, r *http.Request) {
 		DateCollecte string `json:"date_collecte"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
@@ -36,7 +36,7 @@ func CreateCollecte(w http.ResponseWriter, r *http.Request) {
 
 	id, err := db.CreateCollecte(collecte)
 	if err != nil {
-		http.Error(w, "erreur lors de la création de la collecte", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la création de la collecte", http.StatusInternalServerError)
 		return
 	}
 
@@ -49,7 +49,7 @@ func ListCollectes(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
@@ -59,11 +59,11 @@ func ListCollectes(w http.ResponseWriter, r *http.Request) {
 	} else if claims.Role == "adherent" {
 		collectes, err = db.GetCollectesByAdherent(claims.ID)
 	} else {
-		http.Error(w, "accès refusé", http.StatusForbidden)
+		utils.JSONError(w, "accès refusé", http.StatusForbidden)
 		return
 	}
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération des collectes", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération des collectes", http.StatusInternalServerError)
 		return
 	}
 
@@ -75,12 +75,12 @@ func UpdateCollecteStatut(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -89,17 +89,17 @@ func UpdateCollecteStatut(w http.ResponseWriter, r *http.Request) {
 		Statut string `json:"statut"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
 	if req.Statut != "planifiee" && req.Statut != "effectuee" && req.Statut != "annulee" {
-		http.Error(w, "statut invalide", http.StatusBadRequest)
+		utils.JSONError(w, "statut invalide", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.UpdateStatutCollecte(req.ID, req.Statut); err != nil {
-		http.Error(w, "erreur lors de la mise à jour de la collecte", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la mise à jour de la collecte", http.StatusInternalServerError)
 		return
 	}
 
@@ -110,12 +110,12 @@ func DeleteCollecte(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -124,12 +124,12 @@ func DeleteCollecte(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.DeleteCollecte(req.ID); err != nil {
-		http.Error(w, "erreur lors de la suppression de la collecte", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la suppression de la collecte", http.StatusInternalServerError)
 		return
 	}
 

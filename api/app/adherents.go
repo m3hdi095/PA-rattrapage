@@ -23,18 +23,18 @@ type CreateAdherentRequest struct {
 func CreateAdherent(w http.ResponseWriter, r *http.Request) {
 	var req CreateAdherentRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "corps de requête JSON invalide", http.StatusBadRequest)
+		utils.JSONError(w, "corps de requête JSON invalide", http.StatusBadRequest)
 		return
 	}
 
 	if req.Email == "" || req.Password == "" || req.Nom == "" || req.Siret == "" {
-		http.Error(w, "email, password, nom et siret sont obligatoires", http.StatusBadRequest)
+		utils.JSONError(w, "email, password, nom et siret sont obligatoires", http.StatusBadRequest)
 		return
 	}
 
 	passwordHash, err := utils.HashPassword(req.Password)
 	if err != nil {
-		http.Error(w, "impossible de hasher le mot de passe", http.StatusInternalServerError)
+		utils.JSONError(w, "impossible de hasher le mot de passe", http.StatusInternalServerError)
 		return
 	}
 
@@ -53,7 +53,7 @@ func CreateAdherent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err := db.CreateAdherent(&adherent); err != nil {
-		http.Error(w, "erreur lors de la création de l'adhérent", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la création de l'adhérent", http.StatusInternalServerError)
 		return
 	}
 
@@ -66,18 +66,18 @@ func GetAllAdherents(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token JWT invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token JWT invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
 	adherents, err := db.GetAllAdherents()
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération des adhérents", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération des adhérents", http.StatusInternalServerError)
 		return
 	}
 
@@ -90,17 +90,17 @@ func GetOwnAdherent(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 	if claims.Role != "adherent" {
-		http.Error(w, "accès réservé aux adhérents", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux adhérents", http.StatusForbidden)
 		return
 	}
 
 	adherent, err := db.GetAdherentByID(claims.ID)
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération de l'adhérent", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération de l'adhérent", http.StatusInternalServerError)
 		return
 	}
 
@@ -112,12 +112,12 @@ func UpdateAdherentProfile(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token JWT invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token JWT invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "adherent" {
-		http.Error(w, "accès réservé aux adhérents", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux adhérents", http.StatusForbidden)
 		return
 	}
 
@@ -129,12 +129,12 @@ func UpdateAdherentProfile(w http.ResponseWriter, r *http.Request) {
 		Telephone  string `json:"telephone"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "corps de requête JSON invalide", http.StatusBadRequest)
+		utils.JSONError(w, "corps de requête JSON invalide", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.UpdateAdherent(claims.ID, req.Nom, req.Adresse, req.CodePostal, req.Ville, req.Telephone); err != nil {
-		http.Error(w, "erreur lors de la mise à jour du profil", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la mise à jour du profil", http.StatusInternalServerError)
 		return
 	}
 
@@ -145,12 +145,12 @@ func UpdateAdherentPassword(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token JWT invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token JWT invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "adherent" {
-		http.Error(w, "accès réservé aux adhérents", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux adhérents", http.StatusForbidden)
 		return
 	}
 
@@ -159,29 +159,29 @@ func UpdateAdherentPassword(w http.ResponseWriter, r *http.Request) {
 		NewPassword string `json:"new_password"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "corps de requête JSON invalide", http.StatusBadRequest)
+		utils.JSONError(w, "corps de requête JSON invalide", http.StatusBadRequest)
 		return
 	}
 
 	adherent, err := db.GetAdherentByID(claims.ID)
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération de l'adhérent", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération de l'adhérent", http.StatusInternalServerError)
 		return
 	}
 
 	if !utils.CheckPasswordHash(req.OldPassword, adherent.PasswordHash) {
-		http.Error(w, "mot de passe actuel incorrect", http.StatusUnauthorized)
+		utils.JSONError(w, "mot de passe actuel incorrect", http.StatusUnauthorized)
 		return
 	}
 
 	newHash, err := utils.HashPassword(req.NewPassword)
 	if err != nil {
-		http.Error(w, "impossible de hasher le mot de passe", http.StatusInternalServerError)
+		utils.JSONError(w, "impossible de hasher le mot de passe", http.StatusInternalServerError)
 		return
 	}
 
 	if err := db.UpdateAdherentPassword(claims.ID, newHash); err != nil {
-		http.Error(w, "erreur lors de la mise à jour du mot de passe", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la mise à jour du mot de passe", http.StatusInternalServerError)
 		return
 	}
 
@@ -192,12 +192,12 @@ func DeleteAdherent(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -206,12 +206,12 @@ func DeleteAdherent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.DeleteAdherent(req.ID); err != nil {
-		http.Error(w, "erreur lors de la suppression de l'adhérent", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la suppression de l'adhérent", http.StatusInternalServerError)
 		return
 	}
 

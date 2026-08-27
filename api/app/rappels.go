@@ -11,7 +11,7 @@ import (
 func RappelsRenouvellement(w http.ResponseWriter, r *http.Request) {
 	adherents, err := db.GetAdherentsExpiredSoon(30)
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération des adhérents", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération des adhérents", http.StatusInternalServerError)
 		return
 	}
 

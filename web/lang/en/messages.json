@@ -10,7 +10,7 @@
     "login_button": "Log in",
     "back_link": "← Back",
     "login_error": "Incorrect email or password",
-    "api_unreachable_error": "Unable to contact the API. Make sure the Go API is running on port 8081.",
+    "api_unreachable_error": "The service is temporarily unavailable. Please try again in a moment.",
 
     "admin_page_title": "NO MORE WASTE - Administration",
     "admin_login_title": "Login - Administration Area",

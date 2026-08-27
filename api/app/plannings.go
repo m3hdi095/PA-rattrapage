@@ -15,12 +15,12 @@ func CreatePlanning(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -34,7 +34,7 @@ func CreatePlanning(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
@@ -49,7 +49,7 @@ func CreatePlanning(w http.ResponseWriter, r *http.Request) {
 
 	id, err := db.CreatePlanning(planning)
 	if err != nil {
-		http.Error(w, "erreur lors de la création du planning", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la création du planning", http.StatusInternalServerError)
 		return
 	}
 
@@ -63,13 +63,13 @@ func ListPlannings(w http.ResponseWriter, r *http.Request) {
 	_, err := utils.VerifyJWT(tokenString)
 
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	plannings, err := db.GetAllPlannings()
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération des plannings", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération des plannings", http.StatusInternalServerError)
 		return
 	}
 
@@ -81,18 +81,18 @@ func ExportPlanningsExcel(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "benevole" {
-		http.Error(w, "accès réservé aux bénévoles", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux bénévoles", http.StatusForbidden)
 		return
 	}
 
 	plannings, err := db.GetPlanningsByBenevole(claims.ID)
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération des plannings", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération des plannings", http.StatusInternalServerError)
 		return
 	}
 
@@ -122,12 +122,12 @@ func DeletePlanning(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -136,12 +136,12 @@ func DeletePlanning(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.DeletePlanning(req.ID); err != nil {
-		http.Error(w, "erreur lors de la suppression du planning", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la suppression du planning", http.StatusInternalServerError)
 		return
 	}
 

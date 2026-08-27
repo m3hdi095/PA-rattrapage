@@ -13,12 +13,12 @@ func CreateService(w http.ResponseWriter, r *http.Request) {
 	claims, err := utils.VerifyJWT(tokenString)
 
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -29,7 +29,7 @@ func CreateService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
@@ -41,7 +41,7 @@ func CreateService(w http.ResponseWriter, r *http.Request) {
 
 	id, err := db.CreateService(service)
 	if err != nil {
-		http.Error(w, "erreur lors de la création du service", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la création du service", http.StatusInternalServerError)
 		return
 	}
 
@@ -56,13 +56,13 @@ func ListServices(w http.ResponseWriter, r *http.Request) {
 	_, err := utils.VerifyJWT(tokenString)
 
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	services, err := db.GetAllServices()
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération des services", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération des services", http.StatusInternalServerError)
 		return
 	}
 
@@ -74,12 +74,12 @@ func DeleteService(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -88,12 +88,12 @@ func DeleteService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.DeleteService(req.ID); err != nil {
-		http.Error(w, "erreur lors de la suppression du service", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la suppression du service", http.StatusInternalServerError)
 		return
 	}
 

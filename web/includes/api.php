@@ -29,7 +29,7 @@ function apiRequest($method, $endpoint, $data = null, $token = null) : array
     curl_close($ch);
 
     if ($response === false) {
-        throw new Exception("Impossible de contacter l'API (" . $curlError . "). Vérifie que l'API Go tourne bien sur le port 8081.");
+        throw new Exception("Le service est momentanément indisponible. Merci de réessayer dans quelques instants.");
     }
 
     return [
@@ -59,7 +59,7 @@ function apiRequestRaw($method, $endpoint, $token = null): array
     curl_close($ch);
 
     if ($response === false) {
-        throw new Exception("Impossible de contacter l'API (" . $curlError . "). Vérifie que l'API Go tourne bien sur le port 8081.");
+        throw new Exception("Le service est momentanément indisponible. Merci de réessayer dans quelques instants.");
     }
 
     return [

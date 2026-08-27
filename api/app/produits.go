@@ -12,12 +12,12 @@ func CreateProduit(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -30,7 +30,7 @@ func CreateProduit(w http.ResponseWriter, r *http.Request) {
 		EmplacementStock string `json:"emplacement_stock"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
@@ -45,7 +45,7 @@ func CreateProduit(w http.ResponseWriter, r *http.Request) {
 
 	id, err := db.CreateProduit(produit)
 	if err != nil {
-		http.Error(w, "erreur lors de la création du produit", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la création du produit", http.StatusInternalServerError)
 		return
 	}
 
@@ -58,18 +58,18 @@ func ListProduits(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
 	produits, err := db.GetProduits()
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération des produits", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération des produits", http.StatusInternalServerError)
 		return
 	}
 
@@ -81,12 +81,12 @@ func UpdateProduitStatut(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -96,17 +96,17 @@ func UpdateProduitStatut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
 	if req.Statut != "en_stock" && req.Statut != "distribue" && req.Statut != "perime" {
-		http.Error(w, "statut invalide", http.StatusBadRequest)
+		utils.JSONError(w, "statut invalide", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.UpdateStatutProduit(req.ID, req.Statut); err != nil {
-		http.Error(w, "erreur lors de la mise à jour du statut du produit", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la mise à jour du statut du produit", http.StatusInternalServerError)
 		return
 	}
 
@@ -117,12 +117,12 @@ func DeleteProduit(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -131,12 +131,12 @@ func DeleteProduit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.DeleteProduit(req.ID); err != nil {
-		http.Error(w, "erreur lors de la suppression du produit", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la suppression du produit", http.StatusInternalServerError)
 		return
 	}
 

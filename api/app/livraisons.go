@@ -13,12 +13,12 @@ func CreateLivraison(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -28,7 +28,7 @@ func CreateLivraison(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
@@ -39,7 +39,7 @@ func CreateLivraison(w http.ResponseWriter, r *http.Request) {
 
 	id, err := db.CreateLivraison(livraison)
 	if err != nil {
-		http.Error(w, "erreur lors de la création de la livraison", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la création de la livraison", http.StatusInternalServerError)
 		return
 	}
 
@@ -52,18 +52,18 @@ func ListLivraisons(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
 	livraisons, err := db.GetAllLivraisons()
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération des livraisons", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération des livraisons", http.StatusInternalServerError)
 		return
 	}
 
@@ -75,12 +75,12 @@ func UpdateLivraisonStatut(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -90,17 +90,17 @@ func UpdateLivraisonStatut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
 	if req.Statut != "prevue" && req.Statut != "livree" && req.Statut != "annulee" {
-		http.Error(w, "statut invalide", http.StatusBadRequest)
+		utils.JSONError(w, "statut invalide", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.UpdateStatutLivraison(req.ID, req.Statut); err != nil {
-		http.Error(w, "erreur lors de la mise à jour du statut de la livraison", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la mise à jour du statut de la livraison", http.StatusInternalServerError)
 		return
 	}
 
@@ -111,12 +111,12 @@ func AddProduitLivraison(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -127,12 +127,12 @@ func AddProduitLivraison(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.AddProduitToLivraison(req.LivraisonID, req.ProduitID, req.Quantite); err != nil {
-		http.Error(w, "erreur lors de l'ajout du produit à la livraison", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de l'ajout du produit à la livraison", http.StatusInternalServerError)
 		return
 	}
 
@@ -152,30 +152,30 @@ func GetLivraisonRecap(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
 	livraisonID := r.URL.Query().Get("livraison_id")
 	if livraisonID == "" {
-		http.Error(w, "livraison_id manquant", http.StatusBadRequest)
+		utils.JSONError(w, "livraison_id manquant", http.StatusBadRequest)
 		return
 	}
 
 	livraisonIDInt, err := strconv.Atoi(livraisonID)
 	if err != nil {
-		http.Error(w, "livraison_id invalide", http.StatusBadRequest)
+		utils.JSONError(w, "livraison_id invalide", http.StatusBadRequest)
 		return
 	}
 
 	produits, err := db.GetProduitsByLivraison(livraisonIDInt)
 	if err != nil {
-		http.Error(w, "erreur lors de la récupération des produits de la livraison", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la récupération des produits de la livraison", http.StatusInternalServerError)
 		return
 	}
 
@@ -187,12 +187,12 @@ func DeleteLivraison(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
 	if err != nil {
-		http.Error(w, "token invalide", http.StatusUnauthorized)
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
 		return
 	}
 
 	if claims.Role != "admin" {
-		http.Error(w, "accès réservé aux admins", http.StatusForbidden)
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
 		return
 	}
 
@@ -201,12 +201,12 @@ func DeleteLivraison(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "données invalides", http.StatusBadRequest)
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.DeleteLivraison(req.ID); err != nil {
-		http.Error(w, "erreur lors de la suppression de la livraison", http.StatusInternalServerError)
+		utils.JSONError(w, "erreur lors de la suppression de la livraison", http.StatusInternalServerError)
 		return
 	}
 
