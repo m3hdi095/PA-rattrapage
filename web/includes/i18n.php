@@ -11,6 +11,14 @@ function currentLang() {
     return $_SESSION['lang'] ?? 'fr';
 }
 
+function otherLang() {
+    return currentLang() === 'fr' ? 'en' : 'fr';
+}
+
+function otherLangLabel() {
+    return currentLang() === 'fr' ? 'English' : 'Français';
+}
+
 function t($key) {
     static $strings = null;
     if ($strings === null) {

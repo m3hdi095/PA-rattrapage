@@ -22,7 +22,7 @@ require_once __DIR__ . '/includes/i18n.php';
                 <a class="button" href="benevole/index.php"><?= t('home_benevole_space') ?></a>
             </p>
         </div>
-        <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
+        <p><a href="?lang=<?= otherLang() ?>"><?= otherLangLabel() ?></a></p>
     </div>
 </body>
 </html>

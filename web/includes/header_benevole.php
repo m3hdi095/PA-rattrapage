@@ -21,7 +21,7 @@ function navClass($page, $currentPage) {
         <a href="plannings.php" class="<?= navClass('plannings.php', $currentPage) ?>"><?= t('nav_mon_planning') ?></a>
         <a href="profil.php" class="<?= navClass('profil.php', $currentPage) ?>"><?= t('nav_mon_profil') ?></a>
         <a href="../logout.php"><?= t('nav_logout') ?></a>
-        <span class="lang-switch"><a href="<?= $currentPage ?>?lang=fr">Français</a> | <a href="<?= $currentPage ?>?lang=en">English</a></span>
+        <span class="lang-switch"><a href="<?= $currentPage ?>?lang=<?= otherLang() ?>"><?= otherLangLabel() ?></a></span>
     </nav>
 
     <div class="container">

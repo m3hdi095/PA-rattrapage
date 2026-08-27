@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
 
         <p><a href="../index.php"><?= t("back_link") ?></a></p>
-        <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
+        <p><a href="?lang=<?= otherLang() ?>"><?= otherLangLabel() ?></a></p>
     </div>
 </body>
 </html>

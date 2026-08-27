@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <p><a href="register.php"><?= t('adherent_no_account_link') ?></a></p>
         <p><a href="../index.php"><?= t("back_link") ?></a></p>
-        <p><a href="?lang=fr">Français</a> | <a href="?lang=en">English</a></p>
+        <p><a href="?lang=<?= otherLang() ?>"><?= otherLangLabel() ?></a></p>
     </div>
 </body>
 </html>

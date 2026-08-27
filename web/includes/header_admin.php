@@ -33,7 +33,7 @@ function navClass($page, $currentPage) {
         <a href="admins.php" class="<?= navClass('admins.php', $currentPage) ?>"><?= t('nav_admins') ?></a>
         <?php endif; ?>
         <a href="../logout.php"><?= t('nav_logout') ?></a>
-        <span class="lang-switch"><a href="<?= $currentPage ?>?lang=fr">Français</a> | <a href="<?= $currentPage ?>?lang=en">English</a></span>
+        <span class="lang-switch"><a href="<?= $currentPage ?>?lang=<?= otherLang() ?>"><?= otherLangLabel() ?></a></span>
     </nav>
 
     <div class="container">
