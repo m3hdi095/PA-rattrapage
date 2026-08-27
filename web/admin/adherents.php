@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../includes/api.php';
+require_once __DIR__ . '/../includes/i18n.php';
 
 if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
@@ -23,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'telephone'   => $_POST['telephone'] ?? '',
             ], $_SESSION['token']);
             if ($result['statusCode'] >= 400) {
-                $error = $result['body']['error'] ?? "Impossible de créer cet adhérent.";
+                $error = $result['body']['error'] ?? t('create_adherent_error_fallback');
             }
         } else {
             apiRequest('DELETE', '/adherents', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
@@ -48,40 +49,40 @@ try {
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
-<h2>Adhérents (commerçants)</h2>
+<h2><?= t('adherents_page_heading') ?></h2>
 
 <?php if (!empty($error)): ?>
     <p class="error"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 
-<h3>Créer un adhérent</h3>
+<h3><?= t('create_adherent_heading') ?></h3>
 <form method="post">
     <input type="hidden" name="action" value="creer">
-    <label>Email : <input type="email" name="email" required></label><br>
-    <label>Mot de passe : <input type="password" name="password" required></label><br>
-    <label>Nom du commerce : <input type="text" name="nom" required></label><br>
-    <label>SIRET : <input type="text" name="siret" required></label><br>
-    <label>Adresse : <input type="text" name="adresse"></label><br>
-    <label>Code postal : <input type="text" name="code_postal"></label><br>
-    <label>Ville : <input type="text" name="ville"></label><br>
-    <label>Téléphone : <input type="tel" name="telephone"></label><br>
-    <button type="submit">Créer</button>
+    <label><?= t('email_label') ?> : <input type="email" name="email" required></label><br>
+    <label><?= t('password_label') ?> : <input type="password" name="password" required></label><br>
+    <label><?= t('nom_commerce_label') ?> : <input type="text" name="nom" required></label><br>
+    <label><?= t('siret_label') ?> : <input type="text" name="siret" required></label><br>
+    <label><?= t('adresse_label') ?> : <input type="text" name="adresse"></label><br>
+    <label><?= t('code_postal_label') ?> : <input type="text" name="code_postal"></label><br>
+    <label><?= t('ville_label') ?> : <input type="text" name="ville"></label><br>
+    <label><?= t('telephone_label') ?> : <input type="tel" name="telephone"></label><br>
+    <button type="submit"><?= t('action_create') ?></button>
 </form>
 
-<h3>Liste</h3>
+<h3><?= t('list_heading') ?></h3>
 <table border="1" cellpadding="6">
     <tr>
-        <th>ID</th>
-        <th>Email</th>
-        <th>Nom</th>
-        <th>SIRET</th>
-        <th>Adresse</th>
-        <th>Code postal</th>
-        <th>Ville</th>
-        <th>Téléphone</th>
-        <th>Adhésion</th>
-        <th>Expiration</th>
-        <th>Actions</th>
+        <th><?= t('id_column') ?></th>
+        <th><?= t('email_label') ?></th>
+        <th><?= t('nom_commerce_label') ?></th>
+        <th><?= t('siret_label') ?></th>
+        <th><?= t('adresse_label') ?></th>
+        <th><?= t('code_postal_label') ?></th>
+        <th><?= t('ville_label') ?></th>
+        <th><?= t('telephone_label') ?></th>
+        <th><?= t('adhesion_column') ?></th>
+        <th><?= t('expiration_column') ?></th>
+        <th><?= t('actions_column') ?></th>
     </tr>
     <?php foreach ($adherents as $a): ?>
     <tr>
@@ -96,9 +97,9 @@ require __DIR__ . '/../includes/header_admin.php';
         <td><?= htmlspecialchars($a['date_adhesion']) ?></td>
         <td><?= htmlspecialchars($a['date_expiration']) ?></td>
         <td>
-            <form method="post" onsubmit="return confirm('Supprimer cet adhérent ?');">
+            <form method="post" onsubmit="return confirm(<?= json_encode(t('confirm_delete_adherent')) ?>);">
                 <input type="hidden" name="id" value="<?= (int) $a['id'] ?>">
-                <button type="submit">Supprimer</button>
+                <button type="submit"><?= t('action_delete') ?></button>
             </form>
         </td>
     </tr>

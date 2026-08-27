@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../includes/api.php';
+require_once __DIR__ . '/../includes/i18n.php';
 
 if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
@@ -57,12 +58,12 @@ foreach ($adherents as $a) {
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
-<h2>Inscriptions à un créneau</h2>
+<h2><?= t('inscriptions_page_heading') ?></h2>
 
 <form method="get">
-    <label>Planning :
+    <label><?= t('planning_label') ?> :
         <select name="planning_id" required>
-            <option value="">-- Choisir --</option>
+            <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($plannings as $p): ?>
                 <option value="<?= (int) $p['id'] ?>" <?= $p['id'] === $planningId ? 'selected' : '' ?>>
                     <?= htmlspecialchars($servicesById[$p['service_id']] ?? ('service #' . $p['service_id'])) ?> — <?= htmlspecialchars($p['date_debut']) ?> (<?= htmlspecialchars($p['lieu']) ?>)
@@ -70,7 +71,7 @@ require __DIR__ . '/../includes/header_admin.php';
             <?php endforeach; ?>
         </select>
     </label>
-    <button type="submit">Voir les inscriptions</button>
+    <button type="submit"><?= t('view_inscriptions_button') ?></button>
 </form>
 
 <?php if (!empty($error)): ?>
@@ -80,9 +81,9 @@ require __DIR__ . '/../includes/header_admin.php';
 <?php if ($planningId !== null && !$error): ?>
 <table border="1" cellpadding="6">
     <tr>
-        <th>ID</th>
-        <th>Adhérent</th>
-        <th>Statut</th>
+        <th><?= t('id_column') ?></th>
+        <th><?= t('adherent_column') ?></th>
+        <th><?= t('statut_column') ?></th>
     </tr>
     <?php foreach ($inscriptions as $i): ?>
     <tr>

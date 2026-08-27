@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../includes/api.php';
+require_once __DIR__ . '/../includes/i18n.php';
 
 if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
@@ -55,34 +56,34 @@ foreach ($benevoles as $b) {
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
-<h2>Tournées de distribution</h2>
+<h2><?= t('tournees_page_heading') ?></h2>
 
 <?php if (!empty($error)): ?>
     <p style="color:red;"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 
-<h3>Créer une tournée</h3>
+<h3><?= t('create_tournee_heading') ?></h3>
 <form method="post">
-    <label>Bénévole (chauffeur) :
+    <label><?= t('benevole_chauffeur_label') ?> :
         <select name="benevole_id" required>
-            <option value="">-- Choisir --</option>
+            <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($benevoles as $b): ?>
                 <option value="<?= (int) $b['id'] ?>"><?= htmlspecialchars($b['nom'] . ' ' . $b['prenom']) ?></option>
             <?php endforeach; ?>
         </select>
     </label><br>
-    <label>Date : <input type="date" name="date_tournee" required></label><br>
-    <button type="submit">Créer</button>
+    <label><?= t('date_label') ?> : <input type="date" name="date_tournee" required></label><br>
+    <button type="submit"><?= t('action_create') ?></button>
 </form>
 
-<h3>Liste</h3>
+<h3><?= t('list_heading') ?></h3>
 <table border="1" cellpadding="6">
     <tr>
-        <th>ID</th>
-        <th>Bénévole</th>
-        <th>Date</th>
-        <th>Statut</th>
-        <th>Actions</th>
+        <th><?= t('id_column') ?></th>
+        <th><?= t('benevole_column') ?></th>
+        <th><?= t('date_label') ?></th>
+        <th><?= t('statut_column') ?></th>
+        <th><?= t('actions_column') ?></th>
     </tr>
     <?php foreach ($tournees as $t): ?>
     <tr>
@@ -101,10 +102,10 @@ require __DIR__ . '/../includes/header_admin.php';
                 </form>
                 <?php endif; ?>
             <?php endforeach; ?>
-            <form method="post" style="display:inline;" onsubmit="return confirm('Supprimer cette tournée ?');">
+            <form method="post" style="display:inline;" onsubmit="return confirm(<?= json_encode(t('confirm_delete_tournee')) ?>);">
                 <input type="hidden" name="action" value="supprimer">
                 <input type="hidden" name="id" value="<?= (int) $t['id'] ?>">
-                <button type="submit">Supprimer</button>
+                <button type="submit"><?= t('action_delete') ?></button>
             </form>
         </td>
     </tr>

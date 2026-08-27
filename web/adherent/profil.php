@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../includes/api.php';
+require_once __DIR__ . '/../includes/i18n.php';
 
 if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'adherent') {
     header('Location: index.php');
@@ -22,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'ville'       => $_POST['ville'] ?? '',
                 'telephone'   => $_POST['telephone'] ?? '',
             ], $_SESSION['token']);
-            $success = "Profil mis à jour.";
+            $success = t('profil_updated_msg');
         } elseif ($form === 'mot_de_passe') {
             $result = apiRequest('PATCH', '/adherents/mot-de-passe', [
                 'old_password' => $_POST['old_password'] ?? '',
@@ -30,9 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ], $_SESSION['token']);
 
             if ($result['statusCode'] === 200) {
-                $success = "Mot de passe mis à jour.";
+                $success = t('password_updated_msg');
             } else {
-                $error = "Mot de passe actuel incorrect.";
+                $error = t('current_password_incorrect_msg');
             }
         }
     } catch (Exception $e) {
@@ -50,7 +51,7 @@ try {
 require __DIR__ . '/../includes/header_adherent.php';
 ?>
 
-<h2>Mon profil</h2>
+<h2><?= t('mon_profil_heading') ?></h2>
 
 <?php if ($error): ?>
     <p class="error"><?= htmlspecialchars($error) ?></p>
@@ -59,23 +60,23 @@ require __DIR__ . '/../includes/header_adherent.php';
     <p class="success"><?= htmlspecialchars($success) ?></p>
 <?php endif; ?>
 
-<h3>Informations du commerce</h3>
+<h3><?= t('infos_commerce_heading') ?></h3>
 <form method="post">
     <input type="hidden" name="form" value="profil">
-    <label>Nom du commerce : <input type="text" name="nom" value="<?= htmlspecialchars($moi['nom'] ?? '') ?>" required></label><br>
-    <label>Adresse : <input type="text" name="adresse" value="<?= htmlspecialchars($moi['adresse'] ?? '') ?>" required></label><br>
-    <label>Code postal : <input type="text" name="code_postal" value="<?= htmlspecialchars($moi['code_postal'] ?? '') ?>" required></label><br>
-    <label>Ville : <input type="text" name="ville" value="<?= htmlspecialchars($moi['ville'] ?? '') ?>" required></label><br>
-    <label>Téléphone : <input type="tel" name="telephone" value="<?= htmlspecialchars($moi['telephone'] ?? '') ?>"></label><br>
-    <button type="submit">Enregistrer</button>
+    <label><?= t('nom_commerce_label') ?> : <input type="text" name="nom" value="<?= htmlspecialchars($moi['nom'] ?? '') ?>" required></label><br>
+    <label><?= t('adresse_label') ?> : <input type="text" name="adresse" value="<?= htmlspecialchars($moi['adresse'] ?? '') ?>" required></label><br>
+    <label><?= t('code_postal_label') ?> : <input type="text" name="code_postal" value="<?= htmlspecialchars($moi['code_postal'] ?? '') ?>" required></label><br>
+    <label><?= t('ville_label') ?> : <input type="text" name="ville" value="<?= htmlspecialchars($moi['ville'] ?? '') ?>" required></label><br>
+    <label><?= t('telephone_label') ?> : <input type="tel" name="telephone" value="<?= htmlspecialchars($moi['telephone'] ?? '') ?>"></label><br>
+    <button type="submit"><?= t('action_save') ?></button>
 </form>
 
-<h3>Changer de mot de passe</h3>
+<h3><?= t('change_password_heading') ?></h3>
 <form method="post">
     <input type="hidden" name="form" value="mot_de_passe">
-    <label>Mot de passe actuel : <input type="password" name="old_password" required></label><br>
-    <label>Nouveau mot de passe : <input type="password" name="new_password" required></label><br>
-    <button type="submit">Changer le mot de passe</button>
+    <label><?= t('current_password_label') ?> : <input type="password" name="old_password" required></label><br>
+    <label><?= t('new_password_label') ?> : <input type="password" name="new_password" required></label><br>
+    <button type="submit"><?= t('change_password_button') ?></button>
 </form>
 
 </div>

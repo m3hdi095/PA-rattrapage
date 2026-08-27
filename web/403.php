@@ -7,18 +7,18 @@ $base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 <html lang="<?= currentLang() ?>">
 <head>
     <meta charset="UTF-8">
-    <title>NO MORE WASTE - Accès refusé</title>
+    <title><?= t('error_403_title') ?></title>
     <link rel="stylesheet" href="<?= $base ?>/public/css/styles.css">
 </head>
 <body>
     <div class="header">
-        <h1>403 - Accès refusé</h1>
+        <h1><?= t('error_403_heading') ?></h1>
     </div>
 
     <div class="container">
         <div class="card">
-            <p>Tu n'as pas le droit d'accéder à cette page.</p>
-            <p><a class="button" href="<?= $base ?>/index.php">Retour à l'accueil</a></p>
+            <p><?= t('error_403_text') ?></p>
+            <p><a class="button" href="<?= $base ?>/index.php"><?= t('back_home_button') ?></a></p>
         </div>
     </div>
 </body>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../includes/api.php';
+require_once __DIR__ . '/../includes/i18n.php';
 
 if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
@@ -36,34 +37,34 @@ try {
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
-<h2>Compétences</h2>
+<h2><?= t('competences_page_heading') ?></h2>
 
 <?php if (!empty($error)): ?>
     <p class="error"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 
-<h3>Ajouter une compétence</h3>
+<h3><?= t('add_competence_heading') ?></h3>
 <form method="post">
-    <label>Libellé : <input type="text" name="libelle" required></label><br>
-    <button type="submit">Ajouter</button>
+    <label><?= t('libelle_label') ?> : <input type="text" name="libelle" required></label><br>
+    <button type="submit"><?= t('action_add') ?></button>
 </form>
 
-<h3>Liste</h3>
+<h3><?= t('list_heading') ?></h3>
 <table border="1" cellpadding="6">
     <tr>
-        <th>ID</th>
-        <th>Libellé</th>
-        <th>Actions</th>
+        <th><?= t('id_column') ?></th>
+        <th><?= t('libelle_label') ?></th>
+        <th><?= t('actions_column') ?></th>
     </tr>
     <?php foreach ($capacites as $c): ?>
     <tr>
         <td><?= htmlspecialchars($c['id']) ?></td>
         <td><?= htmlspecialchars($c['libelle']) ?></td>
         <td>
-            <form method="post" onsubmit="return confirm('Supprimer cette compétence ? Elle sera retirée des bénévoles et services qui l\'utilisent.');">
+            <form method="post" onsubmit="return confirm(<?= json_encode(t('confirm_delete_competence')) ?>);">
                 <input type="hidden" name="action" value="supprimer">
                 <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
-                <button type="submit">Supprimer</button>
+                <button type="submit"><?= t('action_delete') ?></button>
             </form>
         </td>
     </tr>

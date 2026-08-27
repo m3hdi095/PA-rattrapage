@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../includes/api.php';
+require_once __DIR__ . '/../includes/i18n.php';
 
 if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'adherent') {
     header('Location: index.php');
@@ -32,24 +33,24 @@ try {
 require __DIR__ . '/../includes/header_adherent.php';
 ?>
 
-<h2>Mes demandes de collecte</h2>
+<h2><?= t('mes_collectes_page_heading') ?></h2>
 
 <?php if (!empty($error)): ?>
     <p style="color:red;"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 
-<h3>Demander une collecte</h3>
+<h3><?= t('demander_collecte_heading') ?></h3>
 <form method="post">
-    <label>Date/heure souhaitée : <input type="datetime-local" name="date_collecte" required></label><br>
-    <button type="submit">Demander</button>
+    <label><?= t('date_collecte_souhaitee_label') ?> : <input type="datetime-local" name="date_collecte" required></label><br>
+    <button type="submit"><?= t('demander_button') ?></button>
 </form>
 
-<h3>Mes collectes</h3>
+<h3><?= t('mes_collectes_list_heading') ?></h3>
 <table border="1" cellpadding="6">
     <tr>
-        <th>ID</th>
-        <th>Date</th>
-        <th>Statut</th>
+        <th><?= t('id_column') ?></th>
+        <th><?= t('date_label') ?></th>
+        <th><?= t('statut_column') ?></th>
     </tr>
     <?php foreach ($collectes as $c): ?>
     <tr>

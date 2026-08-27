@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../includes/api.php';
+require_once __DIR__ . '/../includes/i18n.php';
 
 if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'benevole') {
     header('Location: index.php');
@@ -20,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'prenom'    => $_POST['prenom'] ?? '',
                 'telephone' => $_POST['telephone'] ?? '',
             ], $_SESSION['token']);
-            $success = "Profil mis à jour.";
+            $success = t('profil_updated_msg');
         } elseif ($form === 'mot_de_passe') {
             $result = apiRequest('PATCH', '/benevoles/mot-de-passe', [
                 'old_password' => $_POST['old_password'] ?? '',
@@ -28,15 +29,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ], $_SESSION['token']);
 
             if ($result['statusCode'] === 200) {
-                $success = "Mot de passe mis à jour.";
+                $success = t('password_updated_msg');
             } else {
-                $error = "Mot de passe actuel incorrect.";
+                $error = t('current_password_incorrect_msg');
             }
         } elseif ($form === 'competences') {
             apiRequest('PATCH', '/benevoles/capacites', [
                 'capacites' => $_POST['capacites'] ?? [],
             ], $_SESSION['token']);
-            $success = "Compétences mises à jour.";
+            $success = t('competences_updated_msg');
         }
     } catch (Exception $e) {
         $error = $e->getMessage();
@@ -61,7 +62,7 @@ $mesCapacites = array_map(fn($c) => $c['libelle'], $moi['capacites'] ?? []);
 require __DIR__ . '/../includes/header_benevole.php';
 ?>
 
-<h2>Mon profil</h2>
+<h2><?= t('mon_profil_heading') ?></h2>
 
 <?php if ($error): ?>
     <p class="error"><?= htmlspecialchars($error) ?></p>
@@ -70,35 +71,35 @@ require __DIR__ . '/../includes/header_benevole.php';
     <p class="success"><?= htmlspecialchars($success) ?></p>
 <?php endif; ?>
 
-<h3>Mes informations</h3>
+<h3><?= t('mes_infos_heading') ?></h3>
 <form method="post">
     <input type="hidden" name="form" value="profil">
-    <label>Nom : <input type="text" name="nom" value="<?= htmlspecialchars($moi['nom'] ?? '') ?>" required></label><br>
-    <label>Prénom : <input type="text" name="prenom" value="<?= htmlspecialchars($moi['prenom'] ?? '') ?>" required></label><br>
-    <label>Téléphone : <input type="tel" name="telephone" value="<?= htmlspecialchars($moi['telephone'] ?? '') ?>"></label><br>
-    <button type="submit">Enregistrer</button>
+    <label><?= t('nom_label') ?> : <input type="text" name="nom" value="<?= htmlspecialchars($moi['nom'] ?? '') ?>" required></label><br>
+    <label><?= t('prenom_label') ?> : <input type="text" name="prenom" value="<?= htmlspecialchars($moi['prenom'] ?? '') ?>" required></label><br>
+    <label><?= t('telephone_label') ?> : <input type="tel" name="telephone" value="<?= htmlspecialchars($moi['telephone'] ?? '') ?>"></label><br>
+    <button type="submit"><?= t('action_save') ?></button>
 </form>
 
-<h3>Mes compétences</h3>
+<h3><?= t('mes_competences_heading') ?></h3>
 <form method="post">
     <input type="hidden" name="form" value="competences">
-    <label>Compétences :
+    <label><?= t('competences_legend') ?> :
         <select name="capacites[]" multiple size="4">
             <?php foreach ($capacitesDisponibles as $c): ?>
                 <option value="<?= htmlspecialchars($c['libelle']) ?>" <?= in_array($c['libelle'], $mesCapacites, true) ? 'selected' : '' ?>><?= htmlspecialchars($c['libelle']) ?></option>
             <?php endforeach; ?>
         </select>
-        <br><small>Ctrl+clic pour sélectionner plusieurs compétences.</small>
+        <br><small><?= t('multiselect_hint') ?></small>
     </label><br>
-    <button type="submit">Enregistrer mes compétences</button>
+    <button type="submit"><?= t('save_competences_button') ?></button>
 </form>
 
-<h3>Changer de mot de passe</h3>
+<h3><?= t('change_password_heading') ?></h3>
 <form method="post">
     <input type="hidden" name="form" value="mot_de_passe">
-    <label>Mot de passe actuel : <input type="password" name="old_password" required></label><br>
-    <label>Nouveau mot de passe : <input type="password" name="new_password" required></label><br>
-    <button type="submit">Changer le mot de passe</button>
+    <label><?= t('current_password_label') ?> : <input type="password" name="old_password" required></label><br>
+    <label><?= t('new_password_label') ?> : <input type="password" name="new_password" required></label><br>
+    <button type="submit"><?= t('change_password_button') ?></button>
 </form>
 
 </div>

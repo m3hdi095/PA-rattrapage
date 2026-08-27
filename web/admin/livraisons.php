@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../includes/api.php';
+require_once __DIR__ . '/../includes/i18n.php';
 
 if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
@@ -86,7 +87,7 @@ $apiPublicUrl = getenv('API_PUBLIC_URL') ?: 'http://localhost:8081';
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
-<h2>Livraisons</h2>
+<h2><?= t('livraisons_page_heading') ?></h2>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -94,59 +95,59 @@ require __DIR__ . '/../includes/header_admin.php';
     <p style="color:red;"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 
-<h3>Créer une livraison</h3>
+<h3><?= t('create_livraison_heading') ?></h3>
 <form method="post">
     <input type="hidden" name="action" value="create">
-    <label>Tournée :
+    <label><?= t('tournee_label') ?> :
         <select name="tournee_id" required>
-            <option value="">-- Choisir --</option>
+            <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($tournees as $t): ?>
                 <option value="<?= (int) $t['id'] ?>">Tournée #<?= (int) $t['id'] ?> — <?= htmlspecialchars($t['date_tournee']) ?> (<?= htmlspecialchars($t['statut']) ?>)</option>
             <?php endforeach; ?>
         </select>
     </label><br>
-    <label>Destinataire :
+    <label><?= t('destinataire_label') ?> :
         <select name="destinataire_id" required>
-            <option value="">-- Choisir --</option>
+            <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($destinataires as $d): ?>
                 <option value="<?= (int) $d['id'] ?>"><?= htmlspecialchars($d['nom']) ?></option>
             <?php endforeach; ?>
         </select>
     </label><br>
-    <button type="submit">Créer</button>
+    <button type="submit"><?= t('action_create') ?></button>
 </form>
 
-<h3>Ajouter un produit à une livraison</h3>
+<h3><?= t('add_produit_to_livraison_heading') ?></h3>
 <form method="post">
     <input type="hidden" name="action" value="add_produit">
-    <label>Livraison :
+    <label><?= t('livraison_label') ?> :
         <select name="livraison_id" required>
-            <option value="">-- Choisir --</option>
+            <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($livraisons as $l): ?>
                 <option value="<?= (int) $l['id'] ?>">Livraison #<?= (int) $l['id'] ?> — <?= htmlspecialchars($destinatairesById[$l['destinataire_id']] ?? ('destinataire #' . $l['destinataire_id'])) ?> (<?= htmlspecialchars($l['statut']) ?>)</option>
             <?php endforeach; ?>
         </select>
     </label><br>
-    <label>Produit :
+    <label><?= t('produit_label') ?> :
         <select name="produit_id" required>
-            <option value="">-- Choisir --</option>
+            <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($produits as $p): ?>
                 <option value="<?= (int) $p['id'] ?>"><?= htmlspecialchars($p['nom'] . ' (' . $p['code_barre'] . ')') ?></option>
             <?php endforeach; ?>
         </select>
     </label><br>
-    <label>Quantité : <input type="number" name="quantite" value="1" required></label><br>
-    <button type="submit">Ajouter</button>
+    <label><?= t('quantite_label') ?> : <input type="number" name="quantite" value="1" required></label><br>
+    <button type="submit"><?= t('action_add') ?></button>
 </form>
 
-<h3>Liste</h3>
+<h3><?= t('list_heading') ?></h3>
 <table border="1" cellpadding="6">
     <tr>
-        <th>ID</th>
-        <th>Tournée</th>
-        <th>Destinataire</th>
-        <th>Statut</th>
-        <th>Actions</th>
+        <th><?= t('id_column') ?></th>
+        <th><?= t('tournee_label') ?></th>
+        <th><?= t('destinataire_label') ?></th>
+        <th><?= t('statut_column') ?></th>
+        <th><?= t('actions_column') ?></th>
     </tr>
     <?php foreach ($livraisons as $l): ?>
     <tr>
@@ -165,11 +166,11 @@ require __DIR__ . '/../includes/header_admin.php';
                 </form>
                 <?php endif; ?>
             <?php endforeach; ?>
-            <button type="button" onclick="genererPDF(<?= (int) $l['id'] ?>)">Générer PDF</button>
-            <form method="post" style="display:inline;" onsubmit="return confirm('Supprimer cette livraison ?');">
+            <button type="button" onclick="genererPDF(<?= (int) $l['id'] ?>)"><?= t('generate_pdf_button') ?></button>
+            <form method="post" style="display:inline;" onsubmit="return confirm(<?= json_encode(t('confirm_delete_livraison')) ?>);">
                 <input type="hidden" name="action" value="supprimer">
                 <input type="hidden" name="id" value="<?= (int) $l['id'] ?>">
-                <button type="submit">Supprimer</button>
+                <button type="submit"><?= t('action_delete') ?></button>
             </form>
         </td>
     </tr>
@@ -179,13 +180,19 @@ require __DIR__ . '/../includes/header_admin.php';
 <script>
     const API_TOKEN = <?= json_encode($token) ?>;
     const API_PUBLIC_URL = <?= json_encode($apiPublicUrl) ?>;
+    const I18N_PDF_FETCH_ERROR = <?= json_encode(t('pdf_fetch_error')) ?>;
+    const I18N_PDF_RECAP_TITLE_PREFIX = <?= json_encode(t('pdf_recap_title_prefix')) ?>;
+    const I18N_PDF_COL_NOM = <?= json_encode(t('pdf_col_nom')) ?>;
+    const I18N_PDF_COL_CODE_BARRE = <?= json_encode(t('pdf_col_code_barre')) ?>;
+    const I18N_PDF_COL_QUANTITE = <?= json_encode(t('pdf_col_quantite')) ?>;
+    const I18N_PDF_NO_PRODUITS = <?= json_encode(t('pdf_no_produits')) ?>;
 
     async function genererPDF(livraisonId) {
         const res = await fetch(API_PUBLIC_URL + '/livraisons/recap?livraison_id=' + livraisonId, {
             headers: { 'Authorization': API_TOKEN }
         });
         if (!res.ok) {
-            alert('Impossible de récupérer le récapitulatif de cette livraison.');
+            alert(I18N_PDF_FETCH_ERROR);
             return;
         }
         const produits = await res.json();
@@ -194,17 +201,17 @@ require __DIR__ . '/../includes/header_admin.php';
         const doc = new jsPDF();
 
         doc.setFontSize(16);
-        doc.text('NO MORE WASTE - Récapitulatif de livraison #' + livraisonId, 10, 15);
+        doc.text(I18N_PDF_RECAP_TITLE_PREFIX + livraisonId, 10, 15);
 
         doc.setFontSize(11);
         let y = 30;
-        doc.text('Nom', 10, y);
-        doc.text('Code-barre', 90, y);
-        doc.text('Quantité', 160, y);
+        doc.text(I18N_PDF_COL_NOM, 10, y);
+        doc.text(I18N_PDF_COL_CODE_BARRE, 90, y);
+        doc.text(I18N_PDF_COL_QUANTITE, 160, y);
         y += 8;
 
         if (produits.length === 0) {
-            doc.text('Aucun produit associé à cette livraison.', 10, y);
+            doc.text(I18N_PDF_NO_PRODUITS, 10, y);
         } else {
             produits.forEach(p => {
                 doc.text(String(p.nom), 10, y);

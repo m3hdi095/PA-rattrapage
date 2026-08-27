@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../includes/api.php';
+require_once __DIR__ . '/../includes/i18n.php';
 
 if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'adherent') {
     header('Location: index.php');
@@ -17,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ], $_SESSION['token']);
 
         if ($result['statusCode'] >= 400) {
-            $error = $result['body']['error'] ?? "Impossible de s'inscrire à ce créneau (peut-être déjà inscrit ?).";
+            $error = $result['body']['error'] ?? t('inscription_error_fallback');
         } else {
             header('Location: services.php?inscrit=1');
             exit;
@@ -28,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['inscrit'])) {
-    $success = "Inscription confirmée !";
+    $success = t('inscription_confirmee_msg');
 }
 
 $services = [];
@@ -51,7 +52,7 @@ foreach ($services as $s) {
 require __DIR__ . '/../includes/header_adherent.php';
 ?>
 
-<h2>Services proposés</h2>
+<h2><?= t('services_proposes_heading') ?></h2>
 
 <?php if (!empty($error)): ?>
     <p class="error"><?= htmlspecialchars($error) ?></p>
@@ -60,22 +61,22 @@ require __DIR__ . '/../includes/header_adherent.php';
     <p class="success"><?= htmlspecialchars($success) ?></p>
 <?php endif; ?>
 
-<h3>Nos services</h3>
+<h3><?= t('nos_services_heading') ?></h3>
 <ul>
     <?php foreach ($services as $s): ?>
         <li><strong><?= htmlspecialchars($s['nom']) ?></strong> — <?= htmlspecialchars($s['description']) ?></li>
     <?php endforeach; ?>
 </ul>
 
-<h3>Créneaux disponibles</h3>
+<h3><?= t('creneaux_dispo_heading') ?></h3>
 <table border="1" cellpadding="6">
     <tr>
-        <th>Service</th>
-        <th>Début</th>
-        <th>Fin</th>
-        <th>Lieu</th>
-        <th>Places max</th>
-        <th>Action</th>
+        <th><?= t('service_column') ?></th>
+        <th><?= t('debut_column') ?></th>
+        <th><?= t('fin_column') ?></th>
+        <th><?= t('lieu_column') ?></th>
+        <th><?= t('places_max_column') ?></th>
+        <th><?= t('action_column') ?></th>
     </tr>
     <?php foreach ($plannings as $p): ?>
     <tr>
@@ -87,7 +88,7 @@ require __DIR__ . '/../includes/header_adherent.php';
         <td>
             <form method="post" action="services.php">
                 <input type="hidden" name="planning_id" value="<?= (int) $p['id'] ?>">
-                <button type="submit">S'inscrire</button>
+                <button type="submit"><?= t('signup_button') ?></button>
             </form>
         </td>
     </tr>

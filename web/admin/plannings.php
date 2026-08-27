@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../includes/api.php';
+require_once __DIR__ . '/../includes/i18n.php';
 
 if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
@@ -77,37 +78,37 @@ foreach ($benevoles as $b) {
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
-<h2>Plannings des services</h2>
+<h2><?= t('plannings_page_heading') ?></h2>
 
 <?php if (!empty($error)): ?>
     <p style="color:red;"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 
-<h3>Créer un créneau</h3>
+<h3><?= t('create_creneau_heading') ?></h3>
 <form method="post">
-    <label>Service :
+    <label><?= t('service_label') ?> :
         <select name="service_id" id="service_id" required>
-            <option value="">-- Choisir --</option>
+            <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($services as $s): ?>
                 <option value="<?= (int) $s['id'] ?>"><?= htmlspecialchars($s['nom']) ?><?= (($s['capacite_libelle'] ?? '') !== '') ? ' (' . htmlspecialchars($s['capacite_libelle']) . ')' : '' ?></option>
             <?php endforeach; ?>
         </select>
     </label><br>
-    <label>Bénévole affecté :
+    <label><?= t('benevole_affecte_label') ?> :
         <select name="benevole_id" id="benevole_id" required>
-            <option value="">-- Choisir --</option>
+            <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($benevoles as $b): ?>
                 <option value="<?= (int) $b['id'] ?>"><?= htmlspecialchars($b['nom'] . ' ' . $b['prenom']) ?></option>
             <?php endforeach; ?>
         </select>
     </label>
-    <p id="competence_warning" class="error" style="display:none;">Aucun bénévole ne possède la compétence requise par ce service.</p>
+    <p id="competence_warning" class="error" style="display:none;"><?= t('competence_warning_text') ?></p>
     <br>
-    <label>Date/heure début : <input type="datetime-local" name="date_debut" required></label><br>
-    <label>Date/heure fin : <input type="datetime-local" name="date_fin" required></label><br>
-    <label>Lieu : <input type="text" name="lieu"></label><br>
-    <label>Places max : <input type="number" name="places_max" value="1" required></label><br>
-    <button type="submit">Créer</button>
+    <label><?= t('date_debut_label') ?> : <input type="datetime-local" name="date_debut" required></label><br>
+    <label><?= t('date_fin_label') ?> : <input type="datetime-local" name="date_fin" required></label><br>
+    <label><?= t('lieu_label') ?> : <input type="text" name="lieu"></label><br>
+    <label><?= t('places_max_label') ?> : <input type="number" name="places_max" value="1" required></label><br>
+    <button type="submit"><?= t('action_create') ?></button>
 </form>
 
 <script>
@@ -147,17 +148,17 @@ require __DIR__ . '/../includes/header_admin.php';
     filtrerBenevoles();
 </script>
 
-<h3>Liste</h3>
+<h3><?= t('list_heading') ?></h3>
 <table border="1" cellpadding="6">
     <tr>
-        <th>ID</th>
-        <th>Service</th>
-        <th>Bénévole</th>
-        <th>Début</th>
-        <th>Fin</th>
-        <th>Lieu</th>
-        <th>Places max</th>
-        <th>Actions</th>
+        <th><?= t('id_column') ?></th>
+        <th><?= t('service_column') ?></th>
+        <th><?= t('benevole_column') ?></th>
+        <th><?= t('debut_column') ?></th>
+        <th><?= t('fin_column') ?></th>
+        <th><?= t('lieu_column') ?></th>
+        <th><?= t('places_max_column') ?></th>
+        <th><?= t('actions_column') ?></th>
     </tr>
     <?php foreach ($plannings as $p): ?>
     <tr>
@@ -169,10 +170,10 @@ require __DIR__ . '/../includes/header_admin.php';
         <td><?= htmlspecialchars($p['lieu']) ?></td>
         <td><?= htmlspecialchars($p['places_max']) ?></td>
         <td>
-            <form method="post" onsubmit="return confirm('Supprimer ce planning ?');">
+            <form method="post" onsubmit="return confirm(<?= json_encode(t('confirm_delete_planning')) ?>);">
                 <input type="hidden" name="action" value="supprimer">
                 <input type="hidden" name="id" value="<?= (int) $p['id'] ?>">
-                <button type="submit">Supprimer</button>
+                <button type="submit"><?= t('action_delete') ?></button>
             </form>
         </td>
     </tr>

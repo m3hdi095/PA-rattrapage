@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../includes/api.php';
+require_once __DIR__ . '/../includes/i18n.php';
 
 if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
@@ -41,39 +42,39 @@ try {
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
-<h2>Destinataires (associations / particuliers en détresse)</h2>
+<h2><?= t('destinataires_page_heading') ?></h2>
 
 <?php if (!empty($error)): ?>
     <p style="color:red;"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 
-<h3>Ajouter un destinataire</h3>
+<h3><?= t('add_destinataire_heading') ?></h3>
 <form method="post">
-    <label>Type :
+    <label><?= t('type_label') ?> :
         <select name="type" required>
-            <option value="association">Association</option>
-            <option value="particulier">Particulier</option>
+            <option value="association"><?= t('association_option') ?></option>
+            <option value="particulier"><?= t('particulier_option') ?></option>
         </select>
     </label><br>
-    <label>Nom : <input type="text" name="nom" required></label><br>
-    <label>Adresse : <input type="text" name="adresse" required></label><br>
-    <label>Code postal : <input type="text" name="code_postal" required></label><br>
-    <label>Ville : <input type="text" name="ville" required></label><br>
-    <label>Téléphone : <input type="tel" name="telephone"></label><br>
-    <button type="submit">Ajouter</button>
+    <label><?= t('nom_label') ?> : <input type="text" name="nom" required></label><br>
+    <label><?= t('adresse_label') ?> : <input type="text" name="adresse" required></label><br>
+    <label><?= t('code_postal_label') ?> : <input type="text" name="code_postal" required></label><br>
+    <label><?= t('ville_label') ?> : <input type="text" name="ville" required></label><br>
+    <label><?= t('telephone_label') ?> : <input type="tel" name="telephone"></label><br>
+    <button type="submit"><?= t('action_add') ?></button>
 </form>
 
-<h3>Liste</h3>
+<h3><?= t('list_heading') ?></h3>
 <table border="1" cellpadding="6">
     <tr>
-        <th>ID</th>
-        <th>Type</th>
-        <th>Nom</th>
-        <th>Adresse</th>
-        <th>Code postal</th>
-        <th>Ville</th>
-        <th>Téléphone</th>
-        <th>Actions</th>
+        <th><?= t('id_column') ?></th>
+        <th><?= t('type_label') ?></th>
+        <th><?= t('nom_label') ?></th>
+        <th><?= t('adresse_label') ?></th>
+        <th><?= t('code_postal_label') ?></th>
+        <th><?= t('ville_label') ?></th>
+        <th><?= t('telephone_label') ?></th>
+        <th><?= t('actions_column') ?></th>
     </tr>
     <?php foreach ($destinataires as $d): ?>
     <tr>
@@ -85,10 +86,10 @@ require __DIR__ . '/../includes/header_admin.php';
         <td><?= htmlspecialchars($d['ville']) ?></td>
         <td><?= htmlspecialchars($d['telephone']) ?></td>
         <td>
-            <form method="post" onsubmit="return confirm('Supprimer ce destinataire ?');">
+            <form method="post" onsubmit="return confirm(<?= json_encode(t('confirm_delete_destinataire')) ?>);">
                 <input type="hidden" name="action" value="supprimer">
                 <input type="hidden" name="id" value="<?= (int) $d['id'] ?>">
-                <button type="submit">Supprimer</button>
+                <button type="submit"><?= t('action_delete') ?></button>
             </form>
         </td>
     </tr>

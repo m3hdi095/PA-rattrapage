@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../includes/api.php';
+require_once __DIR__ . '/../includes/i18n.php';
 
 if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
@@ -72,42 +73,42 @@ foreach ($collectes as $c) {
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
-<h2>Gestion des stocks (produits)</h2>
+<h2><?= t('produits_page_heading') ?></h2>
 
 <?php if (!empty($error)): ?>
     <p style="color:red;"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 
-<h3>Ajouter un produit</h3>
+<h3><?= t('add_produit_heading') ?></h3>
 <form method="post">
-    <label>Collecte :
+    <label><?= t('collecte_label') ?> :
         <select name="collecte_id" required>
-            <option value="">-- Choisir --</option>
+            <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($collectes as $c): ?>
                 <option value="<?= (int) $c['id'] ?>">Collecte #<?= (int) $c['id'] ?> — <?= htmlspecialchars($adherentsById[$c['adherent_id']] ?? ('adhérent #' . $c['adherent_id'])) ?> — <?= htmlspecialchars($c['date_collecte']) ?></option>
             <?php endforeach; ?>
         </select>
     </label><br>
-    <label>Code-barre : <input type="text" name="code_barre" required></label><br>
-    <label>Nom : <input type="text" name="nom" required></label><br>
-    <label>Quantité : <input type="number" name="quantite" value="1" required></label><br>
-    <label>Date limite de conso : <input type="date" name="date_limite_conso"></label><br>
-    <label>Emplacement stock : <input type="text" name="emplacement_stock"></label><br>
-    <button type="submit">Ajouter au stock</button>
+    <label><?= t('code_barre_label') ?> : <input type="text" name="code_barre" required></label><br>
+    <label><?= t('nom_label') ?> : <input type="text" name="nom" required></label><br>
+    <label><?= t('quantite_label') ?> : <input type="number" name="quantite" value="1" required></label><br>
+    <label><?= t('date_limite_conso_label') ?> : <input type="date" name="date_limite_conso"></label><br>
+    <label><?= t('emplacement_stock_label') ?> : <input type="text" name="emplacement_stock"></label><br>
+    <button type="submit"><?= t('add_to_stock_button') ?></button>
 </form>
 
-<h3>Produits</h3>
+<h3><?= t('produits_list_heading') ?></h3>
 <table border="1" cellpadding="6">
     <tr>
-        <th>ID</th>
-        <th>Collecte</th>
-        <th>Code-barre</th>
-        <th>Nom</th>
-        <th>Quantité</th>
-        <th>DLC</th>
-        <th>Emplacement</th>
-        <th>Statut</th>
-        <th>Actions</th>
+        <th><?= t('id_column') ?></th>
+        <th><?= t('collecte_label') ?></th>
+        <th><?= t('code_barre_label') ?></th>
+        <th><?= t('nom_label') ?></th>
+        <th><?= t('quantite_label') ?></th>
+        <th><?= t('dlc_column') ?></th>
+        <th><?= t('emplacement_column') ?></th>
+        <th><?= t('statut_column') ?></th>
+        <th><?= t('actions_column') ?></th>
     </tr>
     <?php foreach ($produits as $p): ?>
     <tr>
@@ -130,10 +131,10 @@ require __DIR__ . '/../includes/header_admin.php';
                 </form>
                 <?php endif; ?>
             <?php endforeach; ?>
-            <form method="post" style="display:inline;" onsubmit="return confirm('Supprimer ce produit ?');">
+            <form method="post" style="display:inline;" onsubmit="return confirm(<?= json_encode(t('confirm_delete_produit')) ?>);">
                 <input type="hidden" name="action" value="supprimer">
                 <input type="hidden" name="id" value="<?= (int) $p['id'] ?>">
-                <button type="submit">Supprimer</button>
+                <button type="submit"><?= t('action_delete') ?></button>
             </form>
         </td>
     </tr>

@@ -7,18 +7,18 @@ $base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 <html lang="<?= currentLang() ?>">
 <head>
     <meta charset="UTF-8">
-    <title>NO MORE WASTE - Page introuvable</title>
+    <title><?= t('error_404_title') ?></title>
     <link rel="stylesheet" href="<?= $base ?>/public/css/styles.css">
 </head>
 <body>
     <div class="header">
-        <h1>404 - Page introuvable</h1>
+        <h1><?= t('error_404_heading') ?></h1>
     </div>
 
     <div class="container">
         <div class="card">
-            <p>La page que tu cherches n'existe pas ou a été déplacée.</p>
-            <p><a class="button" href="<?= $base ?>/index.php">Retour à l'accueil</a></p>
+            <p><?= t('error_404_text') ?></p>
+            <p><a class="button" href="<?= $base ?>/index.php"><?= t('back_home_button') ?></a></p>
         </div>
     </div>
 </body>
