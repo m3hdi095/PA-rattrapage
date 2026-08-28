@@ -6,7 +6,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-nomorewaste}
     volumes:
       - db_data:/var/lib/mysql
-      - ./api/001_init_schema.sql:/docker-entrypoint-initdb.d/001_init_schema.sql:ro
+      - ./api/bdd.sql:/docker-entrypoint-initdb.d/bdd.sql:ro
     ports:
       - "3307:3306"
     healthcheck:
