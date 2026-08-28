@@ -161,13 +161,13 @@ INSERT INTO admins (email, password_hash, nom, prenom, role) VALUES
     ('admin@nomorewaste.fr',       '$2a$10$2M4LzkqwEGR9i5DoOb17YuUuaFqUYEq.gh0Lhdan7x2fxOA2Q/y.C', 'Martin', 'Julie', 'admin');
 
 INSERT INTO adherents (email, password_hash, nom, siret, adresse, code_postal, ville, telephone, date_adhesion, date_expiration) VALUES
-    ('adherent@nomorewaste.fr',      '$2a$10$2M4LzkqwEGR9i5DoOb17YuUuaFqUYEq.gh0Lhdan7x2fxOA2Q/y.C', 'Boulangerie du Marais',   '11122233300011', '12 rue des Rosiers',        '75004', 'Paris',    '0142330011', '2025-09-01', '2026-09-01'),
+    ('super.admin@nomorewaste.fr',   '$2a$10$2M4LzkqwEGR9i5DoOb17YuUuaFqUYEq.gh0Lhdan7x2fxOA2Q/y.C', 'Boulangerie du Marais',   '11122233300011', '12 rue des Rosiers',        '75004', 'Paris',    '0142330011', '2025-09-01', '2026-09-01'),
     ('contact@epicerie-verte.fr',    '$2a$10$2M4LzkqwEGR9i5DoOb17YuUuaFqUYEq.gh0Lhdan7x2fxOA2Q/y.C', 'Epicerie Verte',          '22233344400022', '5 avenue Jean Jaures',      '75019', 'Paris',    '0142440022', '2025-11-15', '2026-11-15'),
     ('info@primeur-bio-nantes.fr',   '$2a$10$2M4LzkqwEGR9i5DoOb17YuUuaFqUYEq.gh0Lhdan7x2fxOA2Q/y.C', 'Primeur Bio Nantes',      '33344455500033', '8 rue de Strasbourg',       '44000', 'Nantes',   '0240550033', '2026-01-10', '2027-01-10'),
     ('hello@resto-phoceen.fr',       '$2a$10$2M4LzkqwEGR9i5DoOb17YuUuaFqUYEq.gh0Lhdan7x2fxOA2Q/y.C', 'Restaurant Le Phoceen',   '44455566600044', '20 quai du Port',           '13002', 'Marseille','0491660044', '2026-03-01', '2027-03-01');
 
 INSERT INTO benevoles (email, password_hash, nom, prenom, telephone, statut_candidature) VALUES
-    ('benevole@nomorewaste.fr', '$2a$10$2M4LzkqwEGR9i5DoOb17YuUuaFqUYEq.gh0Lhdan7x2fxOA2Q/y.C', 'Dupont',  'Jean',   '0611111111', 'valide'),
+    ('super.admin@nomorewaste.fr', '$2a$10$2M4LzkqwEGR9i5DoOb17YuUuaFqUYEq.gh0Lhdan7x2fxOA2Q/y.C', 'Dupont',  'Jean',   '0611111111', 'valide'),
     ('alice.martin@mail.fr',    '$2a$10$2M4LzkqwEGR9i5DoOb17YuUuaFqUYEq.gh0Lhdan7x2fxOA2Q/y.C', 'Martin',  'Alice',  '0622222222', 'valide'),
     ('karim.saidi@mail.fr',     '$2a$10$2M4LzkqwEGR9i5DoOb17YuUuaFqUYEq.gh0Lhdan7x2fxOA2Q/y.C', 'Saidi',   'Karim',  '0633333333', 'valide'),
     ('sofia.rossi@mail.fr',     '$2a$10$2M4LzkqwEGR9i5DoOb17YuUuaFqUYEq.gh0Lhdan7x2fxOA2Q/y.C', 'Rossi',   'Sofia',  '0644444444', 'en_attente'),
