@@ -65,6 +65,7 @@ func main() {
 	http.HandleFunc("GET /adherents/me", app.GetOwnAdherent)
 	http.HandleFunc("PATCH /adherents/profil", app.UpdateAdherentProfile)
 	http.HandleFunc("PATCH /adherents/mot-de-passe", app.UpdateAdherentPassword)
+	http.HandleFunc("PATCH /adherents/renouveler", app.RenewAdherentAdhesion)
 	http.HandleFunc("DELETE /adherents", app.DeleteAdherent)
 
 	//Benevoles

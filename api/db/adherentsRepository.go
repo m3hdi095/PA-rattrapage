@@ -111,6 +111,14 @@ func UpdateAdherent(id int, nom, adresse, codePostal, ville, telephone string) e
 	return nil
 }
 
+func RenewAdherentAdhesion(id int, newExpiration string) error {
+	_, err := Connection.Exec("UPDATE adherents SET date_expiration = ? WHERE id = ?", newExpiration, id)
+	if err != nil {
+		return fmt.Errorf("failed to renew adherent adhesion: %w", err)
+	}
+	return nil
+}
+
 func UpdateAdherentPassword(id int, newHash string) error {
 	_, err := Connection.Exec("UPDATE adherents SET password_hash = ? WHERE id = ?", newHash, id)
 	if err != nil {

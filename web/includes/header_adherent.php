@@ -1,8 +1,21 @@
 <?php
 require_once __DIR__ . '/i18n.php';
+require_once __DIR__ . '/api.php';
 $currentPage = basename($_SERVER['PHP_SELF']);
 function navClass($page, $currentPage) {
     return $page === $currentPage ? 'active' : '';
+}
+
+$adhesionExpiree = false;
+if (isset($_SESSION['token'])) {
+    try {
+        $result = apiRequest('GET', '/adherents/me', null, $_SESSION['token']);
+        $dateExpiration = $result['body']['date_expiration'] ?? null;
+        if ($dateExpiration && strtotime($dateExpiration) < strtotime('today')) {
+            $adhesionExpiree = true;
+        }
+    } catch (Exception $e) {
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -24,5 +37,9 @@ function navClass($page, $currentPage) {
         <a href="../logout.php"><?= t('nav_logout') ?></a>
         <span class="lang-switch"><a href="<?= $currentPage ?>?lang=<?= otherLang() ?>"><?= otherLangLabel() ?></a></span>
     </nav>
+
+    <?php if ($adhesionExpiree): ?>
+        <p class="error"><?= t('adhesion_expired_banner') ?> <a href="profil.php"><?= t('renew_adhesion_button') ?></a></p>
+    <?php endif; ?>
 
     <div class="container">

@@ -218,6 +218,48 @@ func UpdateAdherentPassword(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func RenewAdherentAdhesion(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		utils.JSONError(w, "token JWT invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "adherent" {
+		utils.JSONError(w, "accès réservé aux adhérents", http.StatusForbidden)
+		return
+	}
+
+	adherent, err := db.GetAdherentByID(claims.ID)
+	if err != nil {
+		utils.JSONError(w, "erreur lors de la récupération de l'adhérent", http.StatusInternalServerError)
+		return
+	}
+
+	expirationActuelle, err := time.Parse("2006-01-02", adherent.DateExpiration)
+	if err != nil {
+		utils.JSONError(w, "date d'expiration invalide", http.StatusInternalServerError)
+		return
+	}
+
+	// On repart de la date d'expiration actuelle si elle n'est pas encore
+	// passée (pour ne pas perdre les mois restants), sinon d'aujourd'hui.
+	depart := expirationActuelle
+	if depart.Before(time.Now()) {
+		depart = time.Now()
+	}
+	nouvelleExpiration := depart.AddDate(1, 0, 0).Format("2006-01-02")
+
+	if err := db.RenewAdherentAdhesion(claims.ID, nouvelleExpiration); err != nil {
+		utils.JSONError(w, "erreur lors du renouvellement de l'adhésion", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"date_expiration": nouvelleExpiration})
+}
+
 func DeleteAdherent(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)

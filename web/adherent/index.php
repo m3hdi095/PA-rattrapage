@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: collectes.php');
             exit;
         } else {
-            $error = t('login_error');
+            $error = $result['body']['error'] ?? t('login_error');
         }
     } catch (Exception $e) {
         $error = $e->getMessage();

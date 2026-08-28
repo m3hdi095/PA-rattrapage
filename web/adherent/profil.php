@@ -28,6 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $error = $result['body']['error'] ?? t('profil_update_error');
             }
+        } elseif ($form === 'renouveler') {
+            $result = apiRequest('PATCH', '/adherents/renouveler', null, $_SESSION['token']);
+            if ($result['statusCode'] === 200) {
+                $success = t('adhesion_renewed_msg');
+            } else {
+                $error = $result['body']['error'] ?? t('adhesion_renew_error');
+            }
         } elseif ($form === 'mot_de_passe') {
             $result = apiRequest('PATCH', '/adherents/mot-de-passe', [
                 'old_password' => $_POST['old_password'] ?? '',
@@ -73,6 +80,13 @@ require __DIR__ . '/../includes/header_adherent.php';
     <label><?= t('ville_label') ?> : <input type="text" name="ville" value="<?= htmlspecialchars($moi['ville'] ?? '') ?>" required></label><br>
     <label><?= t('telephone_label') ?> : <input type="tel" name="telephone" value="<?= htmlspecialchars($moi['telephone'] ?? '') ?>"></label><br>
     <button type="submit"><?= t('action_save') ?></button>
+</form>
+
+<h3><?= t('adhesion_heading') ?></h3>
+<p><?= t('date_expiration_label') ?> : <?= htmlspecialchars($moi['date_expiration'] ?? '') ?></p>
+<form method="post">
+    <input type="hidden" name="form" value="renouveler">
+    <button type="submit"><?= t('renew_adhesion_button') ?></button>
 </form>
 
 <h3><?= t('change_password_heading') ?></h3>
