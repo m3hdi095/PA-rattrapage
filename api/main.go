@@ -111,6 +111,7 @@ func main() {
 	http.HandleFunc("POST /plannings", app.CreatePlanning)
 	http.HandleFunc("GET /plannings", app.ListPlannings)
 	http.HandleFunc("GET /plannings/excel", app.ExportPlanningsExcel)
+	http.HandleFunc("GET /plannings/envoi", app.EnvoiPlanningsBenevoles)
 	http.HandleFunc("DELETE /plannings", app.DeletePlanning)
 
 	//Produits
