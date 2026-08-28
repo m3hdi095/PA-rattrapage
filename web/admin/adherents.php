@@ -63,7 +63,7 @@ require __DIR__ . '/../includes/header_admin.php';
     <label><?= t('nom_commerce_label') ?> : <input type="text" name="nom" required></label><br>
     <label><?= t('siret_label') ?> : <input type="text" name="siret" pattern="\d{14}" maxlength="14" inputmode="numeric" title="<?= t('siret_pattern_hint') ?>" required></label><br>
     <label><?= t('adresse_label') ?> : <input type="text" name="adresse"></label><br>
-    <label><?= t('code_postal_label') ?> : <input type="text" name="code_postal"></label><br>
+    <label><?= t('code_postal_label') ?> : <input type="text" name="code_postal" pattern="\d{5}" maxlength="5" inputmode="numeric" required></label><br>
     <label><?= t('ville_label') ?> : <input type="text" name="ville"></label><br>
     <label><?= t('telephone_label') ?> : <input type="tel" name="telephone"></label><br>
     <button type="submit"><?= t('action_create') ?></button>

@@ -44,6 +44,11 @@ func CreatePlanning(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if req.PlacesMax < 1 {
+		utils.JSONError(w, "le nombre de places doit être supérieur à 0", http.StatusBadRequest)
+		return
+	}
+
 	planning := &models.Planning{
 		ServiceID:  req.ServiceID,
 		BenevoleID: req.BenevoleID,

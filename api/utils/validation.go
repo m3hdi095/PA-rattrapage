@@ -13,3 +13,9 @@ func IsValidEmail(email string) bool {
 func IsValidPassword(password string) bool {
 	return len(password) >= MinPasswordLength
 }
+
+var codePostalRegex = regexp.MustCompile(`^\d{5}$`)
+
+func IsValidCodePostal(codePostal string) bool {
+	return codePostalRegex.MatchString(codePostal)
+}

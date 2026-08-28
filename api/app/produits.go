@@ -34,6 +34,11 @@ func CreateProduit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if req.Quantite < 1 {
+		utils.JSONError(w, "la quantité doit être supérieure à 0", http.StatusBadRequest)
+		return
+	}
+
 	produit := &models.Produit{
 		CollecteID:       req.CollecteID,
 		Nom:              req.Nom,

@@ -89,7 +89,7 @@ require __DIR__ . '/../includes/header_admin.php';
         </select>
     </label><br>
     <label><?= t('nom_label') ?> : <input type="text" name="nom" required></label><br>
-    <label><?= t('quantite_label') ?> : <input type="number" name="quantite" value="1" required></label><br>
+    <label><?= t('quantite_label') ?> : <input type="number" name="quantite" value="1" min="1" required></label><br>
     <label><?= t('date_limite_conso_label') ?> : <input type="date" name="date_limite_conso"></label><br>
     <label><?= t('emplacement_stock_label') ?> : <input type="text" name="emplacement_stock"></label><br>
     <button type="submit"><?= t('add_to_stock_button') ?></button>

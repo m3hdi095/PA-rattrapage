@@ -200,6 +200,7 @@
     "mon_profil_heading": "My profile",
     "infos_commerce_heading": "Business information",
     "profil_updated_msg": "Profile updated.",
+    "profil_update_error": "Error while updating the profile",
     "password_updated_msg": "Password updated.",
     "current_password_incorrect_msg": "Current password incorrect.",
     "current_password_label": "Current password",

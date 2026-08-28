@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label><?= t('nom_commerce_label') ?> : <input type="text" name="nom_commerce" required></label>
             <label><?= t('siret_label') ?> : <input type="text" name="siret" pattern="\d{14}" maxlength="14" inputmode="numeric" title="<?= t('siret_pattern_hint') ?>" required></label>
             <label><?= t('adresse_label') ?> : <input type="text" name="adresse" required></label>
-            <label><?= t('code_postal_label') ?> : <input type="text" name="code_postal" required></label>
+            <label><?= t('code_postal_label') ?> : <input type="text" name="code_postal" pattern="\d{5}" maxlength="5" inputmode="numeric" required></label>
             <label><?= t('ville_label') ?> : <input type="text" name="ville" required></label>
             <label><?= t('telephone_label') ?> : <input type="tel" name="telephone"></label>
             <label><?= t('email_label') ?> : <input type="email" name="email" required></label>

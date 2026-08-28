@@ -111,7 +111,7 @@ require __DIR__ . '/../includes/header_admin.php';
     <label><?= t('date_debut_label') ?> : <input type="datetime-local" name="date_debut" min="<?= date('Y-m-d\TH:i') ?>" required></label><br>
     <label><?= t('date_fin_label') ?> : <input type="datetime-local" name="date_fin" min="<?= date('Y-m-d\TH:i') ?>" required></label><br>
     <label><?= t('lieu_label') ?> : <input type="text" name="lieu"></label><br>
-    <label><?= t('places_max_label') ?> : <input type="number" name="places_max" value="1" required></label><br>
+    <label><?= t('places_max_label') ?> : <input type="number" name="places_max" value="1" min="1" required></label><br>
     <button type="submit"><?= t('action_create') ?></button>
 </form>
 

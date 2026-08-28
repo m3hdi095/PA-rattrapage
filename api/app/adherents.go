@@ -47,6 +47,11 @@ func CreateAdherent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !utils.IsValidCodePostal(req.CodePostal) {
+		utils.JSONError(w, "code postal invalide (5 chiffres attendus)", http.StatusBadRequest)
+		return
+	}
+
 	passwordHash, err := utils.HashPassword(req.Password)
 	if err != nil {
 		utils.JSONError(w, "impossible de hasher le mot de passe", http.StatusInternalServerError)
@@ -145,6 +150,11 @@ func UpdateAdherentProfile(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		utils.JSONError(w, "corps de requête JSON invalide", http.StatusBadRequest)
+		return
+	}
+
+	if !utils.IsValidCodePostal(req.CodePostal) {
+		utils.JSONError(w, "code postal invalide (5 chiffres attendus)", http.StatusBadRequest)
 		return
 	}
 

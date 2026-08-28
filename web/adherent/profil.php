@@ -16,14 +16,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($form === 'profil') {
-            apiRequest('PATCH', '/adherents/profil', [
+            $result = apiRequest('PATCH', '/adherents/profil', [
                 'nom'         => $_POST['nom'] ?? '',
                 'adresse'     => $_POST['adresse'] ?? '',
                 'code_postal' => $_POST['code_postal'] ?? '',
                 'ville'       => $_POST['ville'] ?? '',
                 'telephone'   => $_POST['telephone'] ?? '',
             ], $_SESSION['token']);
-            $success = t('profil_updated_msg');
+            if ($result['statusCode'] === 200) {
+                $success = t('profil_updated_msg');
+            } else {
+                $error = $result['body']['error'] ?? t('profil_update_error');
+            }
         } elseif ($form === 'mot_de_passe') {
             $result = apiRequest('PATCH', '/adherents/mot-de-passe', [
                 'old_password' => $_POST['old_password'] ?? '',
@@ -65,7 +69,7 @@ require __DIR__ . '/../includes/header_adherent.php';
     <input type="hidden" name="form" value="profil">
     <label><?= t('nom_commerce_label') ?> : <input type="text" name="nom" value="<?= htmlspecialchars($moi['nom'] ?? '') ?>" required></label><br>
     <label><?= t('adresse_label') ?> : <input type="text" name="adresse" value="<?= htmlspecialchars($moi['adresse'] ?? '') ?>" required></label><br>
-    <label><?= t('code_postal_label') ?> : <input type="text" name="code_postal" value="<?= htmlspecialchars($moi['code_postal'] ?? '') ?>" required></label><br>
+    <label><?= t('code_postal_label') ?> : <input type="text" name="code_postal" value="<?= htmlspecialchars($moi['code_postal'] ?? '') ?>" pattern="\d{5}" maxlength="5" inputmode="numeric" required></label><br>
     <label><?= t('ville_label') ?> : <input type="text" name="ville" value="<?= htmlspecialchars($moi['ville'] ?? '') ?>" required></label><br>
     <label><?= t('telephone_label') ?> : <input type="tel" name="telephone" value="<?= htmlspecialchars($moi['telephone'] ?? '') ?>"></label><br>
     <button type="submit"><?= t('action_save') ?></button>
