@@ -29,6 +29,11 @@ func CreateCollecte(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := utils.ValidateFutureDate(req.DateCollecte); err != nil {
+		utils.JSONError(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	collecte := &models.Collecte{
 		AdherentID:   claims.ID,
 		DateCollecte: req.DateCollecte,

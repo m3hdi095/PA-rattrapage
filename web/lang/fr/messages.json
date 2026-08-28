@@ -37,6 +37,9 @@
     "create_account_button": "Créer mon compte",
     "back_to_login_link": "← Retour à la connexion",
     "account_create_error": "Erreur lors de la création du compte",
+    "demande_collecte_error": "Erreur lors de la demande de collecte",
+    "planning_create_error": "Erreur lors de la création du créneau",
+    "tournee_create_error": "Erreur lors de la création de la tournée",
 
     "benevole_register_title": "NO MORE WASTE - Devenir bénévole",
     "benevole_register_heading": "Créer un compte - Bénévole",

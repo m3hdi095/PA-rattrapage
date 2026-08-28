@@ -37,6 +37,9 @@
     "create_account_button": "Create my account",
     "back_to_login_link": "← Back to login",
     "account_create_error": "Error while creating the account",
+    "demande_collecte_error": "Error while requesting the pickup",
+    "planning_create_error": "Error while creating the schedule",
+    "tournee_create_error": "Error while creating the route",
 
     "benevole_register_title": "NO MORE WASTE - Become a volunteer",
     "benevole_register_heading": "Create an account - Volunteer",

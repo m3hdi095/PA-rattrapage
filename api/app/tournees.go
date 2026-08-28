@@ -31,6 +31,11 @@ func CreateTournee(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := utils.ValidateFutureDate(req.DateTournee); err != nil {
+		utils.JSONError(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	tournee := &models.Tournee{
 		BenevoleID:  req.BenevoleID,
 		DateTournee: req.DateTournee,

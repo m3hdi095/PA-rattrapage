@@ -39,6 +39,11 @@ func CreatePlanning(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := utils.ValidateDateRange(req.DateDebut, req.DateFin); err != nil {
+		utils.JSONError(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	planning := &models.Planning{
 		ServiceID:  req.ServiceID,
 		BenevoleID: req.BenevoleID,
@@ -78,7 +83,19 @@ func ListPlannings(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(plannings)
 }
 
-func buildPlanningExcel(plannings []models.Planning) (*excelize.File, error) {
+func servicesNameByID() (map[int]string, error) {
+	services, err := db.GetAllServices()
+	if err != nil {
+		return nil, err
+	}
+	names := make(map[int]string, len(services))
+	for _, s := range services {
+		names[s.ID] = s.Nom
+	}
+	return names, nil
+}
+
+func buildPlanningExcel(plannings []models.Planning, serviceNames map[int]string) (*excelize.File, error) {
 	f := excelize.NewFile()
 
 	f.SetCellValue("Sheet1", "A1", "Service")
@@ -88,7 +105,11 @@ func buildPlanningExcel(plannings []models.Planning) (*excelize.File, error) {
 
 	ligne := 2
 	for _, p := range plannings {
-		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", ligne), p.ServiceID)
+		serviceName, ok := serviceNames[p.ServiceID]
+		if !ok {
+			serviceName = fmt.Sprintf("service #%d", p.ServiceID)
+		}
+		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", ligne), serviceName)
 		f.SetCellValue("Sheet1", fmt.Sprintf("B%d", ligne), p.DateDebut)
 		f.SetCellValue("Sheet1", fmt.Sprintf("C%d", ligne), p.DateFin)
 		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", ligne), p.Lieu)
@@ -117,7 +138,13 @@ func ExportPlanningsExcel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	f, _ := buildPlanningExcel(plannings)
+	serviceNames, err := servicesNameByID()
+	if err != nil {
+		utils.JSONError(w, "erreur lors de la récupération des services", http.StatusInternalServerError)
+		return
+	}
+
+	f, _ := buildPlanningExcel(plannings, serviceNames)
 	defer f.Close()
 
 	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -132,6 +159,12 @@ func EnvoiPlanningsBenevoles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	serviceNames, err := servicesNameByID()
+	if err != nil {
+		utils.JSONError(w, "erreur lors de la récupération des services", http.StatusInternalServerError)
+		return
+	}
+
 	envoyes := 0
 	for _, benevole := range benevoles {
 		if benevole.StatutCandidature != "valide" {
@@ -143,7 +176,7 @@ func EnvoiPlanningsBenevoles(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		f, _ := buildPlanningExcel(plannings)
+		f, _ := buildPlanningExcel(plannings, serviceNames)
 		buf, err := f.WriteToBuffer()
 		f.Close()
 		if err != nil {

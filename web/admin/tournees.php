@@ -13,20 +13,24 @@ $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if (($_POST['action'] ?? '') === 'update_statut') {
-            apiRequest('PATCH', '/tournees/statut', [
+            $result = apiRequest('PATCH', '/tournees/statut', [
                 'id'     => (int) $_POST['id'],
                 'statut' => $_POST['statut'],
             ], $_SESSION['token']);
         } elseif (($_POST['action'] ?? '') === 'supprimer') {
-            apiRequest('DELETE', '/tournees', ['id' => (int) $_POST['id']], $_SESSION['token']);
+            $result = apiRequest('DELETE', '/tournees', ['id' => (int) $_POST['id']], $_SESSION['token']);
         } else {
-            apiRequest('POST', '/tournees', [
+            $result = apiRequest('POST', '/tournees', [
                 'benevole_id'  => (int) ($_POST['benevole_id'] ?? 0),
                 'date_tournee' => $_POST['date_tournee'] ?? '',
             ], $_SESSION['token']);
         }
-        header('Location: tournees.php');
-        exit;
+        if ($result['statusCode'] >= 400) {
+            $error = $result['body']['error'] ?? t('tournee_create_error');
+        } else {
+            header('Location: tournees.php');
+            exit;
+        }
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
@@ -72,7 +76,7 @@ require __DIR__ . '/../includes/header_admin.php';
             <?php endforeach; ?>
         </select>
     </label><br>
-    <label><?= t('date_label') ?> : <input type="date" name="date_tournee" required></label><br>
+    <label><?= t('date_label') ?> : <input type="date" name="date_tournee" min="<?= date('Y-m-d') ?>" required></label><br>
     <button type="submit"><?= t('action_create') ?></button>
 </form>
 

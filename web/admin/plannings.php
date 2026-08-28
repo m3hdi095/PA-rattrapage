@@ -13,9 +13,9 @@ $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if (($_POST['action'] ?? '') === 'supprimer') {
-            apiRequest('DELETE', '/plannings', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
+            $result = apiRequest('DELETE', '/plannings', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
         } else {
-            apiRequest('POST', '/plannings', [
+            $result = apiRequest('POST', '/plannings', [
                 'service_id'  => (int) ($_POST['service_id'] ?? 0),
                 'benevole_id' => (int) ($_POST['benevole_id'] ?? 0),
                 'date_debut'  => $_POST['date_debut'] ?? '',
@@ -24,8 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'places_max'  => (int) ($_POST['places_max'] ?? 1),
             ], $_SESSION['token']);
         }
-        header('Location: plannings.php');
-        exit;
+        if ($result['statusCode'] >= 400) {
+            $error = $result['body']['error'] ?? t('planning_create_error');
+        } else {
+            header('Location: plannings.php');
+            exit;
+        }
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
@@ -104,8 +108,8 @@ require __DIR__ . '/../includes/header_admin.php';
     </label>
     <p id="competence_warning" class="error" style="display:none;"><?= t('competence_warning_text') ?></p>
     <br>
-    <label><?= t('date_debut_label') ?> : <input type="datetime-local" name="date_debut" required></label><br>
-    <label><?= t('date_fin_label') ?> : <input type="datetime-local" name="date_fin" required></label><br>
+    <label><?= t('date_debut_label') ?> : <input type="datetime-local" name="date_debut" min="<?= date('Y-m-d\TH:i') ?>" required></label><br>
+    <label><?= t('date_fin_label') ?> : <input type="datetime-local" name="date_fin" min="<?= date('Y-m-d\TH:i') ?>" required></label><br>
     <label><?= t('lieu_label') ?> : <input type="text" name="lieu"></label><br>
     <label><?= t('places_max_label') ?> : <input type="number" name="places_max" value="1" required></label><br>
     <button type="submit"><?= t('action_create') ?></button>

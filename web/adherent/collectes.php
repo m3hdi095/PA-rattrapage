@@ -12,11 +12,15 @@ $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        apiRequest('POST', '/collectes', [
+        $result = apiRequest('POST', '/collectes', [
             'date_collecte' => $_POST['date_collecte'] ?? '',
         ], $_SESSION['token']);
-        header('Location: collectes.php');
-        exit;
+        if ($result['statusCode'] >= 400) {
+            $error = $result['body']['error'] ?? t('demande_collecte_error');
+        } else {
+            header('Location: collectes.php');
+            exit;
+        }
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
@@ -41,7 +45,7 @@ require __DIR__ . '/../includes/header_adherent.php';
 
 <h3><?= t('demander_collecte_heading') ?></h3>
 <form method="post">
-    <label><?= t('date_collecte_souhaitee_label') ?> : <input type="datetime-local" name="date_collecte" required></label><br>
+    <label><?= t('date_collecte_souhaitee_label') ?> : <input type="datetime-local" name="date_collecte" min="<?= date('Y-m-d\TH:i') ?>" required></label><br>
     <button type="submit"><?= t('demander_button') ?></button>
 </form>
 
