@@ -5,11 +5,11 @@ import (
 	"net/smtp"
 )
 
-const (
-	smtpHost     = "smtp.gmail.com"
-	smtpPort     = "587"
-	smtpFrom     = "projet.annuel42@gmail.com"
-	smtpPassword = "wtwfapeaaevsowpr"
+var (
+	smtpHost     = envOr("SMTP_HOST", "smtp.gmail.com")
+	smtpPort     = envOr("SMTP_PORT", "587")
+	smtpFrom     = envOr("SMTP_FROM", "projet.annuel42@gmail.com")
+	smtpPassword = envOr("SMTP_PASSWORD", "wtwfapeaaevsowpr")
 )
 
 func SendEmail(to, subject, body string) error {

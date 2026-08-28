@@ -2,12 +2,20 @@ package utils
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtSecret = []byte("nomorewaste")
+func envOr(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
+}
+
+var jwtSecret = []byte(envOr("JWT_SECRET", "nomorewaste"))
 
 func GenerateJWT(id int, role string) (string, error) {
 	return GenerateJWTWithAdminRole(id, role, "")

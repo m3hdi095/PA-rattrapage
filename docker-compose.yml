@@ -3,7 +3,7 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: nomorewaste
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-nomorewaste}
     volumes:
       - db_data:/var/lib/mysql
       - ./api/001_init_schema.sql:/docker-entrypoint-initdb.d/001_init_schema.sql:ro
@@ -25,9 +25,14 @@ services:
       DB_HOST: mysql
       DB_PORT: 3306
       DB_USER: root
-      DB_PASSWORD: nomorewaste
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-nomorewaste}
       DB_NAME: no_more_waste
       PORT: 8081
+      JWT_SECRET: ${JWT_SECRET:-nomorewaste}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_FROM: ${SMTP_FROM:-projet.annuel42@gmail.com}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-wtwfapeaaevsowpr}
     ports:
       - "8082:8081"
 
