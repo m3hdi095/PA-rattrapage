@@ -1,9 +1,13 @@
 {
     "site_title": "NO MORE WASTE",
+    "home_tagline": "Together against food waste: we collect unsold goods and redistribute them to those who need them.",
     "home_choose_space": "Choose your space:",
     "home_admin_space": "Administration Area",
+    "home_admin_desc": "Manage members, pickups, stock and delivery routes.",
     "home_adherent_space": "Merchant Area (member)",
+    "home_adherent_desc": "Request a pickup and sign up for the association's services.",
     "home_benevole_space": "Volunteer Area",
+    "home_benevole_desc": "View your schedule and offer your skills.",
 
     "email_label": "Email",
     "password_label": "Password",

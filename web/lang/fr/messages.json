@@ -1,9 +1,13 @@
 {
     "site_title": "NO MORE WASTE",
+    "home_tagline": "Ensemble contre le gaspillage : on collecte les invendus, on les redistribue à ceux qui en ont besoin.",
     "home_choose_space": "Choisissez votre espace :",
     "home_admin_space": "Espace Administration",
+    "home_admin_desc": "Gérer les adhérents, les collectes, les stocks et les tournées.",
     "home_adherent_space": "Espace Commerçant (adhérent)",
+    "home_adherent_desc": "Demander une collecte et s'inscrire aux services de l'association.",
     "home_benevole_space": "Espace Bénévole",
+    "home_benevole_desc": "Consulter son planning et proposer ses compétences.",
 
     "email_label": "Email",
     "password_label": "Mot de passe",

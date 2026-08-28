@@ -7,6 +7,7 @@ $base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 <html lang="<?= currentLang() ?>">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= t('error_500_title') ?></title>
     <link rel="stylesheet" href="<?= $base ?>/public/css/styles.css">
 </head>
