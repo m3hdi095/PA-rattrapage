@@ -32,6 +32,11 @@ func CreateAdherent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !utils.IsValidSiret(req.Siret) {
+		utils.JSONError(w, "SIRET invalide (14 chiffres attendus)", http.StatusBadRequest)
+		return
+	}
+
 	passwordHash, err := utils.HashPassword(req.Password)
 	if err != nil {
 		utils.JSONError(w, "impossible de hasher le mot de passe", http.StatusInternalServerError)

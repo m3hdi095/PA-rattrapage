@@ -30,6 +30,7 @@
     "adherent_register_heading": "Create an account - Merchant",
     "nom_commerce_label": "Business name",
     "siret_label": "SIRET",
+    "siret_pattern_hint": "Exactly 14 digits",
     "adresse_label": "Address",
     "code_postal_label": "Postal code",
     "ville_label": "City",

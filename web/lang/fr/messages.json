@@ -30,6 +30,7 @@
     "adherent_register_heading": "Créer un compte - Commerçant",
     "nom_commerce_label": "Nom du commerce",
     "siret_label": "SIRET",
+    "siret_pattern_hint": "14 chiffres exactement",
     "adresse_label": "Adresse",
     "code_postal_label": "Code postal",
     "ville_label": "Ville",

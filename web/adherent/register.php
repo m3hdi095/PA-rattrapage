@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <form method="post" action="">
             <label><?= t('nom_commerce_label') ?> : <input type="text" name="nom_commerce" required></label>
-            <label><?= t('siret_label') ?> : <input type="text" name="siret" required></label>
+            <label><?= t('siret_label') ?> : <input type="text" name="siret" pattern="\d{14}" maxlength="14" inputmode="numeric" title="<?= t('siret_pattern_hint') ?>" required></label>
             <label><?= t('adresse_label') ?> : <input type="text" name="adresse" required></label>
             <label><?= t('code_postal_label') ?> : <input type="text" name="code_postal" required></label>
             <label><?= t('ville_label') ?> : <input type="text" name="ville" required></label>
