@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             apiRequest('POST', '/produits', [
                 'collecte_id'       => (int) ($_POST['collecte_id'] ?? 0),
-                'code_barre'        => $_POST['code_barre'] ?? '',
                 'nom'               => $_POST['nom'] ?? '',
                 'quantite'          => (int) ($_POST['quantite'] ?? 1),
                 'date_limite_conso' => $_POST['date_limite_conso'] ?? '',
@@ -89,7 +88,6 @@ require __DIR__ . '/../includes/header_admin.php';
             <?php endforeach; ?>
         </select>
     </label><br>
-    <label><?= t('code_barre_label') ?> : <input type="text" name="code_barre" required></label><br>
     <label><?= t('nom_label') ?> : <input type="text" name="nom" required></label><br>
     <label><?= t('quantite_label') ?> : <input type="number" name="quantite" value="1" required></label><br>
     <label><?= t('date_limite_conso_label') ?> : <input type="date" name="date_limite_conso"></label><br>

@@ -75,7 +75,7 @@ CREATE TABLE collectes (
 CREATE TABLE produits (
     id                 INT AUTO_INCREMENT PRIMARY KEY,
     collecte_id        INT NOT NULL,
-    code_barre         VARCHAR(50) NOT NULL,
+    code_barre         VARCHAR(50) NOT NULL UNIQUE,
     nom                VARCHAR(150) NOT NULL,
     quantite           INT NOT NULL DEFAULT 1,
     date_limite_conso  DATE,

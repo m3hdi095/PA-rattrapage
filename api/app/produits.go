@@ -6,6 +6,7 @@ import (
 	"api/utils"
 	"encoding/json"
 	"net/http"
+	"strings"
 )
 
 func CreateProduit(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +24,6 @@ func CreateProduit(w http.ResponseWriter, r *http.Request) {
 
 	var req struct {
 		CollecteID       int    `json:"collecte_id"`
-		CodeBarre        string `json:"code_barre"`
 		Nom              string `json:"nom"`
 		Quantite         int    `json:"quantite"`
 		DateLimiteConso  string `json:"date_limite_conso"`
@@ -36,14 +36,21 @@ func CreateProduit(w http.ResponseWriter, r *http.Request) {
 
 	produit := &models.Produit{
 		CollecteID:       req.CollecteID,
-		CodeBarre:        req.CodeBarre,
 		Nom:              req.Nom,
 		Quantite:         req.Quantite,
 		DateLimiteConso:  req.DateLimiteConso,
 		EmplacementStock: req.EmplacementStock,
 	}
 
-	id, err := db.CreateProduit(produit)
+	var id int
+	const maxTentatives = 5
+	for i := 0; i < maxTentatives; i++ {
+		produit.CodeBarre = utils.GenerateCodeBarre()
+		id, err = db.CreateProduit(produit)
+		if err == nil || !strings.Contains(err.Error(), "Duplicate entry") {
+			break
+		}
+	}
 	if err != nil {
 		utils.JSONError(w, "erreur lors de la création du produit", http.StatusInternalServerError)
 		return
