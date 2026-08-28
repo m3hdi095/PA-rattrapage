@@ -2,6 +2,7 @@ package db
 
 import (
 	"api/models"
+	"database/sql"
 	"fmt"
 )
 
@@ -15,9 +16,11 @@ func GetProduits() ([]models.Produit, error) {
 	var produits []models.Produit
 	for rows.Next() {
 		var p models.Produit
-		if err := rows.Scan(&p.ID, &p.CollecteID, &p.CodeBarre, &p.Nom, &p.Quantite, &p.DateLimiteConso, &p.EmplacementStock, &p.Statut); err != nil {
+		var dateLimiteConso sql.NullString
+		if err := rows.Scan(&p.ID, &p.CollecteID, &p.CodeBarre, &p.Nom, &p.Quantite, &dateLimiteConso, &p.EmplacementStock, &p.Statut); err != nil {
 			return nil, err
 		}
+		p.DateLimiteConso = dateLimiteConso.String
 		produits = append(produits, p)
 	}
 
@@ -29,9 +32,14 @@ func GetProduits() ([]models.Produit, error) {
 }
 
 func CreateProduit(produit *models.Produit) (int, error) {
+	var dateLimiteConso interface{}
+	if produit.DateLimiteConso != "" {
+		dateLimiteConso = produit.DateLimiteConso
+	}
+
 	res, err := Connection.Exec(
 		"INSERT INTO produits (collecte_id, code_barre, nom, quantite, date_limite_conso, emplacement_stock) VALUES (?, ?, ?, ?, ?, ?)",
-		produit.CollecteID, produit.CodeBarre, produit.Nom, produit.Quantite, produit.DateLimiteConso, produit.EmplacementStock,
+		produit.CollecteID, produit.CodeBarre, produit.Nom, produit.Quantite, dateLimiteConso, produit.EmplacementStock,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create produit: %w", err)
