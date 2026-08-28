@@ -32,6 +32,16 @@ func CreateAdherent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !utils.IsValidEmail(req.Email) {
+		utils.JSONError(w, "email invalide", http.StatusBadRequest)
+		return
+	}
+
+	if !utils.IsValidPassword(req.Password) {
+		utils.JSONError(w, "mot de passe trop court (6 caractères minimum)", http.StatusBadRequest)
+		return
+	}
+
 	if !utils.IsValidSiret(req.Siret) {
 		utils.JSONError(w, "SIRET invalide (14 chiffres attendus)", http.StatusBadRequest)
 		return
@@ -176,6 +186,11 @@ func UpdateAdherentPassword(w http.ResponseWriter, r *http.Request) {
 
 	if !utils.CheckPasswordHash(req.OldPassword, adherent.PasswordHash) {
 		utils.JSONError(w, "mot de passe actuel incorrect", http.StatusUnauthorized)
+		return
+	}
+
+	if !utils.IsValidPassword(req.NewPassword) {
+		utils.JSONError(w, "mot de passe trop court (6 caractères minimum)", http.StatusBadRequest)
 		return
 	}
 

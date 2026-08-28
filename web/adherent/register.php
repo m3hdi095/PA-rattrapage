@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label><?= t('ville_label') ?> : <input type="text" name="ville" required></label>
             <label><?= t('telephone_label') ?> : <input type="tel" name="telephone"></label>
             <label><?= t('email_label') ?> : <input type="email" name="email" required></label>
-            <label><?= t('password_label') ?> : <input type="password" name="password" required></label>
+            <label><?= t('password_label') ?> : <input type="password" name="password" minlength="6" required></label>
             <button type="submit"><?= t('create_account_button') ?></button>
         </form>
 

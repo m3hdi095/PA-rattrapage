@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label><?= t('prenom_label') ?> : <input type="text" name="prenom" required></label>
             <label><?= t('telephone_label') ?> : <input type="tel" name="telephone"></label>
             <label><?= t('email_label') ?> : <input type="email" name="email" required></label>
-            <label><?= t('password_label') ?> : <input type="password" name="password" required></label>
+            <label><?= t('password_label') ?> : <input type="password" name="password" minlength="6" required></label>
 
             <label><?= t('competences_legend') ?> :
                 <select name="capacites[]" multiple size="4">

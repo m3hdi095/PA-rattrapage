@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($result['statusCode'] === 200) {
                 $success = t('password_updated_msg');
             } else {
-                $error = t('current_password_incorrect_msg');
+                $error = $result['body']['error'] ?? t('current_password_incorrect_msg');
             }
         } elseif ($form === 'competences') {
             apiRequest('PATCH', '/benevoles/capacites', [
@@ -98,7 +98,7 @@ require __DIR__ . '/../includes/header_benevole.php';
 <form method="post">
     <input type="hidden" name="form" value="mot_de_passe">
     <label><?= t('current_password_label') ?> : <input type="password" name="old_password" required></label><br>
-    <label><?= t('new_password_label') ?> : <input type="password" name="new_password" required></label><br>
+    <label><?= t('new_password_label') ?> : <input type="password" name="new_password" minlength="6" required></label><br>
     <button type="submit"><?= t('change_password_button') ?></button>
 </form>
 

@@ -65,7 +65,7 @@ require __DIR__ . '/../includes/header_admin.php';
 <h3><?= t('create_admin_heading') ?></h3>
 <form method="post">
     <label><?= t('email_label') ?> : <input type="email" name="email" required></label><br>
-    <label><?= t('password_label') ?> : <input type="password" name="password" required></label><br>
+    <label><?= t('password_label') ?> : <input type="password" name="password" minlength="6" required></label><br>
     <label><?= t('nom_label') ?> : <input type="text" name="nom" required></label><br>
     <label><?= t('prenom_label') ?> : <input type="text" name="prenom" required></label><br>
     <label><?= t('role_label') ?> :

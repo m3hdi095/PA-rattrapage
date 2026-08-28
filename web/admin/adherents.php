@@ -59,7 +59,7 @@ require __DIR__ . '/../includes/header_admin.php';
 <form method="post">
     <input type="hidden" name="action" value="creer">
     <label><?= t('email_label') ?> : <input type="email" name="email" required></label><br>
-    <label><?= t('password_label') ?> : <input type="password" name="password" required></label><br>
+    <label><?= t('password_label') ?> : <input type="password" name="password" minlength="6" required></label><br>
     <label><?= t('nom_commerce_label') ?> : <input type="text" name="nom" required></label><br>
     <label><?= t('siret_label') ?> : <input type="text" name="siret" pattern="\d{14}" maxlength="14" inputmode="numeric" title="<?= t('siret_pattern_hint') ?>" required></label><br>
     <label><?= t('adresse_label') ?> : <input type="text" name="adresse"></label><br>

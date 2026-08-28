@@ -46,6 +46,16 @@ func CreateAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !utils.IsValidEmail(req.Email) {
+		utils.JSONError(w, "email invalide", http.StatusBadRequest)
+		return
+	}
+
+	if !utils.IsValidPassword(req.Password) {
+		utils.JSONError(w, "mot de passe trop court (6 caractères minimum)", http.StatusBadRequest)
+		return
+	}
+
 	role := req.Role
 	if role != "super_admin" {
 		role = "admin"
