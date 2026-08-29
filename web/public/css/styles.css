@@ -206,6 +206,61 @@ table form {
   max-width: none;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+.home-navbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  background-color: var(--navbar-bg);
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.home-navbar .navbar-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.home-navbar .navbar-links a {
+  color: var(--text-color);
+  text-decoration: none;
+  padding: 8px 14px;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.home-navbar .navbar-links a:hover {
+  background-color: var(--navbar-hover-bg);
+}
+
+.home-navbar .navbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.home-navbar .lang-link {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.anchor-section {
+  scroll-margin-top: 70px;
+}
+
+.anchor-section p {
+  margin-bottom: 16px;
+}
+
 .hero {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
@@ -292,59 +347,6 @@ table form {
   .hero-stats {
     justify-content: center;
   }
-}
-
-.home-choose {
-  text-align: center;
-  color: var(--card-text-color);
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-.space-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  margin: 20px 0;
-}
-
-.space-card {
-  display: block;
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 24px 20px;
-  text-align: center;
-  text-decoration: none;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
-  transition: transform 0.15s ease, background-color 0.15s ease;
-}
-
-.space-card:hover {
-  background-color: var(--navbar-bg);
-  transform: translateY(-4px);
-}
-
-.space-icon {
-  font-size: 2.5em;
-  display: block;
-  margin-bottom: 10px;
-}
-
-.space-card h2 {
-  margin: 0 0 8px;
-  font-size: 1.1em;
-}
-
-.space-card p {
-  color: var(--card-text-color);
-  font-size: 0.9em;
-  margin: 0;
-}
-
-.lang-switch-home {
-  text-align: center;
-  margin-top: 30px;
 }
 
 .error {

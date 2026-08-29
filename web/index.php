@@ -14,6 +14,18 @@ require_once __DIR__ . '/includes/i18n.php';
         <h1><?= t('site_title') ?></h1>
     </div>
 
+    <nav class="home-navbar">
+        <div class="navbar-links">
+            <a href="#histoire"><?= t('nav_histoire') ?></a>
+            <a href="#benevoles"><?= t('nav_benevoles') ?></a>
+            <a href="#adherents"><?= t('nav_adherents') ?></a>
+        </div>
+        <div class="navbar-right">
+            <a class="lang-link" href="?lang=<?= otherLang() ?>"><?= otherLangLabel() ?></a>
+            <a class="button" href="admin/index.php"><?= t('nav_admin_connexion') ?></a>
+        </div>
+    </nav>
+
     <div class="container">
         <div class="hero">
             <div class="hero-text">
@@ -53,6 +65,11 @@ require_once __DIR__ . '/includes/i18n.php';
             </div>
         </div>
 
+        <section id="histoire" class="card anchor-section">
+            <h2><?= t('histoire_heading') ?></h2>
+            <p><?= t('histoire_text') ?></p>
+        </section>
+
         <div class="how-it-works">
             <h2 class="section-title"><?= t('home_how_heading') ?></h2>
             <div class="steps-grid">
@@ -74,27 +91,17 @@ require_once __DIR__ . '/includes/i18n.php';
             </div>
         </div>
 
-        <p class="home-choose"><?= t('home_choose_space') ?></p>
+        <section id="benevoles" class="card anchor-section">
+            <h2><?= t('benevoles_heading') ?></h2>
+            <p><?= t('benevoles_text') ?></p>
+            <a class="button" href="benevole/index.php"><?= t('login_button') ?></a>
+        </section>
 
-        <div class="space-grid">
-            <a class="space-card" href="admin/index.php">
-                <span class="space-icon">🗂️</span>
-                <h2><?= t('home_admin_space') ?></h2>
-                <p><?= t('home_admin_desc') ?></p>
-            </a>
-            <a class="space-card" href="adherent/index.php">
-                <span class="space-icon">🏪</span>
-                <h2><?= t('home_adherent_space') ?></h2>
-                <p><?= t('home_adherent_desc') ?></p>
-            </a>
-            <a class="space-card" href="benevole/index.php">
-                <span class="space-icon">🤝</span>
-                <h2><?= t('home_benevole_space') ?></h2>
-                <p><?= t('home_benevole_desc') ?></p>
-            </a>
-        </div>
-
-        <p class="lang-switch-home"><a href="?lang=<?= otherLang() ?>"><?= otherLangLabel() ?></a></p>
+        <section id="adherents" class="card anchor-section">
+            <h2><?= t('adherents_heading') ?></h2>
+            <p><?= t('adherents_text') ?></p>
+            <a class="button" href="adherent/index.php"><?= t('login_button') ?></a>
+        </section>
     </div>
 </body>
 </html>
