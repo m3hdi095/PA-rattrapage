@@ -4,7 +4,9 @@ import (
 	"api/db"
 	"api/models"
 	"api/utils"
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 )
@@ -28,6 +30,33 @@ func CreateInscription(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		utils.JSONError(w, "données invalides", http.StatusBadRequest)
+		return
+	}
+
+	// Un adherent ne peut avoir qu'une seule ligne pour un meme creneau
+	// (contrainte UNIQUE en base). S'il en avait deja une "annulee", on la
+	// reactive plutot que d'essayer d'en creer une nouvelle (ce qui violerait
+	// la contrainte et remontait une erreur 500 incomprehensible).
+	existing, err := db.GetInscription(req.PlanningID, claims.ID)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		utils.JSONError(w, "erreur lors de la vérification de l'inscription", http.StatusInternalServerError)
+		return
+	}
+
+	if existing != nil {
+		if existing.Statut == "inscrit" {
+			utils.JSONError(w, "vous êtes déjà inscrit à ce créneau", http.StatusConflict)
+			return
+		}
+
+		if err := db.ReactivateInscription(existing.ID); err != nil {
+			utils.JSONError(w, "erreur lors de la réinscription", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]int{"id": existing.ID})
 		return
 	}
 

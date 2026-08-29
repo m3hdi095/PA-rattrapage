@@ -23,6 +23,26 @@ func CreateInscription(inscription *models.Inscription) (int, error) {
 	return id, nil
 }
 
+func GetInscription(planningID, adherentID int) (*models.Inscription, error) {
+	var inscription models.Inscription
+	row := Connection.QueryRow(
+		"SELECT id, planning_id, adherent_id, statut FROM inscriptions_service WHERE planning_id = ? AND adherent_id = ?",
+		planningID, adherentID,
+	)
+	if err := row.Scan(&inscription.ID, &inscription.PlanningID, &inscription.AdherentID, &inscription.Statut); err != nil {
+		return nil, err
+	}
+	return &inscription, nil
+}
+
+func ReactivateInscription(id int) error {
+	_, err := Connection.Exec("UPDATE inscriptions_service SET statut = 'inscrit' WHERE id = ?", id)
+	if err != nil {
+		return fmt.Errorf("failed to reactivate inscription: %w", err)
+	}
+	return nil
+}
+
 func GetInscriptionsByPlanning(planningID int) ([]models.Inscription, error) {
 	rows, err := Connection.Query("SELECT id, planning_id, adherent_id, statut FROM inscriptions_service WHERE planning_id = ?", planningID)
 	if err != nil {
