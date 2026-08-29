@@ -134,6 +134,7 @@ require __DIR__ . '/../includes/header_adherent.php';
         <th><?= t('action_column') ?></th>
     </tr>
     <?php foreach ($plannings as $p): ?>
+        <?php if ($p['date_debut'] < date('Y-m-d H:i:s')) continue; ?>
     <tr>
         <td><?= htmlspecialchars($serviceNoms[$p['service_id']] ?? ('Service #' . $p['service_id'])) ?></td>
         <td><?= htmlspecialchars($p['date_debut']) ?></td>

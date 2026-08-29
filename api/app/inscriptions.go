@@ -49,6 +49,12 @@ func CreateInscription(w http.ResponseWriter, r *http.Request) {
 		utils.JSONError(w, "créneau introuvable", http.StatusBadRequest)
 		return
 	}
+
+	if err := utils.ValidateFutureDate(dateDebut); err != nil {
+		utils.JSONError(w, "impossible de s'inscrire à un créneau déjà passé", http.StatusConflict)
+		return
+	}
+
 	jourCible := dateDebut[:10]
 
 	mesInscriptions, err := db.GetInscriptionsByAdherent(claims.ID)

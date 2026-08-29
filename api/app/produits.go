@@ -39,6 +39,16 @@ func CreateProduit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	collecteStatut, err := db.GetCollecteStatut(req.CollecteID)
+	if err != nil {
+		utils.JSONError(w, "collecte introuvable", http.StatusBadRequest)
+		return
+	}
+	if collecteStatut == "annulee" {
+		utils.JSONError(w, "impossible d'ajouter un produit à une collecte annulée", http.StatusConflict)
+		return
+	}
+
 	produit := &models.Produit{
 		CollecteID:       req.CollecteID,
 		Nom:              req.Nom,

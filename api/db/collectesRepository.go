@@ -66,6 +66,15 @@ func GetCollectesByAdherent(adherentID int) ([]models.Collecte, error) {
 	return collectes, nil
 }
 
+func GetCollecteStatut(id int) (string, error) {
+	var statut string
+	err := Connection.QueryRow("SELECT statut FROM collectes WHERE id = ?", id).Scan(&statut)
+	if err != nil {
+		return "", fmt.Errorf("failed to get collecte statut: %w", err)
+	}
+	return statut, nil
+}
+
 func UpdateStatutCollecte(id int, statut string) error {
 	_, err := Connection.Exec("UPDATE collectes SET statut = ? WHERE id = ?", statut, id)
 	if err != nil {

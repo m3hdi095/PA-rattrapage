@@ -45,6 +45,15 @@ func GetAllTournees() ([]models.Tournee, error) {
 	return tournees, nil
 }
 
+func GetTourneeStatut(id int) (string, error) {
+	var statut string
+	err := Connection.QueryRow("SELECT statut FROM tournees WHERE id = ?", id).Scan(&statut)
+	if err != nil {
+		return "", fmt.Errorf("failed to get tournee statut: %w", err)
+	}
+	return statut, nil
+}
+
 func UpdateStatutTournee(id int, statut string) error {
 	_, err := Connection.Exec("UPDATE tournees SET statut = ? WHERE id = ?", statut, id)
 	if err != nil {

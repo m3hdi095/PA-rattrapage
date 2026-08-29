@@ -33,6 +33,16 @@ func CreateLivraison(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tourneeStatut, err := db.GetTourneeStatut(req.TourneeID)
+	if err != nil {
+		utils.JSONError(w, "tournée introuvable", http.StatusBadRequest)
+		return
+	}
+	if tourneeStatut == "terminee" {
+		utils.JSONError(w, "impossible d'ajouter une livraison à une tournée déjà terminée", http.StatusConflict)
+		return
+	}
+
 	livraison := &models.Livraison{
 		TourneeID:      req.TourneeID,
 		DestinataireID: req.DestinataireID,
