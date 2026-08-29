@@ -2,8 +2,11 @@ package db
 
 import (
 	"api/models"
+	"errors"
 	"fmt"
 )
+
+var ErrStockInsuffisant = errors.New("stock insuffisant")
 
 func CreateLivraison(livraison *models.Livraison) (int, error) {
 	res, err := Connection.Exec(
@@ -60,12 +63,34 @@ func UpdateStatutLivraison(livraisonID int, newStatut string) error {
 }
 
 func AddProduitToLivraison(livraisonID, produitID, quantite int) error {
-	_, err := Connection.Exec(
+	tx, err := Connection.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to start transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	var stockDisponible int
+	if err := tx.QueryRow("SELECT quantite FROM produits WHERE id = ? FOR UPDATE", produitID).Scan(&stockDisponible); err != nil {
+		return fmt.Errorf("failed to read produit stock: %w", err)
+	}
+
+	if stockDisponible < quantite {
+		return ErrStockInsuffisant
+	}
+
+	if _, err := tx.Exec("UPDATE produits SET quantite = quantite - ? WHERE id = ?", quantite, produitID); err != nil {
+		return fmt.Errorf("failed to decrement produit stock: %w", err)
+	}
+
+	if _, err := tx.Exec(
 		"INSERT INTO livraison_produits (livraison_id, produit_id, quantite) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantite = quantite + VALUES(quantite)",
 		livraisonID, produitID, quantite,
-	)
-	if err != nil {
+	); err != nil {
 		return fmt.Errorf("failed to add produit to livraison: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	return nil

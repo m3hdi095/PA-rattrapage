@@ -168,6 +168,8 @@
 
     "livraisons_page_heading": "Livraisons",
     "livraison_action_error": "Erreur lors de l'action sur la livraison",
+    "produit_ajoute_msg": "Produit ajouté à la livraison, stock mis à jour.",
+    "action_ok_msg": "Action effectuée.",
     "create_livraison_heading": "Créer une livraison",
     "tournee_label": "Tournée",
     "destinataire_label": "Destinataire",

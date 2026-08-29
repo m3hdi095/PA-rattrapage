@@ -168,6 +168,8 @@
 
     "livraisons_page_heading": "Deliveries",
     "livraison_action_error": "Error while performing the delivery action",
+    "produit_ajoute_msg": "Product added to the delivery, stock updated.",
+    "action_ok_msg": "Action completed.",
     "create_livraison_heading": "Create a delivery",
     "tournee_label": "Route",
     "destinataire_label": "Recipient",

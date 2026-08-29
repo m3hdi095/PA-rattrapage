@@ -9,6 +9,7 @@ if (!isset($_SESSION['token']) || $_SESSION['role'] !== 'admin') {
 }
 
 $error = null;
+$success = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? 'create';
@@ -35,12 +36,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result['statusCode'] >= 400) {
             $error = $result['body']['error'] ?? t('livraison_action_error');
         } else {
-            header('Location: livraisons.php');
+            $successParam = $action === 'add_produit' ? 'produit_ajoute' : 'action_ok';
+            header('Location: livraisons.php?success=' . $successParam);
             exit;
         }
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['success'])) {
+    $success = $_GET['success'] === 'produit_ajoute' ? t('produit_ajoute_msg') : t('action_ok_msg');
 }
 
 $livraisons = [];
@@ -97,6 +103,9 @@ require __DIR__ . '/../includes/header_admin.php';
 
 <?php if (!empty($error)): ?>
     <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+<?php endif; ?>
+<?php if (!empty($success)): ?>
+    <p class="success"><?= htmlspecialchars($success) ?></p>
 <?php endif; ?>
 
 <h3><?= t('create_livraison_heading') ?></h3>

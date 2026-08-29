@@ -5,6 +5,7 @@ import (
 	"api/models"
 	"api/utils"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 )
@@ -137,6 +138,10 @@ func AddProduitLivraison(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := db.AddProduitToLivraison(req.LivraisonID, req.ProduitID, req.Quantite); err != nil {
+		if errors.Is(err, db.ErrStockInsuffisant) {
+			utils.JSONError(w, "stock insuffisant pour ce produit", http.StatusConflict)
+			return
+		}
 		utils.JSONError(w, "erreur lors de l'ajout du produit à la livraison", http.StatusInternalServerError)
 		return
 	}
