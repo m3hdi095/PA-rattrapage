@@ -6,6 +6,7 @@ import (
 	"api/utils"
 	"encoding/json"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -73,6 +74,14 @@ func CreateAdherent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err := db.CreateAdherent(&adherent); err != nil {
+		if utils.IsDuplicateEntryError(err) {
+			if strings.Contains(err.Error(), "adherents.siret") {
+				utils.JSONError(w, "ce SIRET est déjà utilisé", http.StatusConflict)
+				return
+			}
+			utils.JSONError(w, "cet email est déjà utilisé", http.StatusConflict)
+			return
+		}
 		utils.JSONError(w, "erreur lors de la création de l'adhérent", http.StatusInternalServerError)
 		return
 	}

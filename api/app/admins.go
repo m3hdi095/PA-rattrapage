@@ -76,6 +76,10 @@ func CreateAdmin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err := db.CreateAdmin(&admin); err != nil {
+		if utils.IsDuplicateEntryError(err) {
+			utils.JSONError(w, "cet email est déjà utilisé", http.StatusConflict)
+			return
+		}
 		utils.JSONError(w, "erreur lors de la création de l'admin", http.StatusInternalServerError)
 		return
 	}

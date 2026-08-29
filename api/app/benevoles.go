@@ -55,6 +55,10 @@ func CreateBenevole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err := db.CreateBenevole(&benevole, req.Capacites); err != nil {
+		if utils.IsDuplicateEntryError(err) {
+			utils.JSONError(w, "cet email est déjà utilisé", http.StatusConflict)
+			return
+		}
 		utils.JSONError(w, "erreur lors de la création du bénévole", http.StatusInternalServerError)
 		return
 	}
