@@ -14,26 +14,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? 'create';
     try {
         if ($action === 'update_statut') {
-            apiRequest('PATCH', '/livraisons/statut', [
+            $result = apiRequest('PATCH', '/livraisons/statut', [
                 'id'     => (int) $_POST['id'],
                 'statut' => $_POST['statut'],
             ], $_SESSION['token']);
         } elseif ($action === 'add_produit') {
-            apiRequest('POST', '/livraisons/produits', [
+            $result = apiRequest('POST', '/livraisons/produits', [
                 'livraison_id' => (int) $_POST['livraison_id'],
                 'produit_id'   => (int) $_POST['produit_id'],
                 'quantite'     => (int) $_POST['quantite'],
             ], $_SESSION['token']);
         } elseif ($action === 'supprimer') {
-            apiRequest('DELETE', '/livraisons', ['id' => (int) $_POST['id']], $_SESSION['token']);
+            $result = apiRequest('DELETE', '/livraisons', ['id' => (int) $_POST['id']], $_SESSION['token']);
         } else {
-            apiRequest('POST', '/livraisons', [
+            $result = apiRequest('POST', '/livraisons', [
                 'tournee_id'      => (int) ($_POST['tournee_id'] ?? 0),
                 'destinataire_id' => (int) ($_POST['destinataire_id'] ?? 0),
             ], $_SESSION['token']);
         }
-        header('Location: livraisons.php');
-        exit;
+        if ($result['statusCode'] >= 400) {
+            $error = $result['body']['error'] ?? t('livraison_action_error');
+        } else {
+            header('Location: livraisons.php');
+            exit;
+        }
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
@@ -136,7 +140,7 @@ require __DIR__ . '/../includes/header_admin.php';
             <?php endforeach; ?>
         </select>
     </label><br>
-    <label><?= t('quantite_label') ?> : <input type="number" name="quantite" value="1" required></label><br>
+    <label><?= t('quantite_label') ?> : <input type="number" name="quantite" value="1" min="1" required></label><br>
     <button type="submit"><?= t('action_add') ?></button>
 </form>
 

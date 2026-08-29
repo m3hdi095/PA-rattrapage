@@ -167,6 +167,7 @@
     "confirm_delete_tournee": "Delete this route?",
 
     "livraisons_page_heading": "Deliveries",
+    "livraison_action_error": "Error while performing the delivery action",
     "create_livraison_heading": "Create a delivery",
     "tournee_label": "Route",
     "destinataire_label": "Recipient",

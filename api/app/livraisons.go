@@ -131,6 +131,11 @@ func AddProduitLivraison(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if req.Quantite < 1 {
+		utils.JSONError(w, "la quantité doit être supérieure à 0", http.StatusBadRequest)
+		return
+	}
+
 	if err := db.AddProduitToLivraison(req.LivraisonID, req.ProduitID, req.Quantite); err != nil {
 		utils.JSONError(w, "erreur lors de l'ajout du produit à la livraison", http.StatusInternalServerError)
 		return

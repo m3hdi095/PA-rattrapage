@@ -61,7 +61,7 @@ func UpdateStatutLivraison(livraisonID int, newStatut string) error {
 
 func AddProduitToLivraison(livraisonID, produitID, quantite int) error {
 	_, err := Connection.Exec(
-		"INSERT INTO livraison_produits (livraison_id, produit_id, quantite) VALUES (?, ?, ?)",
+		"INSERT INTO livraison_produits (livraison_id, produit_id, quantite) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantite = quantite + VALUES(quantite)",
 		livraisonID, produitID, quantite,
 	)
 	if err != nil {

@@ -167,6 +167,7 @@
     "confirm_delete_tournee": "Supprimer cette tournée ?",
 
     "livraisons_page_heading": "Livraisons",
+    "livraison_action_error": "Erreur lors de l'action sur la livraison",
     "create_livraison_heading": "Créer une livraison",
     "tournee_label": "Tournée",
     "destinataire_label": "Destinataire",
