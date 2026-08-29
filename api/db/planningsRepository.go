@@ -97,6 +97,17 @@ func GetPlanningsByBenevole(benevoleID int) ([]models.Planning, error) {
 	return plannings, nil
 }
 
+func UpdatePlanning(planning *models.Planning) error {
+	_, err := Connection.Exec(
+		"UPDATE plannings SET service_id = ?, benevole_id = ?, date_debut = ?, date_fin = ?, lieu = ?, places_max = ? WHERE id = ?",
+		planning.ServiceID, planning.BenevoleID, planning.DateDebut, planning.DateFin, planning.Lieu, planning.PlacesMax, planning.ID,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to update planning: %w", err)
+	}
+	return nil
+}
+
 func DeletePlanning(id int) error {
 	_, err := Connection.Exec("DELETE FROM plannings WHERE id = ?", id)
 	if err != nil {

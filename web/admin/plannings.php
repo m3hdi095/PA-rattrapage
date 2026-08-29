@@ -12,8 +12,19 @@ $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        if (($_POST['action'] ?? '') === 'supprimer') {
+        $action = $_POST['action'] ?? '';
+        if ($action === 'supprimer') {
             $result = apiRequest('DELETE', '/plannings', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
+        } elseif ($action === 'modifier') {
+            $result = apiRequest('PATCH', '/plannings', [
+                'id'          => (int) ($_POST['id'] ?? 0),
+                'service_id'  => (int) ($_POST['service_id'] ?? 0),
+                'benevole_id' => (int) ($_POST['benevole_id'] ?? 0),
+                'date_debut'  => $_POST['date_debut'] ?? '',
+                'date_fin'    => $_POST['date_fin'] ?? '',
+                'lieu'        => $_POST['lieu'] ?? '',
+                'places_max'  => (int) ($_POST['places_max'] ?? 1),
+            ], $_SESSION['token']);
         } else {
             $result = apiRequest('POST', '/plannings', [
                 'service_id'  => (int) ($_POST['service_id'] ?? 0),
@@ -79,6 +90,16 @@ foreach ($benevoles as $b) {
     $benevoleCapaciteIds[$b['id']] = array_map(fn($c) => $c['id'], $b['capacites'] ?? []);
 }
 
+$editPlanning = null;
+if (isset($_GET['edit'])) {
+    foreach ($plannings as $p) {
+        if ($p['id'] === (int) $_GET['edit']) {
+            $editPlanning = $p;
+            break;
+        }
+    }
+}
+
 require __DIR__ . '/../includes/header_admin.php';
 ?>
 
@@ -88,13 +109,17 @@ require __DIR__ . '/../includes/header_admin.php';
     <p style="color:red;"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 
-<h3><?= t('create_creneau_heading') ?></h3>
+<h3 id="creneau_form"><?= $editPlanning ? t('edit_creneau_heading') : t('create_creneau_heading') ?></h3>
 <form method="post">
+    <input type="hidden" name="action" value="<?= $editPlanning ? 'modifier' : 'creer' ?>">
+    <?php if ($editPlanning): ?>
+        <input type="hidden" name="id" value="<?= (int) $editPlanning['id'] ?>">
+    <?php endif; ?>
     <label><?= t('service_label') ?> :
         <select name="service_id" id="service_id" required>
             <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($services as $s): ?>
-                <option value="<?= (int) $s['id'] ?>"><?= htmlspecialchars($s['nom']) ?><?= (($s['capacite_libelle'] ?? '') !== '') ? ' (' . htmlspecialchars($s['capacite_libelle']) . ')' : '' ?></option>
+                <option value="<?= (int) $s['id'] ?>" <?= ($editPlanning && $editPlanning['service_id'] === $s['id']) ? 'selected' : '' ?>><?= htmlspecialchars($s['nom']) ?><?= (($s['capacite_libelle'] ?? '') !== '') ? ' (' . htmlspecialchars($s['capacite_libelle']) . ')' : '' ?></option>
             <?php endforeach; ?>
         </select>
     </label><br>
@@ -102,17 +127,20 @@ require __DIR__ . '/../includes/header_admin.php';
         <select name="benevole_id" id="benevole_id" required>
             <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($benevoles as $b): ?>
-                <option value="<?= (int) $b['id'] ?>"><?= htmlspecialchars($b['nom'] . ' ' . $b['prenom']) ?></option>
+                <option value="<?= (int) $b['id'] ?>" <?= ($editPlanning && $editPlanning['benevole_id'] === $b['id']) ? 'selected' : '' ?>><?= htmlspecialchars($b['nom'] . ' ' . $b['prenom']) ?></option>
             <?php endforeach; ?>
         </select>
     </label>
     <p id="competence_warning" class="error" style="display:none;"><?= t('competence_warning_text') ?></p>
     <br>
-    <label><?= t('date_debut_label') ?> : <input type="datetime-local" name="date_debut" min="<?= date('Y-m-d\TH:i') ?>" required></label><br>
-    <label><?= t('date_fin_label') ?> : <input type="datetime-local" name="date_fin" min="<?= date('Y-m-d\TH:i') ?>" required></label><br>
-    <label><?= t('lieu_label') ?> : <input type="text" name="lieu"></label><br>
-    <label><?= t('places_max_label') ?> : <input type="number" name="places_max" value="1" min="1" required></label><br>
-    <button type="submit"><?= t('action_create') ?></button>
+    <label><?= t('date_debut_label') ?> : <input type="datetime-local" name="date_debut" value="<?= $editPlanning ? htmlspecialchars(str_replace(' ', 'T', substr($editPlanning['date_debut'], 0, 16))) : '' ?>" min="<?= date('Y-m-d\TH:i') ?>" required></label><br>
+    <label><?= t('date_fin_label') ?> : <input type="datetime-local" name="date_fin" value="<?= $editPlanning ? htmlspecialchars(str_replace(' ', 'T', substr($editPlanning['date_fin'], 0, 16))) : '' ?>" min="<?= date('Y-m-d\TH:i') ?>" required></label><br>
+    <label><?= t('lieu_label') ?> : <input type="text" name="lieu" value="<?= $editPlanning ? htmlspecialchars($editPlanning['lieu']) : '' ?>"></label><br>
+    <label><?= t('places_max_label') ?> : <input type="number" name="places_max" value="<?= $editPlanning ? (int) $editPlanning['places_max'] : 1 ?>" min="1" required></label><br>
+    <button type="submit"><?= $editPlanning ? t('action_save') : t('action_create') ?></button>
+    <?php if ($editPlanning): ?>
+        <a href="plannings.php"><?= t('cancel_edit_link') ?></a>
+    <?php endif; ?>
 </form>
 
 <script>
@@ -174,7 +202,8 @@ require __DIR__ . '/../includes/header_admin.php';
         <td><?= htmlspecialchars($p['lieu']) ?></td>
         <td><?= htmlspecialchars($p['places_max']) ?></td>
         <td>
-            <form method="post" onsubmit="return confirm(<?= json_encode(t('confirm_delete_planning')) ?>);">
+            <a href="plannings.php?edit=<?= (int) $p['id'] ?>#creneau_form"><?= t('action_edit') ?></a>
+            <form method="post" style="display:inline;" onsubmit="return confirm(<?= json_encode(t('confirm_delete_planning')) ?>);">
                 <input type="hidden" name="action" value="supprimer">
                 <input type="hidden" name="id" value="<?= (int) $p['id'] ?>">
                 <button type="submit"><?= t('action_delete') ?></button>

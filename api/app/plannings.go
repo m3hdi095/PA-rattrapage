@@ -69,6 +69,62 @@ func CreatePlanning(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]int{"id": id})
 }
 
+func UpdatePlanning(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "admin" {
+		utils.JSONError(w, "accès réservé aux admins", http.StatusForbidden)
+		return
+	}
+
+	var req struct {
+		ID         int    `json:"id"`
+		ServiceID  int    `json:"service_id"`
+		BenevoleID int    `json:"benevole_id"`
+		DateDebut  string `json:"date_debut"`
+		DateFin    string `json:"date_fin"`
+		Lieu       string `json:"lieu"`
+		PlacesMax  int    `json:"places_max"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		utils.JSONError(w, "données invalides", http.StatusBadRequest)
+		return
+	}
+
+	if err := utils.ValidateDateRange(req.DateDebut, req.DateFin); err != nil {
+		utils.JSONError(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if req.PlacesMax < 1 {
+		utils.JSONError(w, "le nombre de places doit être supérieur à 0", http.StatusBadRequest)
+		return
+	}
+
+	planning := &models.Planning{
+		ID:         req.ID,
+		ServiceID:  req.ServiceID,
+		BenevoleID: req.BenevoleID,
+		DateDebut:  req.DateDebut,
+		DateFin:    req.DateFin,
+		Lieu:       req.Lieu,
+		PlacesMax:  req.PlacesMax,
+	}
+
+	if err := db.UpdatePlanning(planning); err != nil {
+		utils.JSONError(w, "erreur lors de la modification du planning", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
 func ListPlannings(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	_, err := utils.VerifyJWT(tokenString)

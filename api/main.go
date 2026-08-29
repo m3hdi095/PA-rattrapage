@@ -112,6 +112,7 @@ func main() {
 
 	//Plannings
 	http.HandleFunc("POST /plannings", app.CreatePlanning)
+	http.HandleFunc("PATCH /plannings", app.UpdatePlanning)
 	http.HandleFunc("GET /plannings", app.ListPlannings)
 	http.HandleFunc("GET /plannings/excel", app.ExportPlanningsExcel)
 	http.HandleFunc("GET /plannings/envoi", app.EnvoiPlanningsBenevoles)

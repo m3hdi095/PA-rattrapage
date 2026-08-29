@@ -96,7 +96,11 @@ require __DIR__ . '/../includes/header_admin.php';
 </form>
 
 <h3><?= t('produits_list_heading') ?></h3>
-<table border="1" cellpadding="6">
+<label for="recherche_code_barre"><?= t('recherche_code_barre_label') ?></label>
+<input type="text" id="recherche_code_barre" placeholder="<?= t('recherche_code_barre_placeholder') ?>" autocomplete="off">
+<p id="recherche_aucun_resultat" class="error" style="display:none;"><?= t('recherche_aucun_resultat') ?></p>
+
+<table border="1" cellpadding="6" id="produits_table">
     <tr>
         <th><?= t('id_column') ?></th>
         <th><?= t('collecte_label') ?></th>
@@ -109,7 +113,7 @@ require __DIR__ . '/../includes/header_admin.php';
         <th><?= t('actions_column') ?></th>
     </tr>
     <?php foreach ($produits as $p): ?>
-    <tr>
+    <tr class="produit_row" data-code-barre="<?= htmlspecialchars(strtolower($p['code_barre'])) ?>">
         <td><?= htmlspecialchars($p['id']) ?></td>
         <td><?= htmlspecialchars($collectesById[$p['collecte_id']] ?? ('collecte #' . $p['collecte_id'])) ?></td>
         <td><?= htmlspecialchars($p['code_barre']) ?></td>
@@ -138,6 +142,27 @@ require __DIR__ . '/../includes/header_admin.php';
     </tr>
     <?php endforeach; ?>
 </table>
+
+<script>
+    const rechercheInput = document.getElementById('recherche_code_barre');
+    const lignes = Array.from(document.querySelectorAll('.produit_row'));
+    const aucunResultat = document.getElementById('recherche_aucun_resultat');
+
+    rechercheInput.addEventListener('input', () => {
+        const terme = rechercheInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        lignes.forEach(ligne => {
+            const correspond = terme === '' || ligne.dataset.codeBarre.includes(terme);
+            ligne.style.display = correspond ? '' : 'none';
+            if (correspond) {
+                visibleCount++;
+            }
+        });
+
+        aucunResultat.style.display = (terme !== '' && visibleCount === 0) ? 'block' : 'none';
+    });
+</script>
 
 </div>
 </body>
