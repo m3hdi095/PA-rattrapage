@@ -73,9 +73,6 @@ func GetInscriptionsByAdherent(adherentID int) ([]models.InscriptionDetail, erro
 	return inscriptions, nil
 }
 
-// CancelInscription annule une inscription, seulement si elle appartient
-// bien a l'adherent donne (evite qu'un adherent annule l'inscription d'un
-// autre en devinant un id). sql.ErrNoRows si rien n'a ete modifie.
 func CancelInscription(id, adherentID int) error {
 	res, err := Connection.Exec(
 		"UPDATE inscriptions_service SET statut = 'annule' WHERE id = ? AND adherent_id = ?",

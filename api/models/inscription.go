@@ -7,8 +7,6 @@ type Inscription struct {
 	Statut     string `json:"statut"`
 }
 
-// InscriptionDetail est une inscription enrichie des infos du creneau
-// (jointure avec plannings), utilisee pour l'affichage "Mes inscriptions".
 type InscriptionDetail struct {
 	ID         int    `json:"id"`
 	PlanningID int    `json:"planning_id"`

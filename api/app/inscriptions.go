@@ -33,10 +33,6 @@ func CreateInscription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Un adherent ne peut avoir qu'une seule ligne pour un meme creneau
-	// (contrainte UNIQUE en base). S'il en avait deja une "annulee", on la
-	// reactive plutot que d'essayer d'en creer une nouvelle (ce qui violerait
-	// la contrainte et remontait une erreur 500 incomprehensible).
 	existing, err := db.GetInscription(req.PlanningID, claims.ID)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		utils.JSONError(w, "erreur lors de la vérification de l'inscription", http.StatusInternalServerError)
@@ -48,14 +44,12 @@ func CreateInscription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Un adherent ne peut pas etre inscrit a deux creneaux le meme jour,
-	// meme sur des services differents.
 	dateDebut, err := db.GetPlanningDateDebut(req.PlanningID)
 	if err != nil {
 		utils.JSONError(w, "créneau introuvable", http.StatusBadRequest)
 		return
 	}
-	jourCible := dateDebut[:10] // "2026-09-05 09:00:00" -> "2026-09-05"
+	jourCible := dateDebut[:10]
 
 	mesInscriptions, err := db.GetInscriptionsByAdherent(claims.ID)
 	if err != nil {
@@ -69,8 +63,6 @@ func CreateInscription(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// A ce stade, l'inscription va prendre une place (nouvelle ou reactivee) :
-	// on verifie qu'il en reste.
 	placesRestantes, err := db.GetPlanningPlacesRestantes(req.PlanningID)
 	if err != nil {
 		utils.JSONError(w, "erreur lors de la vérification des places disponibles", http.StatusInternalServerError)

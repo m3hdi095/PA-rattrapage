@@ -243,8 +243,6 @@ func RenewAdherentAdhesion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// On repart de la date d'expiration actuelle si elle n'est pas encore
-	// passée (pour ne pas perdre les mois restants), sinon d'aujourd'hui.
 	depart := expirationActuelle
 	if depart.Before(time.Now()) {
 		depart = time.Now()

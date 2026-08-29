@@ -1,6 +1,5 @@
 package utils
 
-// IsValidSiret verifie qu'un SIRET est compose de 14 chiffres.
 func IsValidSiret(siret string) bool {
 	if len(siret) != 14 {
 		return false

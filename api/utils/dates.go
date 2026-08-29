@@ -22,7 +22,6 @@ func ParseFlexibleDateTime(s string) (time.Time, error) {
 	return time.Time{}, fmt.Errorf("format de date invalide : %s", s)
 }
 
-// ValidateFutureDate parses s and returns an error if it is not a valid date or is in the past.
 func ValidateFutureDate(s string) error {
 	t, err := ParseFlexibleDateTime(s)
 	if err != nil {
@@ -34,8 +33,6 @@ func ValidateFutureDate(s string) error {
 	return nil
 }
 
-// ValidateDateRange parses debut/fin and returns an error if either is invalid,
-// debut is in the past, or fin is not strictly after debut.
 func ValidateDateRange(debut, fin string) error {
 	debutT, err := ParseFlexibleDateTime(debut)
 	if err != nil {
