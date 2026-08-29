@@ -127,6 +127,7 @@ require __DIR__ . '/../includes/header_admin.php';
         <select name="benevole_id" id="benevole_id" required>
             <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($benevoles as $b): ?>
+                <?php if ($b['statut_candidature'] !== 'valide') continue; ?>
                 <option value="<?= (int) $b['id'] ?>" <?= ($editPlanning && $editPlanning['benevole_id'] === $b['id']) ? 'selected' : '' ?>><?= htmlspecialchars($b['nom'] . ' ' . $b['prenom']) ?></option>
             <?php endforeach; ?>
         </select>

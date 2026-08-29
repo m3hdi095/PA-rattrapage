@@ -36,6 +36,18 @@ func CreateTournee(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if req.BenevoleID != 0 {
+		benevole, err := db.GetBenevoleByID(req.BenevoleID)
+		if err != nil {
+			utils.JSONError(w, "bénévole introuvable", http.StatusBadRequest)
+			return
+		}
+		if benevole.StatutCandidature != "valide" {
+			utils.JSONError(w, "seul un bénévole validé peut être affecté à une tournée", http.StatusConflict)
+			return
+		}
+	}
+
 	tournee := &models.Tournee{
 		BenevoleID:  req.BenevoleID,
 		DateTournee: req.DateTournee,

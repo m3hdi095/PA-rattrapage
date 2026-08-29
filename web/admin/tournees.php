@@ -72,6 +72,7 @@ require __DIR__ . '/../includes/header_admin.php';
         <select name="benevole_id" required>
             <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($benevoles as $b): ?>
+                <?php if ($b['statut_candidature'] !== 'valide') continue; ?>
                 <option value="<?= (int) $b['id'] ?>"><?= htmlspecialchars($b['nom'] . ' ' . $b['prenom']) ?></option>
             <?php endforeach; ?>
         </select>

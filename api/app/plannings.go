@@ -12,6 +12,17 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
+func benevoleEstValide(benevoleID int) (bool, error) {
+	if benevoleID == 0 {
+		return true, nil
+	}
+	benevole, err := db.GetBenevoleByID(benevoleID)
+	if err != nil {
+		return false, err
+	}
+	return benevole.StatutCandidature == "valide", nil
+}
+
 func CreatePlanning(w http.ResponseWriter, r *http.Request) {
 	tokenString := r.Header.Get("Authorization")
 	claims, err := utils.VerifyJWT(tokenString)
@@ -46,6 +57,16 @@ func CreatePlanning(w http.ResponseWriter, r *http.Request) {
 
 	if req.PlacesMax < 1 {
 		utils.JSONError(w, "le nombre de places doit être supérieur à 0", http.StatusBadRequest)
+		return
+	}
+
+	valide, err := benevoleEstValide(req.BenevoleID)
+	if err != nil {
+		utils.JSONError(w, "bénévole introuvable", http.StatusBadRequest)
+		return
+	}
+	if !valide {
+		utils.JSONError(w, "seul un bénévole validé peut être affecté à un créneau", http.StatusConflict)
 		return
 	}
 
@@ -104,6 +125,16 @@ func UpdatePlanning(w http.ResponseWriter, r *http.Request) {
 
 	if req.PlacesMax < 1 {
 		utils.JSONError(w, "le nombre de places doit être supérieur à 0", http.StatusBadRequest)
+		return
+	}
+
+	valide, err := benevoleEstValide(req.BenevoleID)
+	if err != nil {
+		utils.JSONError(w, "bénévole introuvable", http.StatusBadRequest)
+		return
+	}
+	if !valide {
+		utils.JSONError(w, "seul un bénévole validé peut être affecté à un créneau", http.StatusConflict)
 		return
 	}
 
