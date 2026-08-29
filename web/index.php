@@ -7,7 +7,7 @@ require_once __DIR__ . '/includes/i18n.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= t('site_title') ?></title>
-    <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="stylesheet" href="public/css/styles.css?v=<?= filemtime(__DIR__ . '/public/css/styles.css') ?>">
 </head>
 <body>
     <div class="header">
@@ -91,17 +91,21 @@ require_once __DIR__ . '/includes/i18n.php';
             </div>
         </div>
 
-        <section id="benevoles" class="card anchor-section">
-            <h2><?= t('benevoles_heading') ?></h2>
-            <p><?= t('benevoles_text') ?></p>
-            <a class="button" href="benevole/index.php"><?= t('login_button') ?></a>
-        </section>
+        <div class="space-grid">
+            <div id="benevoles" class="space-card anchor-section">
+                <span class="space-icon">🤝</span>
+                <h2><?= t('benevoles_heading') ?></h2>
+                <p><?= t('benevoles_text') ?></p>
+                <a class="button" href="benevole/index.php"><?= t('login_button') ?></a>
+            </div>
 
-        <section id="adherents" class="card anchor-section">
-            <h2><?= t('adherents_heading') ?></h2>
-            <p><?= t('adherents_text') ?></p>
-            <a class="button" href="adherent/index.php"><?= t('login_button') ?></a>
-        </section>
+            <div id="adherents" class="space-card anchor-section">
+                <span class="space-icon">🏪</span>
+                <h2><?= t('adherents_heading') ?></h2>
+                <p><?= t('adherents_text') ?></p>
+                <a class="button" href="adherent/index.php"><?= t('login_button') ?></a>
+            </div>
+        </div>
     </div>
 </body>
 </html>

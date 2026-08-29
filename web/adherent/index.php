@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= t('adherent_page_title') ?></title>
-    <link rel="stylesheet" href="../public/css/styles.css">
+    <link rel="stylesheet" href="../public/css/styles.css?v=<?= filemtime(__DIR__ . '/../public/css/styles.css') ?>">
 </head>
 <body>
     <div class="header">
