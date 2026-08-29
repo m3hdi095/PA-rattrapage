@@ -121,6 +121,21 @@ func RejectBenevole(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	hasPlannings, err := db.HasPlanningsFuturs(req.ID)
+	if err != nil {
+		utils.JSONError(w, "erreur lors de la vérification des créneaux du bénévole", http.StatusInternalServerError)
+		return
+	}
+	hasTournees, err := db.HasTourneesFutures(req.ID)
+	if err != nil {
+		utils.JSONError(w, "erreur lors de la vérification des tournées du bénévole", http.StatusInternalServerError)
+		return
+	}
+	if hasPlannings || hasTournees {
+		utils.JSONError(w, "impossible de rejeter un bénévole ayant des créneaux ou tournées à venir, réassignez-les d'abord", http.StatusConflict)
+		return
+	}
+
 	if err := db.RejectBenevole(req.ID); err != nil {
 		utils.JSONError(w, "erreur lors de la rejection du bénévole", http.StatusInternalServerError)
 		return

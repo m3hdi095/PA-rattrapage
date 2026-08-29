@@ -73,6 +73,18 @@ func GetPlanningPlacesRestantes(planningID int) (int, error) {
 	return placesRestantes, nil
 }
 
+func HasPlanningsFuturs(benevoleID int) (bool, error) {
+	var count int
+	err := Connection.QueryRow(
+		"SELECT COUNT(*) FROM plannings WHERE benevole_id = ? AND date_debut >= NOW()",
+		benevoleID,
+	).Scan(&count)
+	if err != nil {
+		return false, fmt.Errorf("failed to count future plannings: %w", err)
+	}
+	return count > 0, nil
+}
+
 func GetPlanningsByBenevole(benevoleID int) ([]models.Planning, error) {
 	rows, err := Connection.Query("SELECT id, service_id, benevole_id, date_debut, date_fin, lieu, places_max FROM plannings WHERE benevole_id = ?", benevoleID)
 	if err != nil {

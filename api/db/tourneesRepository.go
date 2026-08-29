@@ -45,6 +45,18 @@ func GetAllTournees() ([]models.Tournee, error) {
 	return tournees, nil
 }
 
+func HasTourneesFutures(benevoleID int) (bool, error) {
+	var count int
+	err := Connection.QueryRow(
+		"SELECT COUNT(*) FROM tournees WHERE benevole_id = ? AND date_tournee >= CURDATE()",
+		benevoleID,
+	).Scan(&count)
+	if err != nil {
+		return false, fmt.Errorf("failed to count future tournees: %w", err)
+	}
+	return count > 0, nil
+}
+
 func GetTourneeStatut(id int) (string, error) {
 	var statut string
 	err := Connection.QueryRow("SELECT statut FROM tournees WHERE id = ?", id).Scan(&statut)

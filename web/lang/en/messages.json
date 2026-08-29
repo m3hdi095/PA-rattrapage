@@ -129,7 +129,7 @@
     "create_benevole_button": "Create (auto-validated)",
     "validate_button": "Validate",
     "reject_button": "Reject",
-    "confirm_delete_benevole": "Delete this volunteer?",
+    "confirm_delete_benevole": "Delete this volunteer? Their upcoming slots and routes will remain but become unassigned.",
     "create_benevole_error_fallback": "Unable to create this volunteer.",
 
     "collectes_page_heading": "Pickup management",

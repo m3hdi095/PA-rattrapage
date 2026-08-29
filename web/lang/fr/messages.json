@@ -129,7 +129,7 @@
     "create_benevole_button": "Créer (validé automatiquement)",
     "validate_button": "Valider",
     "reject_button": "Rejeter",
-    "confirm_delete_benevole": "Supprimer ce bénévole ?",
+    "confirm_delete_benevole": "Supprimer ce bénévole ? Ses créneaux et tournées à venir resteront mais seront désassignés.",
     "create_benevole_error_fallback": "Impossible de créer ce bénévole.",
 
     "collectes_page_heading": "Gestion des collectes",
