@@ -69,8 +69,6 @@ foreach ($services as $s) {
     $serviceNoms[$s['id']] = $s['nom'];
 }
 
-// planning_id -> true pour les creneaux ou l'adherent est deja inscrit,
-// utilise pour ne pas proposer "S'inscrire" en double.
 $planningIdsInscrits = [];
 foreach ($mesInscriptions as $mi) {
     $planningIdsInscrits[$mi['planning_id']] = true;
