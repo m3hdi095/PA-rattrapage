@@ -150,7 +150,8 @@ require __DIR__ . '/../includes/header_admin.php';
         <select name="produit_id" required>
             <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($produits as $p): ?>
-                <option value="<?= (int) $p['id'] ?>"><?= htmlspecialchars($p['nom'] . ' (' . $p['code_barre'] . ')') ?></option>
+                <?php if ($p['statut'] === 'perime' || $p['quantite'] < 1) continue; ?>
+                <option value="<?= (int) $p['id'] ?>"><?= htmlspecialchars($p['nom'] . ' (' . $p['code_barre'] . ')') ?> — <?= (int) $p['quantite'] ?> <?= t('disponible_label') ?></option>
             <?php endforeach; ?>
         </select>
     </label><br>

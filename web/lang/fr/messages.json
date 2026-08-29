@@ -177,6 +177,7 @@
     "aucune_livraison_prevue_msg": "Aucune livraison prévue pour le moment (seules les livraisons non encore livrées peuvent être modifiées).",
     "livraison_label": "Livraison",
     "produit_label": "Produit",
+    "disponible_label": "disponible(s)",
     "generate_pdf_button": "Générer PDF",
     "confirm_delete_livraison": "Supprimer cette livraison ?",
     "pdf_fetch_error": "Impossible de récupérer le récapitulatif de cette livraison.",

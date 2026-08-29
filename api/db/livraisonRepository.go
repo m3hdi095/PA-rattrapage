@@ -8,6 +8,7 @@ import (
 
 var ErrStockInsuffisant = errors.New("stock insuffisant")
 var ErrLivraisonNonModifiable = errors.New("livraison non modifiable")
+var ErrProduitPerime = errors.New("produit perime")
 
 func CreateLivraison(livraison *models.Livraison) (int, error) {
 	res, err := Connection.Exec(
@@ -80,8 +81,13 @@ func AddProduitToLivraison(livraisonID, produitID, quantite int) error {
 	}
 
 	var stockDisponible int
-	if err := tx.QueryRow("SELECT quantite FROM produits WHERE id = ? FOR UPDATE", produitID).Scan(&stockDisponible); err != nil {
+	var statutProduit string
+	if err := tx.QueryRow("SELECT quantite, statut FROM produits WHERE id = ? FOR UPDATE", produitID).Scan(&stockDisponible, &statutProduit); err != nil {
 		return fmt.Errorf("failed to read produit stock: %w", err)
+	}
+
+	if statutProduit == "perime" {
+		return ErrProduitPerime
 	}
 
 	if stockDisponible < quantite {

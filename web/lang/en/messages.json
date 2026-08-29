@@ -177,6 +177,7 @@
     "aucune_livraison_prevue_msg": "No pending delivery right now (only deliveries not yet completed can be modified).",
     "livraison_label": "Delivery",
     "produit_label": "Product",
+    "disponible_label": "available",
     "generate_pdf_button": "Generate PDF",
     "confirm_delete_livraison": "Delete this delivery?",
     "pdf_fetch_error": "Unable to fetch this delivery's summary.",
