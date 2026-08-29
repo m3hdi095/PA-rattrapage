@@ -16,12 +16,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($form === 'profil') {
-            apiRequest('PATCH', '/benevoles/profil', [
+            $result = apiRequest('PATCH', '/benevoles/profil', [
                 'nom'       => $_POST['nom'] ?? '',
                 'prenom'    => $_POST['prenom'] ?? '',
                 'telephone' => $_POST['telephone'] ?? '',
             ], $_SESSION['token']);
-            $success = t('profil_updated_msg');
+            if ($result['statusCode'] >= 400) {
+                $error = $result['body']['error'] ?? t('profil_update_error');
+            } else {
+                $success = t('profil_updated_msg');
+            }
         } elseif ($form === 'mot_de_passe') {
             $result = apiRequest('PATCH', '/benevoles/mot-de-passe', [
                 'old_password' => $_POST['old_password'] ?? '',
@@ -34,10 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = $result['body']['error'] ?? t('current_password_incorrect_msg');
             }
         } elseif ($form === 'competences') {
-            apiRequest('PATCH', '/benevoles/capacites', [
+            $result = apiRequest('PATCH', '/benevoles/capacites', [
                 'capacites' => $_POST['capacites'] ?? [],
             ], $_SESSION['token']);
-            $success = t('competences_updated_msg');
+            if ($result['statusCode'] >= 400) {
+                $error = $result['body']['error'] ?? t('competences_update_error');
+            } else {
+                $success = t('competences_updated_msg');
+            }
         }
     } catch (Exception $e) {
         $error = $e->getMessage();

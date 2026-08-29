@@ -13,9 +13,9 @@ $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if (($_POST['action'] ?? '') === 'supprimer') {
-            apiRequest('DELETE', '/destinataires', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
+            $result = apiRequest('DELETE', '/destinataires', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
         } else {
-            apiRequest('POST', '/destinataires', [
+            $result = apiRequest('POST', '/destinataires', [
                 'type'        => $_POST['type'] ?? '',
                 'nom'         => $_POST['nom'] ?? '',
                 'adresse'     => $_POST['adresse'] ?? '',
@@ -24,8 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'telephone'   => $_POST['telephone'] ?? '',
             ], $_SESSION['token']);
         }
-        header('Location: destinataires.php');
-        exit;
+        if ($result['statusCode'] >= 400) {
+            $error = $result['body']['error'] ?? t('destinataire_action_error');
+        } else {
+            header('Location: destinataires.php');
+            exit;
+        }
     } catch (Exception $e) {
         $error = $e->getMessage();
     }

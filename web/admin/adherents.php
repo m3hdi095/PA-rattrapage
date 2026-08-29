@@ -27,7 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = $result['body']['error'] ?? t('create_adherent_error_fallback');
             }
         } else {
-            apiRequest('DELETE', '/adherents', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
+            $result = apiRequest('DELETE', '/adherents', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
+            if ($result['statusCode'] >= 400) {
+                $error = $result['body']['error'] ?? t('create_adherent_error_fallback');
+            }
         }
         if (!$error) {
             header('Location: adherents.php');

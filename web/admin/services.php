@@ -13,17 +13,21 @@ $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if (($_POST['action'] ?? '') === 'supprimer') {
-            apiRequest('DELETE', '/services', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
+            $result = apiRequest('DELETE', '/services', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
         } else {
             $capaciteId = ($_POST['capacite_id'] ?? '') !== '' ? (int) $_POST['capacite_id'] : null;
-            apiRequest('POST', '/services', [
+            $result = apiRequest('POST', '/services', [
                 'nom'         => $_POST['nom'] ?? '',
                 'description' => $_POST['description'] ?? '',
                 'capacite_id' => $capaciteId,
             ], $_SESSION['token']);
         }
-        header('Location: services.php');
-        exit;
+        if ($result['statusCode'] >= 400) {
+            $error = $result['body']['error'] ?? t('service_action_error');
+        } else {
+            header('Location: services.php');
+            exit;
+        }
     } catch (Exception $e) {
         $error = $e->getMessage();
     }

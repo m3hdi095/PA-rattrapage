@@ -16,11 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($action === 'valider') {
-            apiRequest('PATCH', '/benevoles/valider', ['id' => $id], $_SESSION['token']);
+            $result = apiRequest('PATCH', '/benevoles/valider', ['id' => $id], $_SESSION['token']);
         } elseif ($action === 'rejeter') {
-            apiRequest('PATCH', '/benevoles/rejeter', ['id' => $id], $_SESSION['token']);
+            $result = apiRequest('PATCH', '/benevoles/rejeter', ['id' => $id], $_SESSION['token']);
         } elseif ($action === 'supprimer') {
-            apiRequest('DELETE', '/benevoles', ['id' => $id], $_SESSION['token']);
+            $result = apiRequest('DELETE', '/benevoles', ['id' => $id], $_SESSION['token']);
         } elseif ($action === 'creer') {
             $result = apiRequest('POST', '/benevoles', [
                 'email'     => $_POST['email'] ?? '',
@@ -30,13 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'telephone' => $_POST['telephone'] ?? '',
                 'capacites' => $_POST['capacites'] ?? [],
             ], $_SESSION['token']);
-            if ($result['statusCode'] >= 400) {
-                $error = $result['body']['error'] ?? t('create_benevole_error_fallback');
-            } else {
-                apiRequest('PATCH', '/benevoles/valider', ['id' => $result['body']['id']], $_SESSION['token']);
+            if ($result['statusCode'] < 400) {
+                $result = apiRequest('PATCH', '/benevoles/valider', ['id' => $result['body']['id']], $_SESSION['token']);
             }
         }
-        if (!$error) {
+        if (isset($result) && $result['statusCode'] >= 400) {
+            $error = $result['body']['error'] ?? t('create_benevole_error_fallback');
+        } else {
             header('Location: benevoles.php');
             exit;
         }

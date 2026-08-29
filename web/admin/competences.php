@@ -13,14 +13,18 @@ $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if (($_POST['action'] ?? '') === 'supprimer') {
-            apiRequest('DELETE', '/capacites', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
+            $result = apiRequest('DELETE', '/capacites', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
         } else {
-            apiRequest('POST', '/capacites', [
+            $result = apiRequest('POST', '/capacites', [
                 'libelle' => $_POST['libelle'] ?? '',
             ], $_SESSION['token']);
         }
-        header('Location: competences.php');
-        exit;
+        if ($result['statusCode'] >= 400) {
+            $error = $result['body']['error'] ?? t('competence_action_error');
+        } else {
+            header('Location: competences.php');
+            exit;
+        }
     } catch (Exception $e) {
         $error = $e->getMessage();
     }

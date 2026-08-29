@@ -13,15 +13,19 @@ $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if (($_POST['action'] ?? '') === 'supprimer') {
-            apiRequest('DELETE', '/collectes', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
+            $result = apiRequest('DELETE', '/collectes', ['id' => (int) ($_POST['id'] ?? 0)], $_SESSION['token']);
         } else {
-            apiRequest('PATCH', '/collectes/statut', [
+            $result = apiRequest('PATCH', '/collectes/statut', [
                 'id'     => (int) ($_POST['id'] ?? 0),
                 'statut' => $_POST['statut'] ?? '',
             ], $_SESSION['token']);
         }
-        header('Location: collectes.php');
-        exit;
+        if ($result['statusCode'] >= 400) {
+            $error = $result['body']['error'] ?? t('collecte_action_error');
+        } else {
+            header('Location: collectes.php');
+            exit;
+        }
     } catch (Exception $e) {
         $error = $e->getMessage();
     }

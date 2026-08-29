@@ -13,14 +13,14 @@ $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if (($_POST['action'] ?? '') === 'update_statut') {
-            apiRequest('PATCH', '/produits/statut', [
+            $result = apiRequest('PATCH', '/produits/statut', [
                 'id'     => (int) $_POST['id'],
                 'statut' => $_POST['statut'],
             ], $_SESSION['token']);
         } elseif (($_POST['action'] ?? '') === 'supprimer') {
-            apiRequest('DELETE', '/produits', ['id' => (int) $_POST['id']], $_SESSION['token']);
+            $result = apiRequest('DELETE', '/produits', ['id' => (int) $_POST['id']], $_SESSION['token']);
         } else {
-            apiRequest('POST', '/produits', [
+            $result = apiRequest('POST', '/produits', [
                 'collecte_id'       => (int) ($_POST['collecte_id'] ?? 0),
                 'nom'               => $_POST['nom'] ?? '',
                 'quantite'          => (int) ($_POST['quantite'] ?? 1),
@@ -28,8 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'emplacement_stock' => $_POST['emplacement_stock'] ?? '',
             ], $_SESSION['token']);
         }
-        header('Location: produits.php');
-        exit;
+        if ($result['statusCode'] >= 400) {
+            $error = $result['body']['error'] ?? t('produit_action_error');
+        } else {
+            header('Location: produits.php');
+            exit;
+        }
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
