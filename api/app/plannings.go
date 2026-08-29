@@ -12,15 +12,37 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-func benevoleEstValide(benevoleID int) (bool, error) {
+func validerAffectationBenevole(benevoleID, serviceID int) error {
 	if benevoleID == 0 {
-		return true, nil
+		return nil
 	}
+
 	benevole, err := db.GetBenevoleByID(benevoleID)
 	if err != nil {
-		return false, err
+		return fmt.Errorf("bénévole introuvable")
 	}
-	return benevole.StatutCandidature == "valide", nil
+	if benevole.StatutCandidature != "valide" {
+		return fmt.Errorf("seul un bénévole validé peut être affecté à un créneau")
+	}
+
+	service, err := db.GetServiceByID(serviceID)
+	if err != nil {
+		return fmt.Errorf("service introuvable")
+	}
+	if service.CapaciteID != nil {
+		aLaCompetence := false
+		for _, c := range benevole.Capacites {
+			if c.ID == *service.CapaciteID {
+				aLaCompetence = true
+				break
+			}
+		}
+		if !aLaCompetence {
+			return fmt.Errorf("ce bénévole n'a pas la compétence requise (%s) pour ce service", service.CapaciteLibelle)
+		}
+	}
+
+	return nil
 }
 
 func CreatePlanning(w http.ResponseWriter, r *http.Request) {
@@ -60,13 +82,8 @@ func CreatePlanning(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	valide, err := benevoleEstValide(req.BenevoleID)
-	if err != nil {
-		utils.JSONError(w, "bénévole introuvable", http.StatusBadRequest)
-		return
-	}
-	if !valide {
-		utils.JSONError(w, "seul un bénévole validé peut être affecté à un créneau", http.StatusConflict)
+	if err := validerAffectationBenevole(req.BenevoleID, req.ServiceID); err != nil {
+		utils.JSONError(w, err.Error(), http.StatusConflict)
 		return
 	}
 
@@ -128,13 +145,8 @@ func UpdatePlanning(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	valide, err := benevoleEstValide(req.BenevoleID)
-	if err != nil {
-		utils.JSONError(w, "bénévole introuvable", http.StatusBadRequest)
-		return
-	}
-	if !valide {
-		utils.JSONError(w, "seul un bénévole validé peut être affecté à un créneau", http.StatusConflict)
+	if err := validerAffectationBenevole(req.BenevoleID, req.ServiceID); err != nil {
+		utils.JSONError(w, err.Error(), http.StatusConflict)
 		return
 	}
 

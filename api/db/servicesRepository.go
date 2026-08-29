@@ -55,6 +55,26 @@ func GetAllServices() ([]models.Service, error) {
 	return services, nil
 }
 
+func GetServiceByID(id int) (*models.Service, error) {
+	var service models.Service
+	var capaciteID sql.NullInt64
+	var capaciteLibelle sql.NullString
+
+	row := Connection.QueryRow(
+		"SELECT s.id, s.nom, s.description, s.capacite_id, c.libelle FROM services s LEFT JOIN capacites c ON c.id = s.capacite_id WHERE s.id = ?",
+		id,
+	)
+	if err := row.Scan(&service.ID, &service.Nom, &service.Description, &capaciteID, &capaciteLibelle); err != nil {
+		return nil, fmt.Errorf("failed to get service by id: %w", err)
+	}
+	if capaciteID.Valid {
+		cid := int(capaciteID.Int64)
+		service.CapaciteID = &cid
+		service.CapaciteLibelle = capaciteLibelle.String
+	}
+	return &service, nil
+}
+
 func DeleteService(id int) error {
 	_, err := Connection.Exec("DELETE FROM services WHERE id = ?", id)
 	if err != nil {
