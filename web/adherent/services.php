@@ -13,15 +13,28 @@ $success = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $result = apiRequest('POST', '/inscriptions', [
-            'planning_id' => (int) ($_POST['planning_id'] ?? 0),
-        ], $_SESSION['token']);
+        if (($_POST['action'] ?? '') === 'annuler') {
+            $result = apiRequest('PATCH', '/inscriptions/annuler', [
+                'id' => (int) ($_POST['id'] ?? 0),
+            ], $_SESSION['token']);
 
-        if ($result['statusCode'] >= 400) {
-            $error = $result['body']['error'] ?? t('inscription_error_fallback');
+            if ($result['statusCode'] >= 400) {
+                $error = $result['body']['error'] ?? t('desinscription_error_fallback');
+            } else {
+                header('Location: services.php?desinscrit=1');
+                exit;
+            }
         } else {
-            header('Location: services.php?inscrit=1');
-            exit;
+            $result = apiRequest('POST', '/inscriptions', [
+                'planning_id' => (int) ($_POST['planning_id'] ?? 0),
+            ], $_SESSION['token']);
+
+            if ($result['statusCode'] >= 400) {
+                $error = $result['body']['error'] ?? t('inscription_error_fallback');
+            } else {
+                header('Location: services.php?inscrit=1');
+                exit;
+            }
         }
     } catch (Exception $e) {
         $error = $e->getMessage();
@@ -30,6 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['inscrit'])) {
     $success = t('inscription_confirmee_msg');
+}
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['desinscrit'])) {
+    $success = t('desinscription_confirmee_msg');
 }
 
 $services = [];
@@ -82,6 +98,7 @@ require __DIR__ . '/../includes/header_adherent.php';
             <th><?= t('debut_column') ?></th>
             <th><?= t('fin_column') ?></th>
             <th><?= t('lieu_column') ?></th>
+            <th><?= t('action_column') ?></th>
         </tr>
         <?php foreach ($mesInscriptions as $mi): ?>
         <tr>
@@ -89,6 +106,13 @@ require __DIR__ . '/../includes/header_adherent.php';
             <td><?= htmlspecialchars($mi['date_debut']) ?></td>
             <td><?= htmlspecialchars($mi['date_fin']) ?></td>
             <td><?= htmlspecialchars($mi['lieu']) ?></td>
+            <td>
+                <form method="post" action="services.php" onsubmit="return confirm(<?= json_encode(t('confirm_desinscription')) ?>);">
+                    <input type="hidden" name="action" value="annuler">
+                    <input type="hidden" name="id" value="<?= (int) $mi['id'] ?>">
+                    <button type="submit"><?= t('unsubscribe_button') ?></button>
+                </form>
+            </td>
         </tr>
         <?php endforeach; ?>
     </table>

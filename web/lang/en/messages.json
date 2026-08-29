@@ -239,6 +239,10 @@
     "inscription_confirmee_msg": "Sign-up confirmed!",
     "inscription_error_fallback": "Unable to sign up for this slot (maybe already signed up?).",
     "signup_button": "Sign up",
+    "unsubscribe_button": "Unsubscribe",
+    "confirm_desinscription": "Confirm unsubscribing from this slot?",
+    "desinscription_confirmee_msg": "Unsubscribed.",
+    "desinscription_error_fallback": "Error while unsubscribing.",
     "action_column": "Action",
 
     "mon_planning_heading": "My schedule",

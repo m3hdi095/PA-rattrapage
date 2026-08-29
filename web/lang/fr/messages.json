@@ -239,6 +239,10 @@
     "inscription_confirmee_msg": "Inscription confirmée !",
     "inscription_error_fallback": "Impossible de s'inscrire à ce créneau (peut-être déjà inscrit ?).",
     "signup_button": "S'inscrire",
+    "unsubscribe_button": "Se désinscrire",
+    "confirm_desinscription": "Confirmer la désinscription de ce créneau ?",
+    "desinscription_confirmee_msg": "Désinscription confirmée.",
+    "desinscription_error_fallback": "Erreur lors de la désinscription.",
     "action_column": "Action",
 
     "mon_planning_heading": "Mon planning",

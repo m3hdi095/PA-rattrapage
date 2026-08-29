@@ -52,6 +52,15 @@ func GetAllPlannings() ([]models.Planning, error) {
 	return plannings, nil
 }
 
+func GetPlanningDateDebut(planningID int) (string, error) {
+	var dateDebut string
+	err := Connection.QueryRow("SELECT date_debut FROM plannings WHERE id = ?", planningID).Scan(&dateDebut)
+	if err != nil {
+		return "", fmt.Errorf("failed to get planning date_debut: %w", err)
+	}
+	return dateDebut, nil
+}
+
 func GetPlanningPlacesRestantes(planningID int) (int, error) {
 	var placesRestantes int
 	err := Connection.QueryRow(`
