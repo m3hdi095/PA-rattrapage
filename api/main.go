@@ -98,6 +98,7 @@ func main() {
 	//Inscriptions
 	http.HandleFunc("POST /inscriptions", app.CreateInscription)
 	http.HandleFunc("GET /inscriptions", app.ListInscriptions)
+	http.HandleFunc("GET /inscriptions/mes", app.ListMesInscriptions)
 
 	//Livraisons
 	http.HandleFunc("POST /livraisons", app.CreateLivraison)

@@ -43,12 +43,24 @@ func CreateInscription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if existing != nil {
-		if existing.Statut == "inscrit" {
-			utils.JSONError(w, "vous êtes déjà inscrit à ce créneau", http.StatusConflict)
-			return
-		}
+	if existing != nil && existing.Statut == "inscrit" {
+		utils.JSONError(w, "vous êtes déjà inscrit à ce créneau", http.StatusConflict)
+		return
+	}
 
+	// A ce stade, l'inscription va prendre une place (nouvelle ou reactivee) :
+	// on verifie qu'il en reste.
+	placesRestantes, err := db.GetPlanningPlacesRestantes(req.PlanningID)
+	if err != nil {
+		utils.JSONError(w, "erreur lors de la vérification des places disponibles", http.StatusInternalServerError)
+		return
+	}
+	if placesRestantes <= 0 {
+		utils.JSONError(w, "il n'y a plus de places disponibles pour ce créneau", http.StatusConflict)
+		return
+	}
+
+	if existing != nil {
 		if err := db.ReactivateInscription(existing.ID); err != nil {
 			utils.JSONError(w, "erreur lors de la réinscription", http.StatusInternalServerError)
 			return
@@ -74,6 +86,29 @@ func CreateInscription(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]int{"id": id})
+}
+
+func ListMesInscriptions(w http.ResponseWriter, r *http.Request) {
+	tokenString := r.Header.Get("Authorization")
+	claims, err := utils.VerifyJWT(tokenString)
+	if err != nil {
+		utils.JSONError(w, "token invalide", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.Role != "adherent" {
+		utils.JSONError(w, "accès réservé aux adhérents", http.StatusForbidden)
+		return
+	}
+
+	inscriptions, err := db.GetInscriptionsByAdherent(claims.ID)
+	if err != nil {
+		utils.JSONError(w, "erreur lors de la récupération des inscriptions", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(inscriptions)
 }
 
 func ListInscriptions(w http.ResponseWriter, r *http.Request) {

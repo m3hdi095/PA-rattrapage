@@ -34,12 +34,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['inscrit'])) {
 
 $services = [];
 $plannings = [];
+$mesInscriptions = [];
 try {
     $servicesResult = apiRequest('GET', '/services', null, $_SESSION['token']);
     $services = $servicesResult['body'] ?? [];
 
     $planningsResult = apiRequest('GET', '/plannings', null, $_SESSION['token']);
     $plannings = $planningsResult['body'] ?? [];
+
+    $mesInscriptionsResult = apiRequest('GET', '/inscriptions/mes', null, $_SESSION['token']);
+    $mesInscriptions = $mesInscriptionsResult['body'] ?? [];
 } catch (Exception $e) {
     $error = $e->getMessage();
 }
@@ -47,6 +51,13 @@ try {
 $serviceNoms = [];
 foreach ($services as $s) {
     $serviceNoms[$s['id']] = $s['nom'];
+}
+
+// planning_id -> true pour les creneaux ou l'adherent est deja inscrit,
+// utilise pour ne pas proposer "S'inscrire" en double.
+$planningIdsInscrits = [];
+foreach ($mesInscriptions as $mi) {
+    $planningIdsInscrits[$mi['planning_id']] = true;
 }
 
 require __DIR__ . '/../includes/header_adherent.php';
@@ -59,6 +70,28 @@ require __DIR__ . '/../includes/header_adherent.php';
 <?php endif; ?>
 <?php if (!empty($success)): ?>
     <p class="success"><?= htmlspecialchars($success) ?></p>
+<?php endif; ?>
+
+<h3><?= t('mes_inscriptions_heading') ?></h3>
+<?php if (empty($mesInscriptions)): ?>
+    <p><?= t('aucune_inscription_msg') ?></p>
+<?php else: ?>
+    <table border="1" cellpadding="6">
+        <tr>
+            <th><?= t('service_column') ?></th>
+            <th><?= t('debut_column') ?></th>
+            <th><?= t('fin_column') ?></th>
+            <th><?= t('lieu_column') ?></th>
+        </tr>
+        <?php foreach ($mesInscriptions as $mi): ?>
+        <tr>
+            <td><?= htmlspecialchars($serviceNoms[$mi['service_id']] ?? ('Service #' . $mi['service_id'])) ?></td>
+            <td><?= htmlspecialchars($mi['date_debut']) ?></td>
+            <td><?= htmlspecialchars($mi['date_fin']) ?></td>
+            <td><?= htmlspecialchars($mi['lieu']) ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
 <?php endif; ?>
 
 <h3><?= t('nos_services_heading') ?></h3>
@@ -75,7 +108,7 @@ require __DIR__ . '/../includes/header_adherent.php';
         <th><?= t('debut_column') ?></th>
         <th><?= t('fin_column') ?></th>
         <th><?= t('lieu_column') ?></th>
-        <th><?= t('places_max_column') ?></th>
+        <th><?= t('places_restantes_column') ?></th>
         <th><?= t('action_column') ?></th>
     </tr>
     <?php foreach ($plannings as $p): ?>
@@ -84,12 +117,18 @@ require __DIR__ . '/../includes/header_adherent.php';
         <td><?= htmlspecialchars($p['date_debut']) ?></td>
         <td><?= htmlspecialchars($p['date_fin']) ?></td>
         <td><?= htmlspecialchars($p['lieu']) ?></td>
-        <td><?= htmlspecialchars($p['places_max']) ?></td>
+        <td><?= (int) $p['places_restantes'] ?> / <?= (int) $p['places_max'] ?></td>
         <td>
-            <form method="post" action="services.php">
-                <input type="hidden" name="planning_id" value="<?= (int) $p['id'] ?>">
-                <button type="submit"><?= t('signup_button') ?></button>
-            </form>
+            <?php if (isset($planningIdsInscrits[$p['id']])): ?>
+                <em><?= t('deja_inscrit_label') ?></em>
+            <?php elseif ($p['places_restantes'] <= 0): ?>
+                <em><?= t('complet_label') ?></em>
+            <?php else: ?>
+                <form method="post" action="services.php">
+                    <input type="hidden" name="planning_id" value="<?= (int) $p['id'] ?>">
+                    <button type="submit"><?= t('signup_button') ?></button>
+                </form>
+            <?php endif; ?>
         </td>
     </tr>
     <?php endforeach; ?>

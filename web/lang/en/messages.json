@@ -230,7 +230,12 @@
 
     "services_proposes_heading": "Services offered",
     "nos_services_heading": "Our services",
+    "mes_inscriptions_heading": "My sign-ups",
+    "aucune_inscription_msg": "You are not signed up for any slot yet.",
     "creneaux_dispo_heading": "Available slots",
+    "places_restantes_column": "Spots left / max",
+    "deja_inscrit_label": "Already signed up",
+    "complet_label": "Full",
     "inscription_confirmee_msg": "Sign-up confirmed!",
     "inscription_error_fallback": "Unable to sign up for this slot (maybe already signed up?).",
     "signup_button": "Sign up",

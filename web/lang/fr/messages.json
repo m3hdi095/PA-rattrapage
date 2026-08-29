@@ -230,7 +230,12 @@
 
     "services_proposes_heading": "Services proposés",
     "nos_services_heading": "Nos services",
+    "mes_inscriptions_heading": "Mes inscriptions",
+    "aucune_inscription_msg": "Vous n'êtes inscrit à aucun créneau pour le moment.",
     "creneaux_dispo_heading": "Créneaux disponibles",
+    "places_restantes_column": "Places restantes / max",
+    "deja_inscrit_label": "Déjà inscrit",
+    "complet_label": "Complet",
     "inscription_confirmee_msg": "Inscription confirmée !",
     "inscription_error_fallback": "Impossible de s'inscrire à ce créneau (peut-être déjà inscrit ?).",
     "signup_button": "S'inscrire",

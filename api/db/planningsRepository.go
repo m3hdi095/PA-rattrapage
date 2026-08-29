@@ -25,7 +25,11 @@ func CreatePlanning(planning *models.Planning) (int, error) {
 }
 
 func GetAllPlannings() ([]models.Planning, error) {
-	rows, err := Connection.Query("SELECT id, service_id, benevole_id, date_debut, date_fin, lieu, places_max FROM plannings")
+	rows, err := Connection.Query(`
+		SELECT p.id, p.service_id, p.benevole_id, p.date_debut, p.date_fin, p.lieu, p.places_max,
+			p.places_max - (SELECT COUNT(*) FROM inscriptions_service i WHERE i.planning_id = p.id AND i.statut = 'inscrit') AS places_restantes
+		FROM plannings p
+	`)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get all plannings: %w", err)
 	}
@@ -34,7 +38,7 @@ func GetAllPlannings() ([]models.Planning, error) {
 	var plannings []models.Planning
 	for rows.Next() {
 		var planning models.Planning
-		err := rows.Scan(&planning.ID, &planning.ServiceID, &planning.BenevoleID, &planning.DateDebut, &planning.DateFin, &planning.Lieu, &planning.PlacesMax)
+		err := rows.Scan(&planning.ID, &planning.ServiceID, &planning.BenevoleID, &planning.DateDebut, &planning.DateFin, &planning.Lieu, &planning.PlacesMax, &planning.PlacesRestantes)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan planning row: %w", err)
 		}
@@ -46,6 +50,18 @@ func GetAllPlannings() ([]models.Planning, error) {
 	}
 
 	return plannings, nil
+}
+
+func GetPlanningPlacesRestantes(planningID int) (int, error) {
+	var placesRestantes int
+	err := Connection.QueryRow(`
+		SELECT p.places_max - (SELECT COUNT(*) FROM inscriptions_service i WHERE i.planning_id = p.id AND i.statut = 'inscrit')
+		FROM plannings p WHERE p.id = ?
+	`, planningID).Scan(&placesRestantes)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get planning places restantes: %w", err)
+	}
+	return placesRestantes, nil
 }
 
 func GetPlanningsByBenevole(benevoleID int) ([]models.Planning, error) {
