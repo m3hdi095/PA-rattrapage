@@ -142,6 +142,10 @@ func AddProduitLivraison(w http.ResponseWriter, r *http.Request) {
 			utils.JSONError(w, "stock insuffisant pour ce produit", http.StatusConflict)
 			return
 		}
+		if errors.Is(err, db.ErrLivraisonNonModifiable) {
+			utils.JSONError(w, "seule une livraison prévue peut être modifiée", http.StatusConflict)
+			return
+		}
 		utils.JSONError(w, "erreur lors de l'ajout du produit à la livraison", http.StatusInternalServerError)
 		return
 	}

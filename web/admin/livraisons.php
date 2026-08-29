@@ -137,9 +137,14 @@ require __DIR__ . '/../includes/header_admin.php';
         <select name="livraison_id" required>
             <option value=""><?= t('choose_placeholder') ?></option>
             <?php foreach ($livraisons as $l): ?>
-                <option value="<?= (int) $l['id'] ?>">Livraison #<?= (int) $l['id'] ?> — <?= htmlspecialchars($destinatairesById[$l['destinataire_id']] ?? ('destinataire #' . $l['destinataire_id'])) ?> (<?= htmlspecialchars($l['statut']) ?>)</option>
+                <?php if ($l['statut'] === 'prevue'): ?>
+                    <option value="<?= (int) $l['id'] ?>">Livraison #<?= (int) $l['id'] ?> — <?= htmlspecialchars($destinatairesById[$l['destinataire_id']] ?? ('destinataire #' . $l['destinataire_id'])) ?></option>
+                <?php endif; ?>
             <?php endforeach; ?>
         </select>
+        <?php if (!array_filter($livraisons, fn($l) => $l['statut'] === 'prevue')): ?>
+            <p><?= t('aucune_livraison_prevue_msg') ?></p>
+        <?php endif; ?>
     </label><br>
     <label><?= t('produit_label') ?> :
         <select name="produit_id" required>

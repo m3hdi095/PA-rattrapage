@@ -7,6 +7,7 @@ import (
 )
 
 var ErrStockInsuffisant = errors.New("stock insuffisant")
+var ErrLivraisonNonModifiable = errors.New("livraison non modifiable")
 
 func CreateLivraison(livraison *models.Livraison) (int, error) {
 	res, err := Connection.Exec(
@@ -68,6 +69,15 @@ func AddProduitToLivraison(livraisonID, produitID, quantite int) error {
 		return fmt.Errorf("failed to start transaction: %w", err)
 	}
 	defer tx.Rollback()
+
+	var statutLivraison string
+	if err := tx.QueryRow("SELECT statut FROM livraisons WHERE id = ? FOR UPDATE", livraisonID).Scan(&statutLivraison); err != nil {
+		return fmt.Errorf("failed to read livraison statut: %w", err)
+	}
+
+	if statutLivraison != "prevue" {
+		return ErrLivraisonNonModifiable
+	}
 
 	var stockDisponible int
 	if err := tx.QueryRow("SELECT quantite FROM produits WHERE id = ? FOR UPDATE", produitID).Scan(&stockDisponible); err != nil {
